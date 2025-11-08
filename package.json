@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.20.0",
     "@headlessui/react": "^1.7.17",
+    "@monaco-editor/react": "^4.7.0",
     "@reduxjs/toolkit": "^2.1.0",
     "clsx": "^2.0.0",
     "firebase": "^10.8.0",
@@ -20,6 +22,7 @@
     "react-hook-form": "^7.48.2",
     "react-icons": "^4.12.0",
     "react-redux": "^9.1.0",
+    "react-resizable-panels": "^3.0.6",
     "react-router-dom": "^6.20.0",
     "recharts": "^2.11.0",
     "sonner": "^1.4.0"

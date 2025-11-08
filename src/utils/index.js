@@ -100,3 +100,25 @@ export function countTasksByStage(tasks) {
     completed: completedCount,
   };
 }
+
+
+export const getDifficultyBadgeClass = (difficulty) => {
+  switch (difficulty?.toLowerCase()) {
+    case "easy":
+      //return "badge-success";
+      //return "bg-green-500/20 text-green-400 border-green-500/30"
+      return "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/50"
+    case "medium":
+      //return "badge-warning";
+      //return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+      return "bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/50"
+    case "hard":
+    //  return "badge-error";
+    //return "bg-red-500/20 text-red-400 border-red-500/30"
+    return "bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg shadow-red-500/50"
+    default:
+      //return "badge-ghost";
+      //return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+     return "bg-gradient-to-r from-gray-500 to-gray-600 text-white";
+  }
+};
