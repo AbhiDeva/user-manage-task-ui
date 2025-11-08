@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import { PROBLEMS } from "../../utils/problemsdata.js";
-
-
+import { toast } from "sonner";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import ProblemDescription from "../../components/problems/ProblemDescription";
 import OutputPanel from "../../components/problems/OutputPanel";
@@ -16,13 +15,22 @@ function ProblemDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [currentProblemId, setCurrentProblemId] = useState("two-sum");
+  const [currentProblemId, setCurrentProblemId] = useState(id || "two-sum");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
+  //const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
+  const [code, setCode] = useState("")
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
   const currentProblem = PROBLEMS[currentProblemId];
+
+  // Initialize code when component mounts or problem changes
+
+  useEffect(() => {
+    if(currentProblem && currentProblem.starterCode){
+      setCode(currentProblem.starterCode[selectedLanguage] || "");
+    }
+  }, [currentProblemId, selectedLanguage, currentProblem])
 
   // update problem when URL param changes
   useEffect(() => {
@@ -30,13 +38,22 @@ function ProblemDetailPage() {
       setCurrentProblemId(id);
       setCode(PROBLEMS[id].starterCode[selectedLanguage]);
       setOutput(null);
+    } else if(id && !PROBLEMS[id]){
+     toast.error("Problem not found!")
+     navigate("/problem")
     }
   }, [id, selectedLanguage]);
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
     setSelectedLanguage(newLang);
-    setCode(currentProblem.starterCode[newLang]);
+      if (currentProblem && currentProblem.starterCode && currentProblem.starterCode[newLang]) {
+      setCode(currentProblem.starterCode[newLang]);
+    } else {
+      setCode("");
+      toast.error(`Starter code not available for ${newLang}`);
+    }
+    //setCode(currentProblem.starterCode[newLang]);
     setOutput(null);
   };
 
@@ -58,6 +75,8 @@ function ProblemDetailPage() {
 
   const normalizeOutput = (output) => {
     // normalize output for comparison (trim whitespace, handle different spacing)
+    if(!output) return "";
+
     return output
       .trim()
       .split("\n")
@@ -75,16 +94,22 @@ function ProblemDetailPage() {
   };
 
   const checkIfTestsPassed = (actualOutput, expectedOutput) => {
+    if(!actualOutput || !expectedOutput) return false;
     const normalizedActual = normalizeOutput(actualOutput);
     const normalizedExpected = normalizeOutput(expectedOutput);
 
-    return normalizedActual == normalizedExpected;
+    return normalizedActual === normalizedExpected;
   };
 
   const handleRunCode = async () => {
+     if (!code || code.trim() === "") {
+      toast.error("Please write some code first!");
+      return;
+    }
+
     setIsRunning(true);
     setOutput(null);
-
+    try{
     const result = await executeCode(selectedLanguage, code);
     setOutput(result);
     setIsRunning(false);
@@ -104,13 +129,41 @@ function ProblemDetailPage() {
     } else {
       toast.error("Code execution failed!");
     }
+  } catch (error) {
+      console.error("Error running code:", error);
+      toast.error("An error occurred while executing code");
+      setOutput({
+        success: false,
+        output: "",
+        error: error.message || "Unknown error occurred"
+      });
+    } finally {
+      setIsRunning(false);
+    }
   };
 
+   // Show loading or error if problem not found
+  if (!currentProblem) {
+    return (
+      <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-white mb-4">Problem not found</h2>
+          <button
+            onClick={() => navigate("/problem")}
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:scale-105 transition-transform"
+          >
+            Back to Problems
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen bg-base-100 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex flex-col">
       {/* <Navbar /> */}
 
-      <div className="flex-1">
+      <div className="flex-1 over-hidden">
         <PanelGroup direction="horizontal">
           {/* left panel- problem desc */}
           <Panel defaultSize={40} minSize={30}>
@@ -122,7 +175,7 @@ function ProblemDetailPage() {
             />
           </Panel>
 
-          <PanelResizeHandle className="w-2 bg-base-300 hover:bg-primary transition-colors cursor-col-resize" />
+          <PanelResizeHandle className="w-2 bg-gray-800 hover:bg-purple-600 transition-colors cursor-col-resize" />
 
           {/* right panel- code editor & output */}
           <Panel defaultSize={60} minSize={30}>
@@ -143,8 +196,8 @@ function ProblemDetailPage() {
 
               {/* Bottom panel - Output Panel*/}
 
-              <Panel defaultSize={30} minSize={30}>
-                <OutputPanel output={output} />
+              <Panel defaultSize={30} minSize={20}>
+                <OutputPanel output={output}  isRunning={isRunning}/>
               </Panel>
             </PanelGroup>
           </Panel>

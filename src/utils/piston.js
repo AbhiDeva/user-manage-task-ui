@@ -55,7 +55,7 @@ export async function executeCode(language, code) {
 
     if (stderr) {
       return {
-        success: false,
+        success: !data.run.stderr,
         output: output,
         error: stderr,
       };
@@ -69,6 +69,7 @@ export async function executeCode(language, code) {
     return {
       success: false,
       error: `Failed to execute code: ${error.message}`,
+      output: error.message
     };
   }
 }
