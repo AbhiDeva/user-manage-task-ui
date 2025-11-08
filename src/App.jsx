@@ -16,6 +16,7 @@ import {
 } from "./pages";
 import { setOpenSidebar } from "./redux/slices/authSlice";
 import Problem from "./components/problems/Problem";
+import ProblemDetailPage from "./components/problems/ProblemDetailPage";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
@@ -110,6 +111,7 @@ const App = () => {
             <Route path='/team' element={<Users />} />
             <Route path='/status' element={<StatusPage />} />
             <Route path='/problem' element={<Problem />} />
+            <Route path='/problem/:id' element={<ProblemDetailPage />} />
           </Route>
 
           <Route path='/log-in' element={<Login />} />

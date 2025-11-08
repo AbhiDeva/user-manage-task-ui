@@ -78,6 +78,9 @@ const Problem = () => {
                                 key={problem.id}
                                 className="group relative bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] cursor-pointer"
                             >
+
+             
+
                                 <div className="relative p-7">
                                     <div className="flex items-center justify-between gap-6">
 
@@ -123,11 +126,18 @@ const Problem = () => {
 
                                         {/* RIGHT SIDE BUTTON */}
                                         <div className="flex flex-col items-center gap-2 bg-blue-50 px-5 py-4 rounded-xl border border-blue-200 transition-all duration-300">
-                                            <span className="font-bold text-sm text-blue-600">
-                                                Solve
-                                            </span>
-                                            <MdCreate className="w-6 h-6 text-blue-500 group-hover:translate-x-2 transition-all duration-300" />
+                                            <Link
+                                                key={problem.id}
+                                                to={`/problem/${problem.id}`}
+                                                className="card bg-base-100 hover:scale-[1.01] transition-transform"
+                                            >
+                                                <span className="font-bold text-sm text-blue-600">
+                                                    Solve
+                                                </span>
+                                                <MdCreate className="w-6 h-6 text-blue-500 group-hover:translate-x-2 transition-all duration-300" />
+                                            </Link>
                                         </div>
+
 
                                     </div>
                                 </div>
