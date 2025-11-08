@@ -7,6 +7,7 @@ import {
   MdOutlinePendingActions,
   MdSettings,
   MdTaskAlt,
+  MdOutlineLaptopMac
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
@@ -57,7 +58,7 @@ const linkData = [
   {
     label: "Problem",
     link: "problem",
-    icon: <IoCheckmarkDoneOutline />,
+    icon: <MdOutlineLaptopMac />,
   },
   {
     label: "Trash",
