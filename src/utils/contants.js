@@ -4,4 +4,8 @@ const TASKS_URL = "/task";
 
 const ADMIN_URL = "/admin";
 
-export { USERS_URL, TASKS_URL, ADMIN_URL };
+const PROBLEMS_URL = "/problems";
+
+const SUBMISSIONS_URL = "/submissions"
+
+export { USERS_URL, TASKS_URL, ADMIN_URL, PROBLEMS_URL, SUBMISSIONS_URL };

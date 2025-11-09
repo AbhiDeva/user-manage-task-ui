@@ -2,36 +2,86 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProblemNavbar from "./ProblemNavbar";
 import { PROBLEMS } from '../../utils/problemsdata';
-import { MdCode, MdSearch, MdFilterList, MdCreate } from 'react-icons/md';
-import { getDifficultyBadgeClass } from '../../utils/index.js'
+import { MdCode, MdSearch, MdFilterList, MdCreate, MdAdd } from 'react-icons/md';
+import { getDifficultyBadgeClass } from '../../utils/index.js';
+import { toast } from 'sonner';
+import { useGetAllProblemsQuery, useCreateProblemMutation } from '../../redux/slices/api/problemApiSlice.js';
+import { useSelector } from 'react-redux';
+import CreateProblemModal from "./CreateProblemModal"
 
 const Problem = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDifficulty, setSelectedDifficulty] = useState("All");
-    const problems = Object.values(PROBLEMS);
-    const filteredProblems = problems.filter((problem) => {
-        const matchesSearch = problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            problem.category.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDifficulty = selectedDifficulty === "All" || problem.difficulty === selectedDifficulty;
-        return matchesSearch && matchesDifficulty;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { user } = useSelector((state) => state.auth);
+
+    // Fetch problems from API
+    const { data: problemsData, isLoading, error, refetch } = useGetAllProblemsQuery({
+        difficulty: selectedDifficulty === 'All' ? '' : selectedDifficulty,
+        category: '',
+        search: searchTerm,
     });
+
+    console.log(problemsData)
+
+    // Create problem mutation
+    const [createProblem, { isLoading: isCreating }] = useCreateProblemMutation();
+
+    //const problems = Object.values(PROBLEMS);
+    const problems = problemsData && problemsData.data  || [];
+    console.log(problems);
+    const filteredProblems = problems;
+    // const filteredProblems = problems & problems.filter((problem) => {
+    //     const matchesSearch = searchTerm ? (problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //         problem.category.toLowerCase().includes(searchTerm.toLowerCase())) : problem;
+    //     const matchesDifficulty = selectedDifficulty === " " || problem.difficulty === selectedDifficulty;
+    //     return matchesSearch && matchesDifficulty;
+    // });
+    console.log(filteredProblems)
 
     const easyProblemsCount = problems.filter((p) => p.difficulty === "Easy").length;
     const mediumProblemsCount = problems.filter((p) => p.difficulty === "Medium").length;
     const hardProblemsCount = problems.filter((p) => p.difficulty === "Hard").length;
+
+     // Handle problem creation
+    const handleCreateProblem = async (problemData) => {
+        try {
+            await createProblem(problemData).unwrap();
+            toast.success('Problem created successfully!');
+            setIsModalOpen(false);
+            refetch(); // Refresh the problems list
+        } catch (error) {
+            toast.error(error?.data?.message || 'Failed to create problem');
+            console.error('Create problem error:', error);
+        }
+    };
+
 
     return (
         <div className="min-h-screen">
             <ProblemNavbar />
             <div className="max-w-6xl mx-auto px-4 py-12">
                 {/* HEADER */}
-                <div className="mb-8">
+                <div className="mb-8 flex items-center justify-between">
+                    <div>
                     <h1 className="text-2xl mb-3 text-blue-700">
                         Practice Problems
                     </h1>
                     <p className="text-gray-400 text-md">
                         Sharpen your coding skills with these curated problems
                     </p>
+                    </div>
+
+                    {/* Admin Create Button */}
+                    {user?.isAdmin && (
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:scale-105 transition-transform flex items-center gap-2 shadow-lg shadow-purple-500/50"
+                        >
+                            <MdAdd className="w-5 h-5" />
+                            Create Problem
+                        </button>
+                    )}
                 </div>
 
                 {/* SEARCH AND FILTER */}
@@ -73,7 +123,7 @@ const Problem = () => {
                             <p className="text-sm text-gray-500">Try adjusting your search or filters</p>
                         </div>
                     ) : (
-                        filteredProblems.map((problem, index) => (
+                        filteredProblems && filteredProblems.map((problem, index) => (
                             <div
                                 key={problem.id}
                                 className="group relative bg-white rounded-2xl border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] cursor-pointer"
@@ -127,8 +177,8 @@ const Problem = () => {
                                         {/* RIGHT SIDE BUTTON */}
                                         <div className="flex flex-col items-center gap-2 bg-blue-50 px-5 py-4 rounded-xl border border-blue-200 transition-all duration-300">
                                             <Link
-                                                key={problem.id}
-                                                to={`/problem/${problem.id}`}
+                                                key={problem._id}
+                                                to={`/problem/${problem._id}`}
                                                 className="card bg-base-100 hover:scale-[1.01] transition-transform"
                                             >
                                                 <span className="font-bold text-sm text-blue-600">
@@ -201,6 +251,14 @@ const Problem = () => {
                 </div>
 
             </div>
+
+              {/* Create Problem Modal */}
+            <CreateProblemModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSubmit={handleCreateProblem}
+            />
+
         </div>
     );
 }

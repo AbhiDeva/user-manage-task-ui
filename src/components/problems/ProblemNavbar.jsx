@@ -4,8 +4,10 @@ import {
   MdAutoAwesome, 
   MdMenuBook, 
   MdDashboard, 
+  MdAdd
 } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
+import CreateProblemModal from './CreateProblemModal';
 //import { logout } from "../redux/slices/authSlice";
 
 
@@ -16,12 +18,24 @@ const ProblemNavbar = () => {
   
   // Get user from Redux store
   const { user } = useSelector((state) => state.auth);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
 //   const handleLogout = () => {
 //     dispatch(logout());
 //     navigate("/login");
+//   };
+
+//  const handleCreateProblem = async (problemData) => {
+//     try {
+//      // await createProblem(problemData);
+//       toast.success('Problem created successfully!');
+//       setIsModalOpen(false);
+//       // Refresh problems list
+//     } catch (error) {
+//       toast.error(error.response?.data?.message || 'Failed to create problem');
+//     }
 //   };
 
   return (
@@ -91,7 +105,29 @@ const ProblemNavbar = () => {
               </Link>
             )}
           </div> */}
+
+           <div>
+      {/* Admin Create Button */}
+      {/* {user?.isAdmin && (
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:scale-105 transition-transform flex items-center gap-2"
+        >
+          <MdAdd className="w-5 h-5" />
+          Create Problem
+        </button>
+      )} */}
+
+      {/* Modal */}
+      {/* <CreateProblemModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateProblem}
+      /> */}
+    </div>
         </div>
+
+
       </div>
     </nav>
   );
