@@ -7,42 +7,34 @@ import ProblemDescription from "../../components/problems/ProblemDescription";
 import OutputPanel from "../../components/problems/OutputPanel";
 import CodeEditorPanel from "../../components/problems/CodeEditorPanel"
 import { executeCode } from "../../utils/piston.js"
-
-// import toast from "react-hot-toast";
- import confetti from "canvas-confetti";
+import { useGetSingleProblemQuery, useGetAllProblemsQuery } from "../../redux/slices/api/problemApiSlice";
+import confetti from "canvas-confetti";
 
 function ProblemDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [currentProblemId, setCurrentProblemId] = useState(id || "two-sum");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  //const [code, setCode] = useState(PROBLEMS[currentProblemId].starterCode.javascript);
   const [code, setCode] = useState("")
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
-
-  const currentProblem = PROBLEMS[currentProblemId];
-
-  // Initialize code when component mounts or problem changes
-
+  const { data: apiResponse, isLoading,  error} = useGetSingleProblemQuery(id, { skip: !id });
+  const { data : problemapiResponse, isProblemLoading, isProblemerror} = useGetAllProblemsQuery();
+  const totalProblems = problemapiResponse?.data;
+  const currentProblem = apiResponse?.data || apiResponse; // support both formats
   useEffect(() => {
-    if(currentProblem && currentProblem.starterCode){
+    if (currentProblem && currentProblem.starterCode) {
       setCode(currentProblem.starterCode[selectedLanguage] || "");
     }
-  }, [currentProblemId, selectedLanguage, currentProblem])
+  }, [currentProblem, selectedLanguage]);
 
-  // update problem when URL param changes
+  // Handle error or not found
   useEffect(() => {
-    if (id && PROBLEMS[id]) {
-      setCurrentProblemId(id);
-      setCode(PROBLEMS[id].starterCode[selectedLanguage]);
-      setOutput(null);
-    } else if(id && !PROBLEMS[id]){
-     toast.error("Problem not found!")
-     navigate("/problem")
+    if (error) {
+      toast.error("Problem not found!");
+      navigate("/problems");
     }
-  }, [id, selectedLanguage]);
+  }, [error, navigate]);
 
   const handleLanguageChange = (e) => {
     const newLang = e.target.value;
@@ -53,11 +45,15 @@ function ProblemDetailPage() {
       setCode("");
       toast.error(`Starter code not available for ${newLang}`);
     }
-    //setCode(currentProblem.starterCode[newLang]);
+    setCode(currentProblem.starterCode[newLang]);
     setOutput(null);
   };
 
-  const handleProblemChange = (newProblemId) => navigate(`/problem/${newProblemId}`);
+  const handleProblemChange = (newProblemId) =>{
+
+   navigate(`/problem/${newProblemId}`);
+   this.currentProblemId = newProblemId;
+  }
 
   const triggerConfetti = () => {
     confetti({
@@ -169,9 +165,9 @@ function ProblemDetailPage() {
           <Panel defaultSize={40} minSize={30}>
             <ProblemDescription
               problem={currentProblem}
-              currentProblemId={currentProblemId}
+              currentProblemId={id}
               onProblemChange={handleProblemChange}
-              allProblems={Object.values(PROBLEMS)}
+              allProblems={(totalProblems)}
             />
           </Panel>
 
