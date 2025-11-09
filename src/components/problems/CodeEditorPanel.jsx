@@ -65,8 +65,10 @@
 // export default CodeEditorPanel;
 
 import Editor from "@monaco-editor/react";
-import { MdPlayArrow, MdCode, MdSettings } from "react-icons/md";
+import { MdPlayArrow, MdCode, MdSettings, MdSend } from "react-icons/md";
 import { LANGUAGE_CONFIG } from "../../utils/problemsdata.js";
+import { useSubmitCodeMutation } from "../../redux/slices/api/codeSubmissionApiSlice.js";
+import { toast } from 'sonner';
 
 function CodeEditorPanel({
   selectedLanguage,
@@ -75,7 +77,41 @@ function CodeEditorPanel({
   onLanguageChange,
   onCodeChange,
   onRunCode,
+  problemId,
+  userId
 }) {
+
+  const [submitCode, { isLoading: isSubmitting }] = useSubmitCodeMutation();
+
+  const handleSubmit = async () => {
+    try {
+      const submissionData = {
+        problemId,
+        userId,
+        language: selectedLanguage,
+        code,
+        status: "pending", // Will be updated by backend after execution
+      };
+
+      const result = await submitCode(submissionData).unwrap();
+      
+      if (result.status === "accepted") {
+        toast.success("Submission Accepted!");
+      } else if (result.status === "wrong_answer") {
+        toast.error("Wrong Answer");
+      } else if (result.status === "runtime_error") {
+        toast.error("Runtime Error");
+      } else if (result.status === "time_limit_exceeded") {
+        toast.error("Time Limit Exceeded");
+      }
+      
+      console.log("Submission result:", result);
+    } catch (error) {
+      toast.error(error?.data?.message || "Submission failed");
+      console.error("Submission error:", error);
+    }
+  };
+
   return (
     <div className="h-full bg-gradient-to-br from-gray-900 via-black to-gray-900 flex flex-col">
       {/* Header / Toolbar */}
@@ -123,8 +159,9 @@ function CodeEditorPanel({
         </div>
 
         {/* Right side - Run button */}
+        <div className="flex items-center gap-3">
         <button
-          className={`px-5 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all duration-300 shadow-lg
+          className={`px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all duration-300 shadow-lg
             ${isRunning
               ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 cursor-not-allowed'
               : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 hover:shadow-green-500/50'
@@ -144,6 +181,31 @@ function CodeEditorPanel({
             </>
           )}
         </button>
+
+         {/* Submit Button */}
+          <button
+            className={`px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition-all duration-300 shadow-lg
+              ${isSubmitting || isRunning
+                ? 'bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 cursor-not-allowed'
+                : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:scale-105 hover:shadow-green-500/50'
+              }`}
+            disabled={isSubmitting || isRunning}
+            onClick={handleSubmit}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                <span>Submitting...</span>
+              </>
+            ) : (
+              <>
+                <MdSend className="w-5 h-5" />
+                <span>Submit</span>
+              </>
+            )}
+          </button>
+
+        </div>
       </div>
 
       {/* Code Editor */}
@@ -190,7 +252,7 @@ function CodeEditorPanel({
       </div>
 
       {/* Optional: Footer with shortcuts */}
-      <div className="px-4 py-2 bg-gradient-to-r from-gray-900/50 to-gray-800/50 border-t border-gray-700/50">
+      {/* <div className="px-4 py-2 bg-gradient-to-r from-gray-900/50 to-gray-800/50 border-t border-gray-700/50">
         <div className="flex items-center justify-between text-xs text-gray-500">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
@@ -202,7 +264,7 @@ function CodeEditorPanel({
           </div>
           <span className="text-gray-600">Monaco Editor</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -9,6 +9,8 @@ import CodeEditorPanel from "../../components/problems/CodeEditorPanel"
 import { executeCode } from "../../utils/piston.js"
 import { useGetSingleProblemQuery, useGetAllProblemsQuery } from "../../redux/slices/api/problemApiSlice";
 import confetti from "canvas-confetti";
+import { useGetUserSubmissionsQuery } from "../../redux/slices/api/codeSubmissionApiSlice.js";
+import { useSelector } from 'react-redux';
 
 function ProblemDetailPage() {
   const { id } = useParams();
@@ -22,6 +24,13 @@ function ProblemDetailPage() {
   const { data : problemapiResponse, isProblemLoading, isProblemerror} = useGetAllProblemsQuery();
   const totalProblems = problemapiResponse?.data;
   const currentProblem = apiResponse?.data || apiResponse; // support both formats
+  const { user } = useSelector((state) => state.auth);
+  console.log(user)
+
+   const { data: submissions, isLoading: loadingSubmissions } = useGetUserSubmissionsQuery(user?._id, {
+    skip: !user?._id, // Skip query if no user
+  });
+  
   useEffect(() => {
     if (currentProblem && currentProblem.starterCode) {
       setCode(currentProblem.starterCode[selectedLanguage] || "");
@@ -185,6 +194,8 @@ function ProblemDetailPage() {
                   onLanguageChange={handleLanguageChange}
                   onCodeChange={setCode}
                   onRunCode={handleRunCode}
+                   problemId={id}
+                   userId={user?._id}
                 />
               </Panel>
 
