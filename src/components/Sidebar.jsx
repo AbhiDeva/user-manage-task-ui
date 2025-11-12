@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import { FaStickyNote, FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
+import { FaStickyNote, FaTasks, FaTrashAlt, FaUsers, FaCodepen } from "react-icons/fa";
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -59,6 +59,11 @@ const linkData = [
     label: "Problem",
     link: "problem",
     icon: <MdOutlineLaptopMac />,
+  },
+   {
+    label: "Visualiser",
+    link: "visualiser",
+    icon: <FaCodepen />,
   },
   {
     label: "Trash",

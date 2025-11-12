@@ -17,6 +17,7 @@ import {
 import { setOpenSidebar } from "./redux/slices/authSlice";
 import Problem from "./components/problems/Problem";
 import ProblemDetailPage from "./components/problems/ProblemDetailPage";
+import LeetCodeVisualizer from "./pages/Visualiser";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
@@ -112,6 +113,7 @@ const App = () => {
             <Route path='/status' element={<StatusPage />} />
             <Route path='/problem' element={<Problem />} />
             <Route path='/problem/:id' element={<ProblemDetailPage />} />
+            <Route path='/visualiser' element={<LeetCodeVisualizer />} />
           </Route>
 
           <Route path='/log-in' element={<Login />} />
