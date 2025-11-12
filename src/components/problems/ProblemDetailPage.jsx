@@ -106,46 +106,56 @@ function ProblemDetailPage() {
     return normalizedActual === normalizedExpected;
   };
 
-  const handleRunCode = async () => {
-     if (!code || code.trim() === "") {
-      toast.error("Please write some code first!");
-      return;
-    }
+const handleRunCode = async () => {
+  if (!code || code.trim() === "") {
+    toast.error("Please write some code first!");
+    return;
+  }
 
-    setIsRunning(true);
-    setOutput(null);
-    try{
+  setIsRunning(true);
+  setOutput(null);
+  
+  try {
+    console.log("Executing code for language:", selectedLanguage);
     const result = await executeCode(selectedLanguage, code);
+    
+    console.log("Result received in handleRunCode:", result);
+    
+    // Set output first
     setOutput(result);
-    setIsRunning(false);
 
-    // check if code executed successfully and matches expected output
+    // Check if code executed successfully and matches expected output
+    if (result && result.success) {
+      // Add safety check for expectedOutput
+      if (currentProblem?.expectedOutput?.[selectedLanguage]) {
+        const expectedOutput = currentProblem.expectedOutput[selectedLanguage];
+        const testsPassed = checkIfTestsPassed(result.output, expectedOutput);
 
-    if (result.success) {
-      const expectedOutput = currentProblem.expectedOutput[selectedLanguage];
-      const testsPassed = checkIfTestsPassed(result.output, expectedOutput);
-
-      if (testsPassed) {
-        triggerConfetti();
-        toast.success("All tests passed! Great job!");
+        if (testsPassed) {
+          triggerConfetti();
+          toast.success("All tests passed! Great job!");
+        } else {
+          toast.error("Tests failed. Check your output!");
+        }
       } else {
-        toast.error("Tests failed. Check your output!");
+        // No expected output to check against
+        toast.success("Code executed successfully!");
       }
     } else {
       toast.error("Code execution failed!");
     }
   } catch (error) {
-      console.error("Error running code:", error);
-      toast.error("An error occurred while executing code");
-      setOutput({
-        success: false,
-        output: "",
-        error: error.message || "Unknown error occurred"
-      });
-    } finally {
-      setIsRunning(false);
-    }
-  };
+    console.error("Error running code:", error);
+    toast.error("An error occurred while executing code");
+    setOutput({
+      success: false,
+      output: "",
+      error: error.message || "Unknown error occurred"
+    });
+  } finally {
+    setIsRunning(false);
+  }
+};
 
    // Show loading or error if problem not found
   if (!currentProblem) {
