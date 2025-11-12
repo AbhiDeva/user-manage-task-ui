@@ -66,6 +66,16 @@ const linkData = [
     icon: <FaCodepen />,
   },
   {
+    label: "WebVisualiser",
+    link: "web-visualiser",
+    icon: <FaCodepen />,
+  },
+   {
+    label: "Real Time",
+    link: "stack-visualiser",
+    icon: <FaCodepen />,
+  },
+  {
     label: "Trash",
     link: "trashed",
     icon: <FaTrashAlt />,
