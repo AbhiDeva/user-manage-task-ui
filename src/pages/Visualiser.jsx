@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import {sampleProblems} from '../utils/codedata.js'
 import { generateSteps } from '../utils/generatestepsforProblems.js';
-//import { generateSteps } from '../components/visualiser/StepGenerators';
-// import { Code, Play, Pause, ChevronLeft, ChevronRight, RotateCcw } from 'react-feather';
 import { useEffect } from 'react';
 import { RenderVisualization } from '../components/RenderVisualisation.jsx';
-// import { renderVisualization } from '../components/RenderVisualisation';
+import Editor from "@monaco-editor/react";
+import { FaCode, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
+import { FiRotateCcw } from "react-icons/fi"; 
+import { MdSpeed, MdAnimation } from "react-icons/md";
 
 const LeetCodeVisualizer = () => {
   const [code, setCode] = useState('');
@@ -14,13 +15,14 @@ const LeetCodeVisualizer = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [steps, setSteps] = useState([]);
   const [speed, setSpeed] = useState(1000);
-//   const sampleProblems = sampleProblems;
+
 
   const parseAndVisualize = (selectedProblem) => {
     const problem = sampleProblems[selectedProblem];
     if (!problem) return;
 
     setCode(problem.code);
+    setProblemType(selectedProblem);
     const visualSteps = generateSteps(selectedProblem, problem.input);
     setSteps(visualSteps);
     setCurrentStep(0);
@@ -68,8 +70,8 @@ return (
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
-            {/* <Code className="w-10 h-10 text-blue-600" /> */}
-            LeetCode Solution Visualizer
+             <FaCode className="w-10 h-10 text-blue-600" />
+               DSA Problem Code Solution Visualizer
           </h1>
           <p className="text-gray-600">Step-by-step algorithm visualization</p>
         </div>
@@ -92,30 +94,51 @@ return (
 
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Code</h2>
-            <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm font-mono h-64 overflow-y-auto">
-              {code || 'Select a problem to see the code'}
-            </pre>
+          <Editor
+            height="22rem"
+            language="javascript"
+            value={code || "// Select a problem to see the code"}
+            theme="vs-dark" // Light background (can switch to 'vs-dark' for dark mode)
+            options={{
+              readOnly: true,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              fontSize: 15,
+              lineNumbers: "off",
+              smoothScrolling: true,
+              padding: { top: 16, bottom: 16 },
+              lineDecorationsWidth: 8,
+              renderLineHighlight: "all", // highlight the current line
+              renderLineHighlightOnlyWhenFocus: false,
+              roundedSelection: true,
+              cursorBlinking: "smooth",
+              scrollbar: {
+                vertical: "visible",
+                horizontal: "visible",
+                verticalScrollbarSize: 12,
+                horizontalScrollbarSize: 12,
+                useShadows: false,
+                alwaysConsumeMouseWheel: false,
+              },
+              overviewRulerBorder: false,
+            }}
+            className="min-h-[24rem] w-full rounded-xl border border-gray-300 
+             bg-white text-gray-900 shadow-md 
+             bg-gray-900 text-gray-100 rounded-lg overflow-x-auto text-sm font-mono overflow-y-auto
+             hover:shadow-lg transition-all duration-300 "
+          />
           </div>
         </div>
 
         {steps.length > 0 && (
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-800">Visualization</h2>
-              {/* <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-600">Speed:</label>
-                <select
-                  value={speed}
-                  onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="px-3 py-1 border border-gray-300 rounded-lg"
-                >
-                  <option value={2000}>Slow</option>
-                  <option value={1000}>Normal</option>
-                  <option value={500}>Fast</option>
-                </select>
-              </div> */}
+              <h2 className="text-xl font-bold text-gray-800">
+                 <MdAnimation className="w-7 h-7 inline text-blue-500" />Visualization
+                </h2>
               <div className="flex items-center gap-4">
                 {sampleProblems[problemType]?.examples && (
+                  
                   <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-gray-600">Example:</label>
                     <select
@@ -131,7 +154,9 @@ return (
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-gray-600">Speed:</label>
+                  <label className="text-sm font-medium text-gray-600">
+                    <MdSpeed className="w-8 h-8 text-blue-500" /> 
+              </label>
                   <select
                     value={speed}
                     onChange={(e) => setSpeed(Number(e.target.value))}
@@ -164,7 +189,7 @@ return (
                 disabled={currentStep === 0}
                 className="p-3 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
               >
-                {/* <ChevronLeft className="w-5 h-5" /> */}
+                 <FaChevronLeft className="w-5 h-5 cursor-pointer hover:text-blue-500" />
               </button>
 
               <button
@@ -172,7 +197,7 @@ return (
                 disabled={currentStep >= steps.length - 1}
                 className="p-3 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
               >
-                {/* {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />} */}
+                {isPlaying ? ( <FaPause className="w-5 h-5" />) : (<FaPlay className="w-5 h-5" />)}
               </button> 
 
               <button
@@ -180,7 +205,7 @@ return (
                 disabled={currentStep >= steps.length - 1}
                 className="p-3 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
               >
-                {/* <ChevronRight className="w-5 h-5" /> */}
+                 <FaChevronRight className="w-5 h-5 cursor-pointer hover:text-blue-500" />
               </button>
 
               <button
@@ -190,7 +215,7 @@ return (
                 }}
                 className="p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors ml-auto"
               >
-                {/* <RotateCcw className="w-5 h-5" /> */}
+                <FiRotateCcw className="w-5 h-5 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition" />
               </button>
 
               <div className="flex-1 mx-4">
