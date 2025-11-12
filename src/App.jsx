@@ -19,7 +19,7 @@ import Problem from "./components/problems/Problem";
 import ProblemDetailPage from "./components/problems/ProblemDetailPage";
 import LeetCodeVisualizer from "./pages/Visualiser";
 import CodeVisualizerForStack from "./pages/CodeVisualiserforStack";
-import CardParentComponent from "./pages/ CardParentComponent";
+import CardParentComponent from "./pages/CardParentComponent";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
