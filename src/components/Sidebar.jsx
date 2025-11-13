@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { FaStickyNote, FaTasks, FaTrashAlt, FaUsers, FaCodepen } from "react-icons/fa";
+import { TbBrandJavascript } from "react-icons/tb";
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -69,6 +70,12 @@ const linkData = [
     label: "WebVisualiser",
     link: "web-visualiser",
     icon: <FaCodepen />,
+  },
+
+  {
+    label: "JavascriptVisualiser",
+    link: "js-visualiser",
+    icon: <TbBrandJavascript />,
   },
    {
     label: "Real Time",

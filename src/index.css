@@ -60,7 +60,7 @@
 ::-webkit-scrollbar-thumb {
   background-color: #807c7c;
   border-radius: 6px;
-  display: none;
+  /* display: none; */
 }
 
 /* Handle on hover */
@@ -72,6 +72,8 @@
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
+
 
 .dots-container {
   display: flex;

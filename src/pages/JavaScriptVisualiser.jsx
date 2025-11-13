@@ -8,7 +8,7 @@ import { FaCode, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-ic
 import { FiRotateCcw } from "react-icons/fi"; 
 import { MdSpeed, MdAnimation } from "react-icons/md";
 
-const LeetCodeVisualizer = () => {
+const JavaScriptCodeVisualizer = () => {
   const [code, setCode] = useState('');
   const [problemType, setProblemType] = useState('array');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -71,9 +71,9 @@ return (
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
              <FaCode className="w-10 h-10 text-blue-600" />
-               DSA Problem Code Solution Visualizer
+               JavaScript Code Solution Visualizer
           </h1>
-          <p className="text-gray-600">Step-by-step algorithm visualization</p>
+          <p className="text-gray-600">Step-by-step code visualization</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -245,4 +245,4 @@ return (
   );
 }
 
-export default LeetCodeVisualizer;
+export default JavaScriptCodeVisualizer;

@@ -18,6 +18,7 @@ import { setOpenSidebar } from "./redux/slices/authSlice";
 import Problem from "./components/problems/Problem";
 import ProblemDetailPage from "./components/problems/ProblemDetailPage";
 import LeetCodeVisualizer from "./pages/Visualiser";
+import JavaScriptCodeVisualizer from "./pages/JavaScriptVisualiser";
 import CodeVisualizerForStack from "./pages/CodeVisualiserforStack";
 import CardParentComponent from "./pages/CardParentComponent";
 
@@ -117,6 +118,7 @@ const App = () => {
             <Route path='/problem/:id' element={<ProblemDetailPage />} />
             <Route path='/visualiser' element={<LeetCodeVisualizer />} />
             <Route path='/web-visualiser' element={<CodeVisualizerForStack />} />
+            <Route path='/js-visualiser' element={<JavaScriptCodeVisualizer />} />
             <Route path='/stack-visualiser' element={<CardParentComponent />} />
           </Route>
 
