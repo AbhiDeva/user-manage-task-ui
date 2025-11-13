@@ -1,3 +1,6 @@
+ import React from "react";
+ import { FiChevronRight } from "react-icons/fi";
+
 export const RenderVisualization = ({ steps, currentStep }) => {
     if (steps.length === 0 || currentStep >= steps.length) return null;
     
@@ -2434,6 +2437,853 @@ export const RenderVisualization = ({ steps, currentStep }) => {
       );
     }
 
+       // Evaluate RPN Visualization
+        if (data.tokens && data.stack && !data.temperatures) {
+          return (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {data.tokens.map((token, idx) => (
+                  <div
+                    key={idx}
+                    className={`w-16 h-16 flex items-center justify-center border-2 rounded-lg font-bold text-xl transition-all ${
+                      idx === data.current && data.operation
+                        ? 'bg-red-500 text-white border-red-600 scale-110'
+                        : idx === data.current
+                        ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                        : idx < data.current
+                        ? 'bg-gray-200 border-gray-300'
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    {token}
+                  </div>
+                ))}
+              </div>
+    
+              {data.operation && (
+                <div className="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+                  <div className="text-center font-bold text-lg">
+                    {data.operation.a} {data.operation.op} {data.operation.b} = {data.operation.result}
+                  </div>
+                </div>
+              )}
+    
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="text-sm font-semibold mb-2">Stack:</div>
+                <div className="flex gap-2 flex-wrap justify-center min-h-16 items-end">
+                  {data.stack.length === 0 ? (
+                    <span className="text-gray-400">Empty</span>
+                  ) : (
+                    data.stack.map((num, i) => (
+                      <div
+                        key={i}
+                        className={`px-4 py-3 rounded-lg border-2 font-bold text-xl transition-all ${
+                          i === data.stack.length - 1 && data.pushed === num
+                            ? 'bg-green-400 text-white border-green-500 scale-110'
+                            : 'bg-blue-100 border-blue-300'
+                        }`}
+                      >
+                        {num}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+    
+              {data.result !== null && (
+                <div className="text-center text-2xl font-bold text-green-600">
+                  Final Result: {data.result}
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Largest Rectangle Histogram Visualization
+        if (data.heights && data.maxArea !== undefined && data.maxRect) {
+          return (
+            <div className="space-y-4">
+              <div className="flex items-end justify-center gap-1">
+                {data.heights.map((h, idx) => (
+                  <div key={idx} className="flex flex-col items-center">
+                    <div
+                      className={`w-12 border-2 rounded-t-lg font-bold text-xs flex items-end justify-center pb-1 transition-all ${
+                        data.complete && idx >= data.maxRect.left && idx <= data.maxRect.right && h >= data.maxRect.height
+                          ? 'bg-green-500 text-white border-green-600'
+                          : data.calculating && idx >= data.calculating.left && idx <= data.calculating.right && h >= data.calculating.height
+                          ? 'bg-yellow-400 text-white border-yellow-500'
+                          : idx === data.current
+                          ? 'bg-blue-500 text-white border-blue-600 scale-105'
+                          : data.stack.includes(idx)
+                          ? 'bg-orange-300 border-orange-500'
+                          : 'bg-gray-300 border-gray-400'
+                      }`}
+                      style={{ height: `${h * 30}px`, minHeight: '30px' }}
+                    >
+                      {h}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">{idx}</div>
+                  </div>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-sm font-semibold">
+                  <div>Max Area: <span className="text-green-600">{data.maxArea}</span></div>
+                  <div>Stack: <span className="text-orange-600">[{data.stack.join(', ')}]</span></div>
+                  {data.calculating && (
+                    <>
+                      <div>Height: <span className="text-blue-600">{data.calculating.height}</span></div>
+                      <div>Width: <span className="text-purple-600">{data.calculating.width}</span></div>
+                      <div className="col-span-2">Area: <span className="text-yellow-600">{data.calculating.area}</span></div>
+                    </>
+                  )}
+                </div>
+              </div>
+    
+              {data.complete && (
+                <div className="text-center text-lg font-bold text-green-600">
+                  Largest Rectangle: {data.maxRect.height} × {data.maxRect.width} = {data.maxArea}
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Search 2D Matrix Visualization
+        if (data.matrix && data.target !== undefined && !data.numbers) {
+          return (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center gap-1">
+                {data.matrix.map((row, i) => (
+                  <div key={i} className="flex gap-1">
+                    {row.map((cell, j) => {
+                      const isMid = data.midPos && data.midPos[0] === i && data.midPos[1] === j;
+                      return (
+                        <div
+                          key={j}
+                          className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold transition-all ${
+                            data.found && isMid
+                              ? 'bg-green-500 text-white border-green-600 scale-125 animate-pulse'
+                              : isMid && data.direction === 'right'
+                              ? 'bg-blue-400 text-white border-blue-500 scale-110'
+                              : isMid && data.direction === 'left'
+                              ? 'bg-purple-400 text-white border-purple-500 scale-110'
+                              : isMid
+                              ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                              : cell === data.target && data.complete && !data.found
+                              ? 'bg-red-200 border-red-400'
+                              : 'bg-white border-gray-300'
+                          }`}
+                        >
+                          {cell}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-sm font-semibold">
+                  <div>Target: <span className="text-orange-600">{data.target}</span></div>
+                  <div>Mid Index: <span className="text-blue-600">{data.mid >= 0 ? data.mid : '-'}</span></div>
+                  {data.midVal !== undefined && (
+                    <>
+                      <div>Mid Value: <span className="text-purple-600">{data.midVal}</span></div>
+                      <div>Position: <span className="text-green-600">{data.midPos ? `[${data.midPos[0]}, ${data.midPos[1]}]` : '-'}</span></div>
+                    </>
+                  )}
+                </div>
+              </div>
+    
+              {data.found !== undefined && (
+                <div className={`text-center text-lg font-bold ${data.found ? 'text-green-600' : 'text-red-600'}`}>
+                  {data.found ? `✓ Target ${data.target} found!` : `✗ Target ${data.target} not found`}
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Koko Eating Bananas Visualization
+        if (data.piles && data.h !== undefined) {
+          return (
+            <div className="space-y-4">
+              <div className="flex items-end justify-center gap-2">
+                {data.piles.map((pile, idx) => (
+                  <div key={idx} className="flex flex-col items-center">
+                    <div
+                      className={`w-14 border-2 rounded-t-lg font-bold text-sm flex items-end justify-center pb-1 transition-all ${
+                        idx === data.currentPile
+                          ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                          : 'bg-yellow-400 text-gray-800 border-yellow-600'
+                      }`}
+                      style={{ height: `${pile * 5}px`, minHeight: '40px' }}
+                    >
+                      {pile}🍌
+                    </div>
+                    {data.currentPile === idx && data.timeForPile && (
+                      <div className="text-xs font-bold text-blue-600 mt-1">
+                        {data.timeForPile}h
+                      </div>
+                    )}
+                    <div className="text-xs text-gray-500 mt-1">P{idx}</div>
+                  </div>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 text-sm font-semibold">
+                  <div>Time Limit: <span className="text-orange-600">{data.h} hours</span></div>
+                  <div>Current Speed: <span className="text-blue-600">{data.mid >= 0 ? `${data.mid} b/h` : '-'}</span></div>
+                  {data.hours > 0 && (
+                    <>
+                      <div>Total Hours: <span className={data.hours <= data.h ? 'text-green-600' : 'text-red-600'}>{data.hours}</span></div>
+                      <div>Feasible: <span className={data.feasible ? 'text-green-600' : 'text-red-600'}>{data.feasible ? '✓ Yes' : '✗ No'}</span></div>
+                    </>
+                  )}
+                  <div className="col-span-2">Range: <span className="text-purple-600">[{data.left}, {data.right}]</span></div>
+                </div>
+              </div>
+    
+              {data.complete && (
+                <div className="text-center text-lg font-bold text-green-600">
+                  Minimum Speed: {data.minSpeed} bananas/hour
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Find Min in Rotated Array Visualization
+        if (data.nums && data.hasOwnProperty('min') && !data.sorted && !data.prices) {
+          return (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {data.nums.map((num, idx) => (
+                  <div
+                    key={idx}
+                    className={`w-14 h-14 flex items-center justify-center border-2 rounded-lg font-bold text-lg transition-all ${
+                      data.complete && idx === data.left
+                        ? 'bg-green-500 text-white border-green-600 scale-125 animate-pulse'
+                        : idx === data.mid
+                        ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                        : idx === data.left || idx === data.right
+                        ? 'bg-purple-400 text-white border-purple-500'
+                        : idx > data.left && idx < data.right
+                        ? 'bg-gray-100 border-gray-300'
+                        : 'bg-white border-gray-300 opacity-50'
+                    }`}
+                  >
+                    {num}
+                  </div>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="grid grid-cols-3 gap-4 text-sm font-semibold">
+                  <div>Left: <span className="text-purple-600">idx={data.left}, val={data.nums[data.left]}</span></div>
+                  <div>Mid: <span className="text-blue-600">{data.mid >= 0 ? `idx=${data.mid}, val=${data.nums[data.mid]}` : '-'}</span></div>
+                  <div>Right: <span className="text-purple-600">idx={data.right}, val={data.nums[data.right]}</span></div>
+                </div>
+              </div>
+    
+              {data.min >= 0 && (
+                <div className="text-center text-lg font-bold text-green-600">
+                  Minimum Value: {data.min} at index {data.left}
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Time-Based Key-Value Store Visualization
+        if (data.store && data.operations) {
+          return (
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {data.operations.map((op, idx) => (
+                  <div
+                    key={idx}
+                    className={`px-3 py-2 rounded-lg border-2 font-mono text-sm font-bold transition-all ${
+                      idx === data.current
+                        ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                        : idx < data.current
+                        ? 'bg-gray-200 border-gray-300'
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    {op[0]}({op.slice(1).map(v => typeof v === 'string' ? `"${v}"` : v).join(', ')})
+                  </div>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+                <div className="text-sm font-semibold mb-2">Store:</div>
+                {Object.keys(data.store).length === 0 ? (
+                  <span className="text-gray-400">Empty</span>
+                ) : (
+                  <div className="space-y-2">
+                    {Object.entries(data.store).map(([key, values]) => (
+                      <div key={key} className="bg-white p-2 rounded border border-gray-300">
+                        <div className="font-semibold text-blue-700">"{key}":</div>
+                        <div className="flex gap-2 flex-wrap mt-1">
+                          {values.map(([time, val], i) => (
+                            <div key={i} className="bg-blue-100 px-2 py-1 rounded border border-blue-300 text-xs font-mono">
+                              t={time}: "{val}"
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+    
+              {data.result !== null && data.result !== undefined && (
+                <div className="bg-green-50 p-3 rounded-lg border-2 border-green-200">
+                  <div className="text-center font-bold text-lg text-green-700">
+                    Result: "{data.result}"
+                  </div>
+                </div>
+              )}
+    
+              {data.values && data.left !== undefined && (
+                <div className="bg-purple-50 p-3 rounded-lg border-2 border-purple-200">
+                  <div className="text-sm font-semibold mb-2">Binary Search in timestamps:</div>
+                  <div className="flex gap-2 justify-center">
+                    {data.values.map(([time, val], i) => (
+                      <div
+                        key={i}
+                        className={`px-2 py-1 rounded border font-bold text-xs ${
+                          i === data.mid
+                            ? 'bg-purple-500 text-white border-purple-600'
+                            : i >= data.left && i <= data.right
+                            ? 'bg-purple-100 border-purple-300'
+                            : 'bg-gray-100 border-gray-300'
+                        }`}
+                      >
+                        {time}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Reorder List Visualization
+        if (data.list && data.phase && data.hasOwnProperty('slow')) {
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold text-gray-600 mb-2">
+                Phase: <span className="text-blue-600">{data.phase.toUpperCase()}</span>
+              </div>
+    
+              <div>
+                <div className="text-xs text-gray-600 mb-2">Original List:</div>
+                <div className="flex items-center justify-center gap-2">
+                  {data.list.map((val, idx) => (
+                    <React.Fragment key={idx}>
+                      <div
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          data.phase === 'find-middle' && (idx === data.slow || idx === data.fast)
+                            ? idx === data.slow
+                              ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                              : 'bg-purple-500 text-white border-purple-600 scale-110'
+                            : idx === data.slow && data.middleFound
+                            ? 'bg-green-400 text-white border-green-500'
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        {val}
+                      </div>
+                      {idx < data.list.length - 1 && <span className="text-gray-400">→</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+                {data.phase === 'find-middle' && (
+                  <div className="text-center text-xs mt-2">
+                    <span className="text-blue-600">Slow: {data.slow}</span>, 
+                    <span className="text-purple-600 ml-2">Fast: {data.fast}</span>
+                  </div>
+                )}
+              </div>
+    
+              {data.firstHalf && data.secondHalf && (
+                <div className="space-y-3">
+                  <div>
+                    <div className="text-xs text-gray-600 mb-2">First Half:</div>
+                    <div className="flex items-center justify-center gap-2">
+                      {data.firstHalf.map((val, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className="w-10 h-10 flex items-center justify-center border-2 rounded-lg font-bold bg-blue-100 border-blue-300">
+                            {val}
+                          </div>
+                          {idx < data.firstHalf.length - 1 && <span className="text-gray-400">→</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-600 mb-2">Second Half (Reversed):</div>
+                    <div className="flex items-center justify-center gap-2">
+                      {data.secondHalf.map((val, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className="w-10 h-10 flex items-center justify-center border-2 rounded-lg font-bold bg-purple-100 border-purple-300">
+                            {val}
+                          </div>
+                          {idx < data.secondHalf.length - 1 && <span className="text-gray-400">→</span>}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+    
+              {data.result && data.result.length > 0 && (
+                <div>
+                  <div className="text-xs text-gray-600 mb-2">Reordered List:</div>
+                  <div className="flex items-center justify-center gap-2">
+                    {data.result.map((val, idx) => (
+                      <React.Fragment key={idx}>
+                        <div className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          data.complete
+                            ? 'bg-green-500 text-white border-green-600'
+                            : 'bg-green-100 border-green-300'
+                        }`}>
+                          {val}
+                        </div>
+                        {idx < data.result.length - 1 && <span className="text-gray-400">→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Median of Two Sorted Arrays Visualization
+        if (data.nums1 && data.nums2 && data.hasOwnProperty('partition1')) {
+          return (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Array 1:</div>
+                  <div className="flex items-center justify-center gap-1">
+                    {data.nums1.map((num, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          idx === data.partition1 - 1 && data.partition1 > 0
+                            ? 'bg-blue-400 text-white border-blue-500'
+                            : idx === data.partition1
+                            ? 'bg-blue-200 border-blue-400'
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        {num}
+                      </div>
+                    ))}
+                    {data.partition1 >= 0 && (
+                      <div className="text-sm text-blue-600 font-bold ml-2">| P1={data.partition1}</div>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-600 mb-1">Array 2:</div>
+                  <div className="flex items-center justify-center gap-1">
+                    {data.nums2.map((num, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          idx === data.partition2 - 1 && data.partition2 > 0
+                            ? 'bg-purple-400 text-white border-purple-500'
+                            : idx === data.partition2
+                            ? 'bg-purple-200 border-purple-400'
+                            : 'bg-white border-gray-300'
+                        }`}
+                      >
+                        {num}
+                      </div>
+                    ))}
+                    {data.partition2 >= 0 && (
+                      <div className="text-sm text-purple-600 font-bold ml-2">| P2={data.partition2}</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+    
+              {data.maxLeft1 !== undefined && (
+                <div className="bg-gray-50 p-3 rounded-lg text-xs">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>MaxLeft1: <span className="text-blue-600 font-bold">{data.maxLeft1 === -Infinity ? '-∞' : data.maxLeft1}</span></div>
+                    <div>MinRight1: <span className="text-blue-600 font-bold">{data.minRight1 === Infinity ? '∞' : data.minRight1}</span></div>
+                    <div>MaxLeft2: <span className="text-purple-600 font-bold">{data.maxLeft2 === -Infinity ? '-∞' : data.maxLeft2}</span></div>
+                    <div>MinRight2: <span className="text-purple-600 font-bold">{data.minRight2 === Infinity ? '∞' : data.minRight2}</span></div>
+                  </div>
+                </div>
+              )}
+    
+              {data.median !== null && (
+                <div className="text-center text-xl font-bold text-green-600">
+                  Median: {data.median}
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Remove Nth Node From End Visualization
+        if (data.list && data.n !== undefined && data.hasOwnProperty('fast')) {
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm">
+                Remove <span className="text-red-600 font-bold">{data.n}th</span> node from end
+              </div>
+    
+              <div className="flex items-center justify-center gap-2">
+                {data.list.map((val, idx) => (
+                  <React.Fragment key={idx}>
+                    <div
+                      className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold transition-all ${
+                        idx === data.removed
+                          ? 'bg-red-500 text-white border-red-600 scale-110 line-through'
+                          : idx === data.slow && data.phase === 'move-both'
+                          ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                          : idx === data.fast - 1 && data.fast <= data.list.length
+                          ? 'bg-purple-500 text-white border-purple-600 scale-110'
+                          : 'bg-white border-gray-300'
+                      }`}
+                    >
+                      {val}
+                    </div>
+                    {idx < data.list.length - 1 && <span className="text-gray-400">→</span>}
+                  </React.Fragment>
+                ))}
+              </div>
+    
+              <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>Slow: <span className="text-blue-600 font-bold">{data.slow}</span></div>
+                  <div>Fast: <span className="text-purple-600 font-bold">{data.fast}</span></div>
+                  <div className="col-span-2">Phase: <span className="text-orange-600 font-bold">{data.phase || 'init'}</span></div>
+                </div>
+              </div>
+    
+              {data.result && (
+                <div>
+                  <div className="text-xs text-gray-600 mb-2">Result:</div>
+                  <div className="flex items-center justify-center gap-2">
+                    {data.result.map((val, idx) => (
+                      <React.Fragment key={idx}>
+                        <div className="w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold bg-green-500 text-white border-green-600">
+                          {val}
+                        </div>
+                        {idx < data.result.length - 1 && <span className="text-gray-400">→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Task Scheduler Visualization
+        if (data.tasks && data.n !== undefined && data.freq && data.phase) {
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold">
+                Total Tasks: <span className="text-blue-600">{data.tasks.length}</span> | 
+                Cooldown: <span className="text-orange-600">n = {data.n}</span>
+                {data.totalTime !== undefined && (
+                  <> | Total Time: <span className="text-green-600">{data.totalTime}</span></>
+                )}
+              </div>
+    
+              {/* Task frequency chart */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="text-sm font-semibold mb-2">Task Frequencies:</div>
+                <div className="flex gap-2 flex-wrap justify-center">
+                  {Object.entries(data.freq).length === 0 ? (
+                    <span className="text-gray-400">Calculating...</span>
+                  ) : (
+                    Object.entries(data.freq)
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([task, count]) => (
+                        <div
+                          key={task}
+                          className={`flex flex-col items-center p-3 rounded-lg border-2 transition-all ${
+                            task === data.current
+                              ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                              : data.maxFreq && count === data.maxFreq
+                              ? 'bg-purple-500 text-white border-purple-600'
+                              : 'bg-white border-gray-300'
+                          }`}
+                        >
+                          <div className="text-2xl font-bold">{task}</div>
+                          <div className="text-sm">×{count}</div>
+                        </div>
+                      ))
+                  )}
+                </div>
+              </div>
+    
+              {/* Calculation details */}
+              {data.phase === 'calculate' && (
+                <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                  <div className="text-sm font-semibold mb-3">Calculation:</div>
+                  <div className="space-y-2 text-sm">
+                    <div className={data.explaining === 'partCount' ? 'font-bold text-blue-700' : ''}>
+                      • Parts: <span className="font-mono">{data.maxFreq} - 1 = {data.partCount}</span>
+                    </div>
+                    <div className={data.explaining === 'partLength' ? 'font-bold text-blue-700' : ''}>
+                      • Part Length: <span className="font-mono">{data.n} - ({data.maxCount} - 1) = {data.partLength}</span>
+                    </div>
+                    <div className={data.explaining === 'emptySlots' ? 'font-bold text-blue-700' : ''}>
+                      • Empty Slots: <span className="font-mono">{data.partCount} × {data.partLength} = {data.emptySlots}</span>
+                    </div>
+                    <div className={data.explaining === 'availableTasks' ? 'font-bold text-blue-700' : ''}>
+                      • Available Tasks: <span className="font-mono">{data.tasks.length} - {data.maxFreq * data.maxCount} = {data.availableTasks}</span>
+                    </div>
+                    <div className={data.explaining === 'idles' ? 'font-bold text-blue-700' : ''}>
+                      • Idles Needed: <span className="font-mono">max(0, {data.emptySlots} - {data.availableTasks}) = {data.idles}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+    
+              {/* Schedule visualization */}
+              {data.schedule && data.schedule.length > 0 && (
+                <div className="bg-white p-4 rounded-lg border-2 border-gray-300">
+                  <div className="text-sm font-semibold mb-3">
+                    Schedule Timeline:
+                    {data.frame !== undefined && <span className="ml-2 text-blue-600">(Building Frame {data.frame + 1})</span>}
+                  </div>
+                  <div className="flex gap-1 flex-wrap justify-center">
+                    {data.schedule.map((slot, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold text-sm transition-all ${
+                          idx === data.filling
+                            ? 'bg-yellow-400 text-white border-yellow-500 scale-110 animate-pulse'
+                            : slot === 'idle'
+                            ? 'bg-gray-300 border-gray-400 text-gray-600'
+                            : slot === '_'
+                            ? 'bg-gray-100 border-gray-300 text-gray-400'
+                            : data.maxFreq && data.freq[slot] === data.maxFreq
+                            ? 'bg-purple-500 text-white border-purple-600'
+                            : 'bg-blue-400 text-white border-blue-500'
+                        }`}
+                      >
+                        {slot === 'idle' ? '💤' : slot === '_' ? '·' : slot}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-xs text-center text-gray-500 mt-2">
+                    {data.schedule.filter(s => s === 'idle').length > 0 && (
+                      <span>💤 = Idle time • </span>
+                    )}
+                    Total slots: {data.schedule.length}
+                  </div>
+                </div>
+              )}
+    
+              {/* Legend */}
+              {data.schedule && data.schedule.length > 0 && (
+                <div className="flex gap-4 justify-center text-xs">
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 bg-purple-500 rounded border border-purple-600"></div>
+                    <span>Max Frequency Tasks</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 bg-blue-400 rounded border border-blue-500"></div>
+                    <span>Other Tasks</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-4 h-4 bg-gray-300 rounded border border-gray-400"></div>
+                    <span>Idle</span>
+                  </div>
+                </div>
+              )}
+    
+              {data.phase === 'complete' && (
+                <div className="text-center">
+                  <div className="text-xl font-bold text-green-600">
+                    Minimum Time: {data.totalTime} units
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">
+                    ({data.tasks.length} tasks + {data.idles} idle)
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Car Fleet Visualization
+        if (data.target && data.position && data.speed && data.cars) {
+          const roadWidth = 600;
+          const roadStart = 50;
+    
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold">
+                Target: <span className="text-red-600">{data.target}</span> | 
+                Cars: <span className="text-blue-600">{data.cars.length}</span> | 
+                Fleets: <span className="text-green-600">{data.fleets}</span>
+              </div>
+    
+              {/* Road visualization */}
+              <div className="relative bg-gray-800 h-32 rounded-lg overflow-hidden" style={{ width: `${roadWidth + roadStart * 2}px`, margin: '0 auto' }}>
+                {/* Target line */}
+                <div 
+                  className="absolute top-0 bottom-0 w-1 bg-red-500"
+                  style={{ left: `${roadStart + roadWidth}px` }}
+                >
+                  <div className="absolute -top-6 -left-6 text-red-500 font-bold text-sm">
+                    🏁 {data.target}
+                  </div>
+                </div>
+    
+                {/* Start line */}
+                <div 
+                  className="absolute top-0 bottom-0 w-1 bg-green-500"
+                  style={{ left: `${roadStart}px` }}
+                >
+                  <div className="absolute -top-6 -left-2 text-green-500 font-bold text-sm">
+                    0
+                  </div>
+                </div>
+    
+                {/* Road markings */}
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 border-t-2 border-dashed border-yellow-400"></div>
+    
+                {/* Cars */}
+                {data.cars.map((car, idx) => {
+                  const carLeft = roadStart + (car.position / data.target) * roadWidth;
+                  const isCurrent = idx === data.current;
+                  
+                  return (
+                    <div
+                      key={car.id}
+                      className={`absolute transition-all duration-300 ${
+                        isCurrent && data.newFleet
+                          ? 'scale-125'
+                          : isCurrent
+                          ? 'scale-110'
+                          : ''
+                      }`}
+                      style={{
+                        left: `${carLeft}px`,
+                        top: `${20 + (idx % 3) * 30}px`
+                      }}
+                    >
+                      <div className="relative">
+                        <div className={`text-2xl ${
+                          isCurrent && data.newFleet
+                            ? 'animate-bounce'
+                            : ''
+                        }`}>
+                          🚗
+                        </div>
+                        <div className={`absolute -bottom-6 -left-4 text-xs font-bold px-2 py-1 rounded ${
+                          isCurrent && data.newFleet
+                            ? 'bg-green-500 text-white'
+                            : isCurrent && data.joinsFleet
+                            ? 'bg-yellow-500 text-white'
+                            : isCurrent
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-gray-700 text-white'
+                        }`}>
+                          #{car.id}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+    
+              {/* Car details table */}
+              <div className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b-2 border-gray-300">
+                      <th className="p-2 text-left">Car</th>
+                      <th className="p-2 text-left">Position</th>
+                      <th className="p-2 text-left">Speed</th>
+                      <th className="p-2 text-left">Time</th>
+                      <th className="p-2 text-left">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.cars.map((car, idx) => (
+                      <tr
+                        key={car.id}
+                        className={`border-b border-gray-200 ${
+                          idx === data.current
+                            ? data.newFleet
+                              ? 'bg-green-100'
+                              : data.joinsFleet
+                              ? 'bg-yellow-100'
+                              : 'bg-blue-100'
+                            : idx < data.current
+                            ? 'bg-gray-100'
+                            : ''
+                        }`}
+                      >
+                        <td className="p-2 font-bold">#{car.id}</td>
+                        <td className="p-2">{car.position}</td>
+                        <td className="p-2">{car.speed}</td>
+                        <td className="p-2 font-mono">{car.time.toFixed(2)}</td>
+                        <td className="p-2">
+                          {idx === data.current && data.newFleet && <span className="text-green-600 font-bold">🚩 New Fleet</span>}
+                          {idx === data.current && data.joinsFleet && <span className="text-yellow-600 font-bold">🔗 Joins Fleet</span>}
+                          {idx === data.current && data.checking && !data.newFleet && !data.joinsFleet && <span className="text-blue-600">⏳ Checking...</span>}
+                          {idx < data.current && <span className="text-gray-500">✓ Processed</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+    
+              {/* Stack visualization */}
+              <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                <div className="text-sm font-semibold mb-2">Fleet Stack (Time to Reach Target):</div>
+                <div className="flex gap-2 flex-wrap justify-center min-h-12 items-center">
+                  {data.stack.length === 0 ? (
+                    <span className="text-gray-400">Empty</span>
+                  ) : (
+                    data.stack.map((time, i) => (
+                      <div
+                        key={i}
+                        className={`px-4 py-3 rounded-lg border-2 font-bold text-lg ${
+                          i === data.stack.length - 1 && data.newFleet
+                            ? 'bg-green-500 text-white border-green-600 scale-110'
+                            : 'bg-purple-500 text-white border-purple-600'
+                        }`}
+                      >
+                        {time.toFixed(2)}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+    
+              {data.complete && (
+                <div className="text-center text-xl font-bold text-green-600">
+                  Total Fleets: {data.fleets}
+                </div>
+              )}
+            </div>
+          );
+        }
+
     if (data.nums && data.hasOwnProperty('left')) {
       // Binary Search Visualization
       return (
@@ -2528,7 +3378,7 @@ export const RenderVisualization = ({ steps, currentStep }) => {
                   {num}
                 </div>
                 {idx < data.list.length - 1 && (
-                  <ChevronRight className={`w-6 h-6 ${data.complete ? 'rotate-180 text-green-600' : 'text-gray-400'}`} />
+                  <FiChevronRight className={`w-6 h-6 ${data.complete ? 'rotate-180 text-green-600' : 'text-gray-400'}`} />
                 )}
               </React.Fragment>
             ))}

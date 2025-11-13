@@ -23,31 +23,31 @@ import { generateTrappingRainWaterSteps } from '../components/visualiser/Trappin
 import { generateJumpGameSteps } from '../components/visualiser/JumpGameSteps';
 import { generateTopKFrequentSteps } from '../components/visualiser/TopKFrequentSteps';
 import { generateLongestPalindromeSteps } from '../components/visualiser/LongestPalindromeSteps';
-//import { generateNQueensSteps } from '../components/visualiser/NQueensSteps';
+import { generateNQueensSteps } from '../components/visualiser/NQueenSteps';
 import { generateWordSearchSteps } from '../components/visualiser/WordSearchSteps';
 import { generateBinaryTreeInorderSteps } from '../components/visualiser/BinaryTreeInorderSteps';
 import { generateValidateBSTSteps } from '../components/visualiser/ValidateBSTSteps';
-//import { generateLCASteps } from '../components/visualiser/LowestCommonAncestorSteps';
-//import { generateKthSmallestSteps } from '../components/visualiser/KthSmallestBSTSteps';
+import { generateLCASteps } from '../components/visualiser/LCASteps';
+import { generateKthSmallestSteps } from '../components/visualiser/KthSmallestSteps';
 import { generatePermutationsSteps } from '../components/visualiser/PermutationsSteps';
 import { generateCombinationsSteps } from '../components/visualiser/CombinationsSteps';
 import { generateSubsetsSteps } from '../components/visualiser/SubsetsSteps';
-//import { generateKnapsackSteps } from '../components/visualiser/Knapsack01Steps';
+import { generateKnapsackSteps } from '../components/visualiser/KnapsackSteps';
 import { generateEditDistanceSteps } from '../components/visualiser/EditDistanceSteps';
-//import { generateLISSteps } from '../components/visualiser/LongestIncreasingSubsequenceSteps';
+import { generateLISSteps } from '../components/visualiser/LISSteps';
 import { generateDijkstraSteps } from '../components/visualiser/DijkstraSteps';
-//import { generateTrieSteps } from '../components/visualiser/TrieImplementationSteps';
+import { generateTrieSteps } from '../components/visualiser/TrieSteps';
 import { generateUnionFindSteps } from '../components/visualiser/UnionFindSteps';
 import { generateSegmentTreeSteps } from '../components/visualiser/SegmentTreeSteps';
 import { generateKruskalSteps } from '../components/visualiser/KruskalSteps';
 import { generateTopologicalSortSteps } from '../components/visualiser/TopologicalSortSteps';
 import { generateBellmanFordSteps } from '../components/visualiser/BellmanFordSteps';
 import { generateHuffmanCodingSteps } from '../components/visualiser/HuffmanCodingSteps';
-//import { generateAStarSteps } from '../components/visualiser/AStarSearchSteps';
+import { generateAStarSteps } from '../components/visualiser/AStarSteps';
 import { generateMaxFlowSteps } from '../components/visualiser/MaxFlowSteps';
 import { generateContainsDuplicateSteps } from '../components/visualiser/ContainsDuplicateSteps';
 import { generateValidAnagramSteps } from '../components/visualiser/ValidAnagramSteps';
-//import { generateGroupAnagramsSteps } from '../components/visualiser/GroupAnagramsSteps';
+import { generateGroupAnagramsSteps } from '../components/visualiser/GroupsAnagramSteps';
 import { generateContainerWithMostWaterSteps } from '../components/visualiser/ContainerWithMostWaterSteps';
 import { generateValidSudokuSteps } from '../components/visualiser/ValidSudokuSteps';
 
@@ -56,6 +56,17 @@ import { generateBestTimeToBuyStockSteps } from '../components/visualiser/BestTi
 import { generateThreeSumSteps } from '../components/visualiser/ThreeSumSteps';
 import { generateTwoSumIISteps } from '../components/visualiser/TwoSumIISteps';
 import { generateEncodeDecodeSteps } from '../components/visualiser/EncodeDecodeSteps';
+import { generateEvaluateRPNSteps } from '../components/visualiser/EvaluateRPNSteps';
+import { generateLargestRectangleSteps } from '../components/visualiser/LargestRectangleSteps';
+import { generateSearch2DMatrixSteps } from '../components/visualiser/Search2DMatrixSteps';
+import { generateKokoEatingBananasSteps } from '../components/visualiser/KokoEatingBananasSteps';
+import { generateFindMinRotatedArraySteps } from '../components/visualiser/FindMinRotatedArraySteps';
+import { generateTimeBasedKVSteps } from '../components/visualiser/TimeBasedKVSteps';
+import { generateReorderListSteps } from '../components/visualiser/ReorderListSteps';
+import { generateMedianTwoSortedArraysSteps } from '../components/visualiser/MedianTwoSortedArraysSteps';
+import { generateRemoveNthFromEndSteps } from '../components/visualiser/RemoveNthFromEndSteps';
+import { generateCarFleetSteps } from '../components/visualiser/CarFleetSteps';
+import { generateTaskSchedulerSteps } from '../components/visualiser/TaskSchedulerSteps';
 
 import {sampleProblems} from '../utils/codedata.js'
 
@@ -176,6 +187,28 @@ export const generateSteps = (problemKey, input) => {
         return generateBestTimeToBuyStockSteps(input.type ? sampleProblems.bestTimeToBuyStock.examples[input.type] : input.prices);
       case 'dailyTemperatures':
         return generateDailyTemperaturesSteps(input.type ? sampleProblems.dailyTemperatures.examples[input.type] : input.temperatures);
+      case 'evaluateRPN':
+        return generateEvaluateRPNSteps(input.type ? sampleProblems.evaluateRPN.examples[input.type] : input.tokens);
+      case 'largestRectangleHistogram':
+        return generateLargestRectangleSteps(input.type ? sampleProblems.largestRectangleHistogram.examples[input.type] : input.heights);
+      case 'search2DMatrix':
+        return generateSearch2DMatrixSteps(input.type ? sampleProblems.search2DMatrix.examples[input.type] : input);
+      case 'kokoEatingBananas':
+        return generateKokoEatingBananasSteps(input.type ? sampleProblems.kokoEatingBananas.examples[input.type] : input);
+      case 'findMinRotatedArray':
+        return generateFindMinRotatedArraySteps(input.type ? sampleProblems.findMinRotatedArray.examples[input.type] : input.nums);
+      case 'timeBasedKV':
+        return generateTimeBasedKVSteps(input.type ? sampleProblems.timeBasedKV.examples[input.type] : input.operations);
+      case 'reorderList':
+        return generateReorderListSteps(input.type ? sampleProblems.reorderList.examples[input.type] : input.list);
+      case 'medianTwoSortedArrays':
+        return generateMedianTwoSortedArraysSteps(input.type ? sampleProblems.medianTwoSortedArrays.examples[input.type] : input);
+      case 'removeNthFromEnd':
+        return generateRemoveNthFromEndSteps(input.type ? sampleProblems.removeNthFromEnd.examples[input.type] : input);
+      case 'carFleet':
+        return generateCarFleetSteps(input.type ? sampleProblems.carFleet.examples[input.type] : input);
+      case 'taskScheduler':
+        return generateTaskSchedulerSteps(input.type ? sampleProblems.taskScheduler.examples[input.type] : input);
       default:
         return [];
     }

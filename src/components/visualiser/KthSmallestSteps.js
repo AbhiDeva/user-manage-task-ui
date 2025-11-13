@@ -1,3 +1,4 @@
+import {buildTree} from './Tree';
 export const generateKthSmallestSteps = (arr, k) => {
     const steps = [];
     const root = buildTree(arr);

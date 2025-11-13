@@ -1289,5 +1289,407 @@ function decode(str) {
         worst: [90, 80, 70, 60, 50, 40, 30],
         fluctuating: [89, 62, 70, 58, 47, 47, 46, 76, 100, 70]
       }
+    },
+    evaluateRPN: {
+      name: 'Evaluate Reverse Polish Notation',
+      code: `function evalRPN(tokens) {
+  const stack = [];
+  const operators = {
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => Math.trunc(a / b)
+  };
+  
+  for (let token of tokens) {
+    if (operators[token]) {
+      const b = stack.pop();
+      const a = stack.pop();
+      stack.push(operators[token](a, b));
+    } else {
+      stack.push(parseInt(token));
+    }
+  }
+  return stack[0];
+}`,
+      input: { 
+        type: 'normal',
+        tokens: ['2', '1', '+', '3', '*']
+      },
+      examples: {
+        normal: ['2', '1', '+', '3', '*'],
+        medium: ['4', '13', '5', '/', '+'],
+        complex: ['10', '6', '9', '3', '+', '-11', '*', '/', '*', '17', '+', '5', '+'],
+        negative: ['3', '11', '+', '5', '-']
+      }
+    },
+    largestRectangleHistogram: {
+      name: 'Largest Rectangle In Histogram',
+      code: `function largestRectangleArea(heights) {
+  const stack = [];
+  let maxArea = 0;
+  
+  for (let i = 0; i <= heights.length; i++) {
+    const h = i === heights.length ? 0 : heights[i];
+    
+    while (stack.length > 0 && h < heights[stack[stack.length - 1]]) {
+      const height = heights[stack.pop()];
+      const width = stack.length === 0 ? i : i - stack[stack.length - 1] - 1;
+      maxArea = Math.max(maxArea, height * width);
+    }
+    stack.push(i);
+  }
+  return maxArea;
+}`,
+      input: { 
+        type: 'normal',
+        heights: [2, 1, 5, 6, 2, 3]
+      },
+      examples: {
+        normal: [2, 1, 5, 6, 2, 3],
+        medium: [2, 4, 3, 5, 1, 3, 6, 2],
+        worst: [1, 1, 1, 1, 1],
+        increasing: [1, 2, 3, 4, 5, 6]
+      }
+    },
+    search2DMatrix: {
+      name: 'Search a 2D Matrix',
+      code: `function searchMatrix(matrix, target) {
+  const m = matrix.length;
+  const n = matrix[0].length;
+  let left = 0, right = m * n - 1;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    const midVal = matrix[Math.floor(mid / n)][mid % n];
+    
+    if (midVal === target) {
+      return true;
+    } else if (midVal < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  return false;
+}`,
+      input: { 
+        type: 'normal',
+        matrix: [[1,3,5,7],[10,11,16,20],[23,30,34,60]],
+        target: 3
+      },
+      examples: {
+        normal: { matrix: [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target: 3 },
+        medium: { matrix: [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target: 13 },
+        found: { matrix: [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target: 60 },
+        notfound: { matrix: [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target: 100 }
+      }
+    },
+    kokoEatingBananas: {
+      name: 'Koko Eating Bananas',
+      code: `function minEatingSpeed(piles, h) {
+  let left = 1, right = Math.max(...piles);
+  
+  while (left < right) {
+    const mid = Math.floor((left + right) / 2);
+    let hours = 0;
+    
+    for (let pile of piles) {
+      hours += Math.ceil(pile / mid);
+    }
+    
+    if (hours <= h) {
+      right = mid;
+    } else {
+      left = mid + 1;
+    }
+  }
+  return left;
+}`,
+      input: { 
+        type: 'normal',
+        piles: [3, 6, 7, 11],
+        h: 8
+      },
+      examples: {
+        normal: { piles: [3, 6, 7, 11], h: 8 },
+        medium: { piles: [30, 11, 23, 4, 20], h: 5 },
+        tight: { piles: [30, 11, 23, 4, 20], h: 6 },
+        easy: { piles: [3, 6, 7, 11], h: 20 }
+      }
+    },
+    findMinRotatedArray: {
+      name: 'Find Minimum In Rotated Sorted Array',
+      code: `function findMin(nums) {
+  let left = 0, right = nums.length - 1;
+  
+  while (left < right) {
+    const mid = Math.floor((left + right) / 2);
+    
+    if (nums[mid] > nums[right]) {
+      left = mid + 1;
+    } else {
+      right = mid;
+    }
+  }
+  return nums[left];
+}`,
+      input: { 
+        type: 'normal',
+        nums: [3, 4, 5, 1, 2]
+      },
+      examples: {
+        normal: [3, 4, 5, 1, 2],
+        medium: [4, 5, 6, 7, 0, 1, 2],
+        norotate: [1, 2, 3, 4, 5],
+        singlerotate: [2, 1]
+      }
+    },
+    timeBasedKV: {
+      name: 'Time Based Key-Value Store',
+      code: `class TimeMap {
+  constructor() {
+    this.store = new Map();
+  }
+  
+  set(key, value, timestamp) {
+    if (!this.store.has(key)) {
+      this.store.set(key, []);
+    }
+    this.store.get(key).push([timestamp, value]);
+  }
+  
+  get(key, timestamp) {
+    if (!this.store.has(key)) return "";
+    const values = this.store.get(key);
+    let left = 0, right = values.length - 1;
+    let result = "";
+    
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (values[mid][0] <= timestamp) {
+        result = values[mid][1];
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
+    }
+    return result;
+  }
+}`,
+      input: { 
+        type: 'normal',
+        operations: [
+          ['set', 'foo', 'bar', 1],
+          ['set', 'foo', 'bar2', 4],
+          ['get', 'foo', 1],
+          ['get', 'foo', 3],
+          ['set', 'foo', 'bar3', 4],
+          ['get', 'foo', 4],
+          ['get', 'foo', 5]
+        ]
+      },
+      examples: {
+        normal: [
+          ['set', 'foo', 'bar', 1],
+          ['set', 'foo', 'bar2', 4],
+          ['get', 'foo', 1],
+          ['get', 'foo', 3],
+          ['set', 'foo', 'bar3', 4],
+          ['get', 'foo', 4],
+          ['get', 'foo', 5]
+        ],
+        multiple: [
+          ['set', 'love', 'high', 10],
+          ['set', 'love', 'low', 20],
+          ['get', 'love', 5],
+          ['get', 'love', 10],
+          ['get', 'love', 15],
+          ['get', 'love', 20],
+          ['get', 'love', 25]
+        ]
+      }
+    },
+    reorderList: {
+      name: 'Reorder List',
+      code: `function reorderList(head) {
+  if (!head || !head.next) return;
+  
+  // Find middle
+  let slow = head, fast = head;
+  while (fast.next && fast.next.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+  
+  // Reverse second half
+  let prev = null, curr = slow.next;
+  slow.next = null;
+  while (curr) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  
+  // Merge two halves
+  let first = head, second = prev;
+  while (second) {
+    const tmp1 = first.next;
+    const tmp2 = second.next;
+    first.next = second;
+    second.next = tmp1;
+    first = tmp1;
+    second = tmp2;
+  }
+}`,
+      input: { 
+        type: 'normal',
+        list: [1, 2, 3, 4, 5]
+      },
+      examples: {
+        normal: [1, 2, 3, 4, 5],
+        even: [1, 2, 3, 4],
+        short: [1, 2, 3],
+        two: [1, 2]
+      }
+    },
+    medianTwoSortedArrays: {
+      name: 'Median of Two Sorted Arrays',
+      code: `function findMedianSortedArrays(nums1, nums2) {
+  if (nums1.length > nums2.length) {
+    [nums1, nums2] = [nums2, nums1];
+  }
+  
+  const m = nums1.length, n = nums2.length;
+  let left = 0, right = m;
+  
+  while (left <= right) {
+    const partition1 = Math.floor((left + right) / 2);
+    const partition2 = Math.floor((m + n + 1) / 2) - partition1;
+    
+    const maxLeft1 = partition1 === 0 ? -Infinity : nums1[partition1 - 1];
+    const minRight1 = partition1 === m ? Infinity : nums1[partition1];
+    const maxLeft2 = partition2 === 0 ? -Infinity : nums2[partition2 - 1];
+    const minRight2 = partition2 === n ? Infinity : nums2[partition2];
+    
+    if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1) {
+      if ((m + n) % 2 === 0) {
+        return (Math.max(maxLeft1, maxLeft2) + Math.min(minRight1, minRight2)) / 2;
+      } else {
+        return Math.max(maxLeft1, maxLeft2);
+      }
+    } else if (maxLeft1 > minRight2) {
+      right = partition1 - 1;
+    } else {
+      left = partition1 + 1;
+    }
+  }
+}`,
+      input: { 
+        type: 'normal',
+        nums1: [1, 3],
+        nums2: [2]
+      },
+      examples: {
+        normal: { nums1: [1, 3], nums2: [2] },
+        medium: { nums1: [1, 2], nums2: [3, 4] },
+        unequal: { nums1: [1, 3, 5, 7, 9], nums2: [2, 4, 6] },
+        empty: { nums1: [], nums2: [1] }
+      }
+    },
+    removeNthFromEnd: {
+      name: 'Remove Nth Node From End of List',
+      code: `function removeNthFromEnd(head, n) {
+  const dummy = { val: 0, next: head };
+  let fast = dummy, slow = dummy;
+  
+  // Move fast n+1 steps ahead
+  for (let i = 0; i <= n; i++) {
+    fast = fast.next;
+  }
+  
+  // Move both until fast reaches end
+  while (fast) {
+    fast = fast.next;
+    slow = slow.next;
+  }
+  
+  // Remove the nth node
+  slow.next = slow.next.next;
+  return dummy.next;
+}`,
+      input: { 
+        type: 'normal',
+        list: [1, 2, 3, 4, 5],
+        n: 2
+      },
+      examples: {
+        normal: { list: [1, 2, 3, 4, 5], n: 2 },
+        first: { list: [1, 2, 3, 4, 5], n: 5 },
+        last: { list: [1, 2, 3, 4, 5], n: 1 },
+        single: { list: [1], n: 1 }
+      }
+    },
+    carFleet: {
+      name: 'Car Fleet',
+      code: `function carFleet(target, position, speed) {
+  const cars = position.map((pos, i) => ({
+    position: pos,
+    speed: speed[i],
+    time: (target - pos) / speed[i]
+  })).sort((a, b) => b.position - a.position);
+  
+  const stack = [];
+  for (let car of cars) {
+    if (stack.length === 0 || car.time > stack[stack.length - 1]) {
+      stack.push(car.time);
+    }
+  }
+  return stack.length;
+}`,
+      input: { 
+        type: 'normal',
+        target: 12,
+        position: [10, 8, 0, 5, 3],
+        speed: [2, 4, 1, 1, 3]
+      },
+      examples: {
+        normal: { target: 12, position: [10, 8, 0, 5, 3], speed: [2, 4, 1, 1, 3] },
+        simple: { target: 10, position: [0, 4, 2], speed: [2, 1, 3] },
+        nofleet: { target: 100, position: [0, 2, 4], speed: [4, 2, 1] },
+        onefleet: { target: 10, position: [3], speed: [3] }
+      }
+    },
+    taskScheduler: {
+      name: 'Task Scheduler',
+      code: `function leastInterval(tasks, n) {
+  const freq = new Map();
+  for (let task of tasks) {
+    freq.set(task, (freq.get(task) || 0) + 1);
+  }
+  
+  const maxFreq = Math.max(...freq.values());
+  const maxCount = Array.from(freq.values()).filter(f => f === maxFreq).length;
+  
+  const partCount = maxFreq - 1;
+  const partLength = n - (maxCount - 1);
+  const emptySlots = partCount * partLength;
+  const availableTasks = tasks.length - maxFreq * maxCount;
+  const idles = Math.max(0, emptySlots - availableTasks);
+  
+  return tasks.length + idles;
+}`,
+      input: { 
+        type: 'normal',
+        tasks: ['A','A','A','B','B','B'],
+        n: 2
+      },
+      examples: {
+        normal: { tasks: ['A','A','A','B','B','B'], n: 2 },
+        noidle: { tasks: ['A','A','A','B','B','B','C','C','C','D','D','E'], n: 2 },
+        longidle: { tasks: ['A','A','A','B','B','B'], n: 3 },
+        simple: { tasks: ['A','B','C','D','E','A','B','C'], n: 2 }
+      }
     }
   };

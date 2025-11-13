@@ -1,3 +1,4 @@
+ import { buildTree } from './Tree';
  export const generateValidateBSTSteps = (arr) => {
     const steps = [];
     const root = buildTree(arr);

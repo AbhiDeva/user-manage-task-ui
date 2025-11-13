@@ -1,3 +1,4 @@
+
 export const buildTree = (arr) => {
     if (!arr || arr.length === 0) return null;
     const nodes = arr.map(val => val === null ? null : { val, left: null, right: null });

@@ -1,3 +1,4 @@
+import { buildTree } from './Tree';
 export const generateLCASteps = (arr, p, q) => {
     const steps = [];
     const root = buildTree(arr);
