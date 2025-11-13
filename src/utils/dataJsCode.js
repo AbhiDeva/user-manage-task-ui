@@ -134,6 +134,168 @@ export const sampleConcepts = {
         ]
       }
     },
+    'throttling': {
+      title: 'Throttling',
+      normal: {
+        steps: [
+          { title: 'The Problem', desc: 'Function called too frequently', code: "window.addEventListener('scroll', () => {\n  console.log('Scrolling!');\n  // Called 100s of times!\n});" },
+          { title: 'What is Throttling?', desc: 'Limit function execution rate', visual: { type: 'timeline', events: ['call', 'call', 'call', 'call'], executed: [true, false, false, true], label: 'Execute once per interval' } },
+          { title: 'Basic Throttle', desc: 'Allow execution every X milliseconds', code: "function throttle(func, delay) {\n  let lastCall = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastCall >= delay) {\n      lastCall = now;\n      func(...args);\n    }\n  };\n}" },
+          { title: 'Usage', desc: 'Wrap your function', code: "const throttledScroll = throttle(() => {\n  console.log('Scrolling!');\n}, 1000);\n\nwindow.addEventListener('scroll', throttledScroll);" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Visual Timeline', desc: '1000ms throttle interval', visual: { type: 'throttle-timeline', interval: 1000, calls: [0, 200, 400, 600, 800, 1000, 1200], executed: [0, 1000, 1200] } },
+          { title: 'Leading Edge', desc: 'Execute immediately on first call', code: "const throttled = throttle(fn, 1000);\n// First call: executes immediately\n// Next calls: wait for interval", demo: { type: 'leading' } },
+          { title: 'Trailing Edge', desc: 'Execute after interval ends', code: "function throttle(func, delay, trailing = true) {\n  let timeout, lastCall = 0;\n  // Execute after last call + delay\n}", demo: { type: 'trailing' } },
+          { title: 'Real Use Cases', desc: 'When to use throttling', example: 'Scroll events, Window resize, Mouse move, API rate limiting' }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Advanced Throttle', desc: 'Leading + Trailing options', code: "function throttle(func, delay, options = {}) {\n  let timeout, lastCall = 0;\n  const { leading = true, trailing = true } = options;\n  \n  return function(...args) {\n    const now = Date.now();\n    const remaining = delay - (now - lastCall);\n    \n    if (remaining <= 0 || remaining > delay) {\n      if (timeout) {\n        clearTimeout(timeout);\n        timeout = null;\n      }\n      if (leading) {\n        lastCall = now;\n        func.apply(this, args);\n      }\n    } else if (!timeout && trailing) {\n      timeout = setTimeout(() => {\n        lastCall = Date.now();\n        timeout = null;\n        func.apply(this, args);\n      }, remaining);\n    }\n  };\n}" },
+          { title: 'Performance Impact', desc: 'Before vs After throttling', visual: { type: 'performance', before: 1000, after: 10 } },
+          { title: 'Cancel Throttle', desc: 'Stop pending executions', code: "const throttled = throttle(fn, 1000);\nthrottled.cancel = function() {\n  clearTimeout(timeout);\n};" },
+          { title: 'Lodash Implementation', desc: 'Production-ready solution', example: '_.throttle(func, wait, {leading: true, trailing: true})' }
+        ]
+      }
+    },
+    'debouncing': {
+      title: 'Debouncing',
+      normal: {
+        steps: [
+          { title: 'The Problem', desc: 'User types fast, API called too much', code: "input.addEventListener('input', (e) => {\n  searchAPI(e.target.value);\n  // Called on every keystroke!\n});" },
+          { title: 'What is Debouncing?', desc: 'Wait until user stops typing', visual: { type: 'timeline', events: ['k', 'e', 'y', 's'], executed: [false, false, false, true], label: 'Execute after quiet period' } },
+          { title: 'Basic Debounce', desc: 'Delay execution until pause', code: "function debounce(func, delay) {\n  let timeout;\n  return function(...args) {\n    clearTimeout(timeout);\n    timeout = setTimeout(() => {\n      func.apply(this, args);\n    }, delay);\n  };\n}" },
+          { title: 'Usage', desc: 'Wrap your function', code: "const debouncedSearch = debounce((query) => {\n  searchAPI(query);\n}, 500);\n\ninput.addEventListener('input', (e) => {\n  debouncedSearch(e.target.value);\n});" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Visual Timeline', desc: '500ms debounce delay', visual: { type: 'debounce-timeline', delay: 500, calls: [0, 100, 200, 300, 400, 700], executed: [1200] } },
+          { title: 'Timer Reset', desc: 'Each call resets the timer', demo: { type: 'timer-reset', resets: [0, 100, 200, 300], final: 800 } },
+          { title: 'Immediate Mode', desc: 'Execute on leading edge', code: "function debounce(func, delay, immediate) {\n  let timeout;\n  return function(...args) {\n    const callNow = immediate && !timeout;\n    clearTimeout(timeout);\n    timeout = setTimeout(() => {\n      timeout = null;\n      if (!immediate) func.apply(this, args);\n    }, delay);\n    if (callNow) func.apply(this, args);\n  };\n}" },
+          { title: 'Use Cases', desc: 'When to use debouncing', example: 'Search input, Form validation, Auto-save, Window resize' }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Advanced Debounce', desc: 'Max wait option', code: "function debounce(func, wait, options = {}) {\n  let timeout, maxTimeout;\n  const { maxWait, leading = false } = options;\n  \n  return function(...args) {\n    const later = () => {\n      timeout = null;\n      if (maxTimeout) clearTimeout(maxTimeout);\n      func.apply(this, args);\n    };\n    \n    clearTimeout(timeout);\n    timeout = setTimeout(later, wait);\n    \n    if (maxWait && !maxTimeout) {\n      maxTimeout = setTimeout(() => {\n        clearTimeout(timeout);\n        later();\n      }, maxWait);\n    }\n  };\n}" },
+          { title: 'Debounce vs Throttle', desc: 'Key differences', visual: { type: 'comparison', debounce: 'Waits for pause', throttle: 'Executes at intervals' } },
+          { title: 'Cancel & Flush', desc: 'Control pending calls', code: "const debounced = debounce(fn, 1000);\ndebounced.cancel(); // Cancel pending\ndebounced.flush();  // Execute immediately" },
+          { title: 'Performance Gains', desc: 'Real-world impact', example: 'Search: 100 calls → 1 call\nResize: 500 calls → 1 call' }
+        ]
+      }
+    },
+    'promises': {
+      title: 'Promises',
+      normal: {
+        steps: [
+          { title: 'What is a Promise?', desc: 'Represents future value', code: "const promise = new Promise((resolve, reject) => {\n  // Async operation\n  setTimeout(() => {\n    resolve('Success!');\n  }, 1000);\n});" },
+          { title: 'Three States', desc: 'Promise lifecycle', visual: { type: 'promise-states', states: ['Pending', 'Fulfilled', 'Rejected'] } },
+          { title: 'Using Promises', desc: 'then() and catch()', code: "promise\n  .then(result => {\n    console.log(result); // 'Success!'\n  })\n  .catch(error => {\n    console.error(error);\n  });" },
+          { title: 'Chaining', desc: 'Sequential async operations', code: "fetchUser()\n  .then(user => fetchPosts(user.id))\n  .then(posts => console.log(posts))\n  .catch(error => console.error(error));" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Promise Flow', desc: 'State transitions', visual: { type: 'promise-flow', from: 'Pending', to: 'Fulfilled', value: 'data' } },
+          { title: 'Creating Promises', desc: 'Wrapping async code', code: "function fetchData(url) {\n  return new Promise((resolve, reject) => {\n    fetch(url)\n      .then(res => res.json())\n      .then(data => resolve(data))\n      .catch(err => reject(err));\n  });\n}" },
+          { title: 'Promise.resolve', desc: 'Create resolved promise', code: "const promise = Promise.resolve(42);\n// Immediately fulfilled with value 42\n\nconst promise2 = Promise.reject('Error');\n// Immediately rejected" },
+          { title: 'Finally', desc: 'Cleanup regardless of outcome', code: "promise\n  .then(data => process(data))\n  .catch(err => handle(err))\n  .finally(() => {\n    // Always runs\n    cleanup();\n  });" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Error Handling', desc: 'Catch at any level', code: "promise1\n  .then(data => {\n    throw new Error('Oops');\n    return promise2; // Skipped\n  })\n  .then(data => { /* Skipped */ })\n  .catch(error => {\n    console.error(error); // Catches error\n  });" },
+          { title: 'Race Conditions', desc: 'Promise.race()', code: "Promise.race([\n  fetch('/api/fast'),\n  fetch('/api/slow')\n])\n.then(result => {\n  // First to complete wins\n});", visual: { type: 'race' } },
+          { title: 'Promise Chain', desc: 'Return values flow through', code: "Promise.resolve(1)\n  .then(x => x + 1)    // 2\n  .then(x => x * 2)    // 4\n  .then(x => x ** 2)   // 16\n  .then(x => console.log(x));" },
+          { title: 'Anti-patterns', desc: 'Common mistakes', example: 'Nested promises, Not returning promises, Forgetting .catch()' }
+        ]
+      }
+    },
+    'async-await': {
+      title: 'Async/Await',
+      normal: {
+        steps: [
+          { title: 'What is Async/Await?', desc: 'Syntactic sugar over promises', code: "// Promise way\nfetchData()\n  .then(data => console.log(data));\n\n// Async/Await way\nconst data = await fetchData();\nconsole.log(data);" },
+          { title: 'Async Function', desc: 'Always returns a promise', code: "async function getData() {\n  return 'Hello';\n}\n// Same as:\nfunction getData() {\n  return Promise.resolve('Hello');\n}" },
+          { title: 'Await Keyword', desc: 'Pause until promise resolves', code: "async function fetchUser() {\n  const response = await fetch('/api/user');\n  const data = await response.json();\n  return data;\n}", visual: { type: 'await-pause' } },
+          { title: 'Sequential Execution', desc: 'One after another', code: "async function process() {\n  const user = await fetchUser();    // Wait\n  const posts = await fetchPosts();  // Then wait\n  return { user, posts };\n}" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Error Handling', desc: 'Use try/catch with await', code: "async function getData() {\n  try {\n    const data = await fetch('/api');\n    return data;\n  } catch (error) {\n    console.error('Failed:', error);\n  }\n}" },
+          { title: 'Parallel Execution', desc: 'Run multiple awaits together', code: "async function getData() {\n  // Sequential (slow)\n  const user = await fetchUser();\n  const posts = await fetchPosts();\n  \n  // Parallel (fast)\n  const [user, posts] = await Promise.all([\n    fetchUser(),\n    fetchPosts()\n  ]);\n}", visual: { type: 'parallel-vs-sequential' } },
+          { title: 'Top-level Await', desc: 'Modern JavaScript feature', code: "// In ES modules\nconst data = await fetch('/api');\n\n// No need to wrap in async function!" },
+          { title: 'Async Loops', desc: 'Iterate over promises', code: "async function processItems(items) {\n  for (const item of items) {\n    await processItem(item);\n  }\n}" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Concurrent Processing', desc: 'Balance between sequential and parallel', code: "async function processInBatches(items, batchSize) {\n  for (let i = 0; i < items.length; i += batchSize) {\n    const batch = items.slice(i, i + batchSize);\n    await Promise.all(\n      batch.map(item => processItem(item))\n    );\n  }\n}" },
+          { title: 'Early Return', desc: 'Await in conditionals', code: "async function getData(useCache) {\n  if (useCache) {\n    const cached = await getFromCache();\n    if (cached) return cached;\n  }\n  return await fetchFromAPI();\n}" },
+          { title: 'Async IIFE', desc: 'Immediately invoked async function', code: "(async () => {\n  const data = await fetchData();\n  console.log(data);\n})();" },
+          { title: 'Best Practices', desc: 'Guidelines', advice: 'Use Promise.all for parallel ops\nAvoid await in loops unless needed\nAlways handle errors with try/catch' }
+        ]
+      }
+    },
+    'try-catch': {
+      title: 'Try/Catch Error Handling',
+      normal: {
+        steps: [
+          { title: 'Basic Try/Catch', desc: 'Handle runtime errors', code: "try {\n  const data = JSON.parse(invalidJSON);\n  console.log(data);\n} catch (error) {\n  console.error('Parse failed:', error);\n}" },
+          { title: 'Error Object', desc: 'Catch provides error details', code: "catch (error) {\n  console.log(error.name);    // 'SyntaxError'\n  console.log(error.message); // Description\n  console.log(error.stack);   // Stack trace\n}", visual: { type: 'error-object' } },
+          { title: 'Finally Block', desc: 'Always executes', code: "try {\n  openFile();\n  processFile();\n} catch (error) {\n  handleError(error);\n} finally {\n  closeFile(); // Always runs\n}" },
+          { title: 'Flow Control', desc: 'How execution flows', visual: { type: 'try-catch-flow' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Nested Try/Catch', desc: 'Multiple error handlers', code: "try {\n  try {\n    riskyOperation();\n  } catch (innerError) {\n    // Handle specific error\n    throw innerError; // Re-throw if needed\n  }\n} catch (outerError) {\n  // Handle any error\n}" },
+          { title: 'Specific Error Types', desc: 'Catch different errors differently', code: "try {\n  operation();\n} catch (error) {\n  if (error instanceof TypeError) {\n    // Handle type error\n  } else if (error instanceof RangeError) {\n    // Handle range error\n  } else {\n    // Handle others\n  }\n}" },
+          { title: 'Async Try/Catch', desc: 'Works with async/await', code: "async function fetchData() {\n  try {\n    const response = await fetch('/api');\n    return await response.json();\n  } catch (error) {\n    console.error('Fetch failed:', error);\n    return null;\n  }\n}" },
+          { title: 'Custom Errors', desc: 'Create your own error types', code: "class ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = 'ValidationError';\n  }\n}\n\nthrow new ValidationError('Invalid input');" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Error Boundaries', desc: 'Component-level error handling', code: "class ErrorBoundary {\n  try {\n    return component.render();\n  } catch (error) {\n    return <ErrorFallback error={error} />;\n  }\n}" },
+          { title: 'Global Error Handler', desc: 'Catch unhandled errors', code: "window.addEventListener('error', (event) => {\n  console.error('Global error:', event.error);\n  sendToLogging(event.error);\n});\n\nwindow.addEventListener('unhandledrejection', (event) => {\n  console.error('Unhandled promise:', event.reason);\n});" },
+          { title: 'Retry Logic', desc: 'Try operation multiple times', code: "async function retry(fn, maxAttempts = 3) {\n  for (let i = 0; i < maxAttempts; i++) {\n    try {\n      return await fn();\n    } catch (error) {\n      if (i === maxAttempts - 1) throw error;\n      await sleep(1000 * (i + 1));\n    }\n  }\n}" },
+          { title: 'Best Practices', desc: 'Error handling guidelines', advice: 'Catch specific errors\nLog with context\nDon\'t catch if you can\'t handle\nUse finally for cleanup' }
+        ]
+      }
+    },
+    'promise-all-vs-settled': {
+      title: 'Promise.all vs Promise.allSettled',
+      normal: {
+        steps: [
+          { title: 'Promise.all', desc: 'Fails if ANY promise rejects', code: "const promises = [\n  fetch('/api/user'),\n  fetch('/api/posts'),\n  fetch('/api/comments')\n];\n\nPromise.all(promises)\n  .then(results => {\n    // All succeeded\n  })\n  .catch(error => {\n    // One failed, stops here\n  });" },
+          { title: 'The Problem', desc: 'One failure stops everything', visual: { type: 'promise-all-fail', promises: [true, false, true], result: 'rejected' } },
+          { title: 'Promise.allSettled', desc: 'Waits for ALL to complete', code: "Promise.allSettled(promises)\n  .then(results => {\n    // All finished (success or fail)\n    results.forEach(result => {\n      if (result.status === 'fulfilled') {\n        console.log(result.value);\n      } else {\n        console.log(result.reason);\n      }\n    });\n  });" },
+          { title: 'Key Difference', desc: 'Handling failures', visual: { type: 'comparison-basic' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Promise.all Behavior', desc: 'Short-circuits on first rejection', code: "Promise.all([\n  Promise.resolve('A'),\n  Promise.reject('Error!'),\n  Promise.resolve('C') // Never checked\n])\n.catch(error => {\n  console.log(error); // 'Error!'\n});", visual: { type: 'short-circuit' } },
+          { title: 'allSettled Response', desc: 'Array of result objects', code: "Promise.allSettled([\n  Promise.resolve('A'),\n  Promise.reject('Error!'),\n  Promise.resolve('C')\n])\n.then(results => {\n  // [\n  //   {status: 'fulfilled', value: 'A'},\n  //   {status: 'rejected', reason: 'Error!'},\n  //   {status: 'fulfilled', value: 'C'}\n  // ]\n});" },
+          { title: 'Use Cases Comparison', desc: 'When to use which', visual: { type: 'use-case-table' } },
+          { title: 'Real Example', desc: 'Multiple API calls', code: "// Use all: Need ALL data\nPromise.all([fetchUser(), fetchPosts()])\n\n// Use allSettled: Partial data OK\nPromise.allSettled([fetchUser(), fetchPosts()])" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Error Recovery', desc: 'Handle mixed results', code: "const results = await Promise.allSettled([\n  fetchUser(),\n  fetchPosts(),\n  fetchComments()\n]);\n\nconst successful = results\n  .filter(r => r.status === 'fulfilled')\n  .map(r => r.value);\n\nconst failed = results\n  .filter(r => r.status === 'rejected')\n  .map(r => r.reason);\n\nif (failed.length > 0) {\n  logErrors(failed);\n}\n\nreturn successful;" },
+          { title: 'Promise.any', desc: 'First successful promise', code: "Promise.any([\n  fetch('/api/server1'),\n  fetch('/api/server2'),\n  fetch('/api/server3')\n])\n.then(firstSuccess => {\n  // Use fastest successful response\n});\n// Rejects only if ALL fail", visual: { type: 'promise-any' } },
+          { title: 'Promise.race', desc: 'First completed (success or fail)', code: "Promise.race([\n  fetch('/api'),\n  timeout(5000)\n])\n.then(result => {\n  // Whichever finishes first\n});", visual: { type: 'promise-race' } },
+          { title: 'Comparison Table', desc: 'All promise combinators', visual: { type: 'full-comparison-table' } }
+        ]
+      }
+    },
     'call-bind-apply': {
       title: 'Call, Bind & Apply',
       normal: {

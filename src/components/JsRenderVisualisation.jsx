@@ -35,7 +35,7 @@
       );
     }
 
-    if (currentStep.visual) {
+    if (currentStep?.visual) {
       const { type, original, copy, clone, independent, nested, levels, cloned, shared } = currentStep.visual;
       
       if (type === 'reference') {
@@ -322,7 +322,7 @@
       }
     }
 
-    if (currentStep.dom) {
+    if (currentStep?.dom) {
       return (
         <div className="flex flex-col items-center justify-center space-y-6 min-h-[300px]">
           {currentStep.dom.map((item, idx) => {
@@ -373,7 +373,7 @@
       );
     }
 
-    if (currentStep.stack !== undefined) {
+    if (currentStep?.stack !== undefined) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[300px]">
           <div className="text-lg font-bold mb-4 text-gray-700">Call Stack</div>
