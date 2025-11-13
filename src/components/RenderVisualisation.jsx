@@ -3444,6 +3444,284 @@ export const RenderVisualization = ({ steps, currentStep }) => {
               );
             }
 
+    // LRU Cache Visualization
+        if (data.capacity && data.cache && data.operations) {
+          const cacheEntries = Object.entries(data.cache);
+          
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold">
+                Capacity: <span className="text-blue-600">{data.capacity}</span> | 
+                Size: <span className="text-purple-600">{cacheEntries.length}</span>
+              </div>
+    
+              <div className="bg-gray-50 p-4 rounded-lg border-2 border-gray-300">
+                <div className="text-sm font-semibold mb-3">Cache (LRU → MRU):</div>
+                <div className="flex gap-2 justify-center flex-wrap min-h-16 items-center">
+                  {cacheEntries.length === 0 ? (
+                    <span className="text-gray-400">Empty</span>
+                  ) : (
+                    cacheEntries.map(([key, val], idx) => (
+                      <div
+                        key={key}
+                        className={`px-4 py-3 rounded-lg border-2 font-bold transition-all ${
+                          data.operation === 'put' && String(key) === String(data.key) && data.added
+                            ? 'bg-green-500 text-white border-green-600 scale-110'
+                            : data.operation === 'get' && String(key) === String(data.key) && data.found
+                            ? 'bg-blue-500 text-white border-blue-600 scale-110'
+                            : idx === 0
+                            ? 'bg-red-100 border-red-300 text-red-700'
+                            : idx === cacheEntries.length - 1
+                            ? 'bg-green-100 border-green-300 text-green-700'
+                            : 'bg-gray-100 border-gray-300'
+                        }`}
+                      >
+                        <div className="text-xs">Key: {key}</div>
+                        <div className="text-lg">{val}</div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-2 px-2">
+                  <span>← Least Recent</span>
+                  <span>Most Recent →</span>
+                </div>
+              </div>
+    
+              {data.operation && (
+                <div className={`p-3 rounded-lg border-2 ${
+                  data.notFound ? 'bg-red-50 border-red-200' :
+                  data.evicted ? 'bg-orange-50 border-orange-200' :
+                  data.operation === 'get' ? 'bg-blue-50 border-blue-200' :
+                  'bg-green-50 border-green-200'
+                }`}>
+                  <div className="font-bold text-sm">
+                    {data.operation === 'put' ? `PUT(${data.key}, ${data.value})` : `GET(${data.key})`}
+                  </div>
+                  {data.result !== null && data.result !== undefined && (
+                    <div className="text-sm mt-1">
+                      Result: <span className="font-mono font-bold">{data.result}</span>
+                    </div>
+                  )}
+                  {data.evicted && (
+                    <div className="text-sm mt-1 text-orange-600">
+                      ⚠️ Evicted key: {data.evicted}
+                    </div>
+                  )}
+                </div>
+              )}
+    
+              <div className="flex gap-4 justify-center text-xs">
+                <div className="flex items-center gap-1">
+                  <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+                  <span>LRU (will be evicted)</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-4 h-4 bg-green-100 border border-green-300 rounded"></div>
+                  <span>MRU (most recent)</span>
+                </div>
+              </div>
+            </div>
+          );
+        }
+    
+        // Merge K Lists Visualization
+        if (data.lists && data.hasOwnProperty('level') && !data.list && !data.k) {
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold">
+                Level: <span className="text-blue-600">{data.level}</span> | 
+                Lists: <span className="text-purple-600">{data.lists.length}</span>
+              </div>
+    
+              <div className="space-y-3">
+                {data.lists.map((list, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      data.merging && data.merging.includes(idx)
+                        ? 'bg-blue-100 border-blue-400'
+                        : 'bg-white border-gray-300'
+                    }`}
+                  >
+                    <div className="text-xs font-semibold mb-2">List {idx}:</div>
+                    <div className="flex gap-2 flex-wrap">
+                      {list.map((val, i) => (
+                        <div key={i} className="w-10 h-10 flex items-center justify-center bg-purple-100 border border-purple-300 rounded font-bold">
+                          {val}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+    
+              {data.result && (
+                <div className="bg-yellow-50 p-3 rounded-lg border-2 border-yellow-300">
+                  <div className="text-xs font-semibold mb-2">Merged Result:</div>
+                  <div className="flex gap-2 flex-wrap justify-center">
+                    {data.result.map((val, i) => (
+                      <div key={i} className="w-10 h-10 flex items-center justify-center bg-green-500 text-white border-2 border-green-600 rounded font-bold">
+                        {val}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+    
+              {data.complete && (
+                <div className="text-center text-lg font-bold text-green-600">
+                  ✓ All Lists Merged!
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Reverse K Group Visualization
+        if (data.list && data.k && data.reversed !== undefined) {
+          return (
+            <div className="space-y-4">
+              <div className="text-center text-sm font-semibold">
+                Group Size: <span className="text-blue-600">k = {data.k}</span>
+              </div>
+    
+              <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                <div className="text-xs font-semibold mb-2">Original:</div>
+                <div className="flex items-center gap-2 justify-center flex-wrap">
+                  {data.list.map((val, idx) => (
+                    <React.Fragment key={idx}>
+                      <div className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                        idx === data.current ? 'bg-blue-500 text-white border-blue-600 scale-110' : 'bg-white border-gray-300'
+                      }`}>
+                        {val}
+                      </div>
+                      {idx < data.list.length - 1 && <span className="text-gray-400">→</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+    
+              {data.group && (
+                <div className={`p-4 rounded-lg border-2 ${
+                  data.phase === 'reverse' ? 'bg-green-50 border-green-300' : 
+                  data.phase === 'keep' ? 'bg-yellow-50 border-yellow-300' :
+                  'bg-blue-50 border-blue-300'
+                }`}>
+                  <div className="text-xs font-semibold mb-2">Current Group:</div>
+                  <div className="flex items-center gap-2 justify-center">
+                    {data.group.map((val, idx) => (
+                      <React.Fragment key={idx}>
+                        <div className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          data.phase === 'reverse' ? 'bg-green-400 text-white border-green-600' :
+                          data.phase === 'keep' ? 'bg-yellow-400 text-white border-yellow-600' :
+                          'bg-blue-400 text-white border-blue-600'
+                        }`}>
+                          {val}
+                        </div>
+                        {idx < data.group.length - 1 && <span className="text-gray-400">→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+    
+              {data.reversed.length > 0 && (
+                <div className="bg-green-50 p-4 rounded-lg border-2 border-green-300">
+                  <div className="text-xs font-semibold mb-2">Result:</div>
+                  <div className="flex items-center gap-2 justify-center flex-wrap">
+                    {data.reversed.map((val, idx) => (
+                      <React.Fragment key={idx}>
+                        <div className={`w-12 h-12 flex items-center justify-center border-2 rounded-lg font-bold ${
+                          data.phase === 'complete' ? 'bg-green-500 text-white border-green-600' : 'bg-green-100 border-green-300'
+                        }`}>
+                          {val}
+                        </div>
+                        {idx < data.reversed.length - 1 && <span className="text-gray-400">→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+    
+        // Invert Tree Visualization
+        if (data.tree && data.inverted && data.phase) {
+          const renderTree = (treeData, title, isCurrent = false) => {
+            const levels = [];
+            let level = 0;
+            let idx = 0;
+            while (idx < treeData.length) {
+              const levelSize = Math.pow(2, level);
+              levels.push(treeData.slice(idx, idx + levelSize));
+              idx += levelSize;
+              level++;
+              if (level > 4) break;
+            }
+    
+            return (
+              <div className="space-y-2">
+                <div className="text-xs font-semibold text-center mb-2">{title}:</div>
+                <div className="flex flex-col items-center gap-3">
+                  {levels.map((levelNodes, i) => (
+                    <div key={i} className="flex gap-3 justify-center" style={{ minWidth: `${Math.pow(2, levels.length - i) * 60}px` }}>
+                      {levelNodes.map((val, j) => {
+                        const nodeIdx = Math.pow(2, i) - 1 + j;
+                        return val === null ? (
+                          <div key={j} className="w-12 h-12" />
+                        ) : (
+                          <div
+                            key={j}
+                            className={`w-12 h-12 flex items-center justify-center border-2 rounded-full font-bold transition-all ${
+                              isCurrent && nodeIdx === data.current
+                                ? 'bg-blue-500 text-white border-blue-600 scale-125'
+                                : data.swapped && data.swapped.includes(nodeIdx)
+                                ? 'bg-green-500 text-white border-green-600 scale-110'
+                                : 'bg-white border-gray-300'
+                            }`}
+                          >
+                            {val}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          };
+    
+          return (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                  {renderTree(data.tree, 'Current State', true)}
+                </div>
+                {data.phase === 'complete' && (
+                  <div className="bg-green-50 p-4 rounded-lg border-2 border-green-300">
+                    {renderTree(data.inverted, 'Inverted Tree')}
+                  </div>
+                )}
+              </div>
+    
+              {data.phase !== 'complete' && (
+                <div className="text-center text-sm text-gray-600">
+                  {data.phase === 'swap' && 'Swapping left and right children'}
+                  {data.phase === 'visit' && `Visiting node ${data.current}`}
+                </div>
+              )}
+    
+              {data.complete && (
+                <div className="text-center text-lg font-bold text-green-600">
+                  ✓ Tree Inverted!
+                </div>
+              )}
+            </div>
+          );
+        }
+
     if (data.nums && data.hasOwnProperty('left')) {
       // Binary Search Visualization
       return (

@@ -69,6 +69,11 @@ import { generateCarFleetSteps } from '../components/visualiser/CarFleetSteps';
 import { generateTaskSchedulerSteps } from '../components/visualiser/TaskSchedulerSteps';
 import { generateCopyRandomListSteps } from '../components/visualiser/CopyRandomListSteps';
 
+import { generateLRUCacheSteps } from '../components/visualiser/LRUCacheSteps';
+import { generateMergeKListsSteps } from '../components/visualiser/MergeKListsSteps';
+import { generateReverseKGroupSteps } from '../components/visualiser/ReverseKGroupSteps';
+import { generateInvertTreeSteps } from '../components/visualiser/InvertTreeSteps';
+
 import {sampleProblems} from '../utils/codedata.js'
 
 
@@ -212,6 +217,14 @@ export const generateSteps = (problemKey, input) => {
         return generateTaskSchedulerSteps(input.type ? sampleProblems.taskScheduler.examples[input.type] : input);
       case 'copyRandomList':
         return generateCopyRandomListSteps(input.type ? sampleProblems.copyRandomList.examples[input.type] : input.nodes);
+       case 'lruCache':
+        return generateLRUCacheSteps(input.type ? sampleProblems.lruCache.examples[input.type] : input);
+      case 'mergeKLists':
+        return generateMergeKListsSteps(input.type ? sampleProblems.mergeKLists.examples[input.type] : input.lists);
+      case 'reverseKGroup':
+        return generateReverseKGroupSteps(input.type ? sampleProblems.reverseKGroup.examples[input.type] : input);
+      case 'invertTree':
+        return generateInvertTreeSteps(input.type ? sampleProblems.invertTree.examples[input.type] : input.tree);
         default:
         return [];
     }

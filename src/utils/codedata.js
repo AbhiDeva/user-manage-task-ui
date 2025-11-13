@@ -1759,5 +1759,152 @@ function decode(str) {
           { val: 1, next: null, random: 0 }
         ]
       }
+    },
+    lruCache: {
+      name: 'LRU Cache',
+      code: `class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.cache = new Map();
+  }
+  
+  get(key) {
+    if (!this.cache.has(key)) return -1;
+    const val = this.cache.get(key);
+    this.cache.delete(key);
+    this.cache.set(key, val);
+    return val;
+  }
+  
+  put(key, value) {
+    if (this.cache.has(key)) {
+      this.cache.delete(key);
+    }
+    this.cache.set(key, value);
+    if (this.cache.size > this.capacity) {
+      this.cache.delete(this.cache.keys().next().value);
+    }
+  }
+}`,
+      input: { 
+        type: 'normal',
+        capacity: 2,
+        operations: [
+          ['put', 1, 1],
+          ['put', 2, 2],
+          ['get', 1],
+          ['put', 3, 3],
+          ['get', 2],
+          ['put', 4, 4],
+          ['get', 1],
+          ['get', 3],
+          ['get', 4]
+        ]
+      },
+      examples: {
+        normal: { capacity: 2, operations: [['put',1,1],['put',2,2],['get',1],['put',3,3],['get',2],['put',4,4],['get',1],['get',3],['get',4]] },
+        simple: { capacity: 3, operations: [['put',1,1],['put',2,2],['put',3,3],['get',1],['get',2],['get',3]] },
+        eviction: { capacity: 1, operations: [['put',1,1],['put',2,2],['get',1],['get',2]] }
+      }
+    },
+    mergeKLists: {
+      name: 'Merge K Sorted Lists',
+      code: `function mergeKLists(lists) {
+  if (!lists || lists.length === 0) return null;
+  
+  while (lists.length > 1) {
+    const merged = [];
+    for (let i = 0; i < lists.length; i += 2) {
+      const l1 = lists[i];
+      const l2 = i + 1 < lists.length ? lists[i + 1] : null;
+      merged.push(mergeTwoLists(l1, l2));
+    }
+    lists = merged;
+  }
+  return lists[0];
+}
+
+function mergeTwoLists(l1, l2) {
+  if (!l1) return l2;
+  if (!l2) return l1;
+  if (l1.val < l2.val) {
+    l1.next = mergeTwoLists(l1.next, l2);
+    return l1;
+  } else {
+    l2.next = mergeTwoLists(l1, l2.next);
+    return l2;
+  }
+}`,
+      input: { 
+        type: 'normal',
+        lists: [[1,4,5],[1,3,4],[2,6]]
+      },
+      examples: {
+        normal: [[1,4,5],[1,3,4],[2,6]],
+        simple: [[1,2],[3,4]],
+        unequal: [[1],[2,3,4],[5,6,7,8]],
+        single: [[1,2,3]]
+      }
+    },
+    reverseKGroup: {
+      name: 'Reverse Nodes In K Group',
+      code: `function reverseKGroup(head, k) {
+  let count = 0, curr = head;
+  while (curr && count < k) {
+    curr = curr.next;
+    count++;
+  }
+  if (count < k) return head;
+  
+  let prev = null;
+  curr = head;
+  for (let i = 0; i < k; i++) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  
+  head.next = reverseKGroup(curr, k);
+  return prev;
+}`,
+      input: { 
+        type: 'normal',
+        list: [1,2,3,4,5],
+        k: 2
+      },
+      examples: {
+        normal: { list: [1,2,3,4,5], k: 2 },
+        k3: { list: [1,2,3,4,5], k: 3 },
+        k1: { list: [1,2,3,4,5], k: 1 },
+        exact: { list: [1,2,3,4], k: 2 }
+      }
+    },
+    invertTree: {
+      name: 'Invert Binary Tree',
+      code: `function invertTree(root) {
+  if (!root) return null;
+  
+  // Swap left and right children
+  const temp = root.left;
+  root.left = root.right;
+  root.right = temp;
+  
+  // Recursively invert subtrees
+  invertTree(root.left);
+  invertTree(root.right);
+  
+  return root;
+}`,
+      input: { 
+        type: 'normal',
+        tree: [4,2,7,1,3,6,9]
+      },
+      examples: {
+        normal: [4,2,7,1,3,6,9],
+        simple: [2,1,3],
+        unbalanced: [1,2,null,3,null,4],
+        single: [1]
+      }
     }
   };
