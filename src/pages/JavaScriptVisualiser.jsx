@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {sampleProblems} from '../utils/codedata.js'
+// import {sampleProblems} from '../utils/codedata.js'
+import { sampleConcepts  } from '../utils/dataJsCode.js';
 import { generateSteps } from '../utils/generatestepsforProblems.js';
 import { useEffect } from 'react';
 import { RenderVisualization } from '../components/RenderVisualisation.jsx';
@@ -7,30 +8,33 @@ import Editor from "@monaco-editor/react";
 import { FaCode, FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 import { FiRotateCcw } from "react-icons/fi"; 
 import { MdSpeed, MdAnimation } from "react-icons/md";
+import { JsRenderVisualization } from '../components/JsRenderVisualisation.jsx';
 
 const JavaScriptCodeVisualizer = () => {
   const [code, setCode] = useState('');
-  const [problemType, setProblemType] = useState('array');
+  const [problemType, setProblemType] = useState('call-bind-apply');
+  const [difficulty, setDifficulty] = useState('normal');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [steps, setSteps] = useState([]);
+  const [steps, setSteps] = useState(0);
   const [speed, setSpeed] = useState(1000);
-
+  const [selectedConcept, setSelectedConcept] = useState('shallow-deep-objects');
 
   const parseAndVisualize = (selectedProblem) => {
-    const problem = sampleProblems[selectedProblem];
+    const problem = sampleConcepts[selectedProblem];
     if (!problem) return;
-
-    setCode(problem.code);
+    console.log("Selected Problem:", problem);
+    setCode(problem[difficulty].code);
+    const currentConcept = sampleConcepts[problemType][difficulty];
     setProblemType(selectedProblem);
-    const visualSteps = generateSteps(selectedProblem, problem.input);
+    const visualSteps = problem[difficulty].steps;
     setSteps(visualSteps);
     setCurrentStep(0);
   };
 
-
+  const currentConcept = sampleConcepts[problemType][difficulty];
   const changeExample = (exampleType) => {
-    const problem = sampleProblems[problemType];
+    const problem = sampleConcepts[problemType];
     if (!problem || !problem.examples) return;
 
     const newInput = { ...problem.input, type: exampleType };
@@ -42,7 +46,11 @@ const JavaScriptCodeVisualizer = () => {
       }
     }
 
-    const visualSteps = generateSteps(problemType, newInput);
+    // const visualSteps = generateSteps(problemType, newInput);
+    // setSteps(visualSteps);
+    const currentConcept = concepts[selectedConcept][difficulty];
+    const visualSteps = currentConcept.steps;
+    setCode(currentConcept.code);
     setSteps(visualSteps);
     setCurrentStep(0);
   };
@@ -65,6 +73,8 @@ const JavaScriptCodeVisualizer = () => {
     return () => clearInterval(interval);
   }, [isPlaying, currentStep, steps.length, speed]);
 
+   //const currentStep = currentConcept.steps[step];
+
 return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -79,19 +89,19 @@ return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow-lg p-6">
             <div className="flex items-center justify-between mb-4">
-                 <h2 className="text-xl font-bold mb-4 text-gray-800">Select Problem</h2>
+                 <h2 className="text-xl font-bold mb-4 text-gray-800">Select Code</h2>
                  <p className="text-md font-bold mb-4 text-gray-800">Count :
-                  <span className="text-sm font-bold mb-4 text-blue-800"> {Object.entries(sampleProblems).length}</span> </p>
+                  <span className="text-sm font-bold mb-4 text-blue-800"> {Object.entries(sampleConcepts).length}</span> </p>
             </div>
            
             <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-              {Object.entries(sampleProblems).map(([key, problem]) => (
+              {Object.entries(sampleConcepts).map(([key, problem]) => (
                 <button
                   key={key}
                   onClick={() => parseAndVisualize(key)}
                   className="w-full text-left px-4 py-3 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors font-medium text-sm"
                 >
-                  {problem.name}
+                  {problem.title}
                 </button>
               ))}
             </div>
@@ -142,7 +152,7 @@ return (
                  <MdAnimation className="w-7 h-7 inline text-blue-500" />Visualization
                 </h2>
               <div className="flex items-center gap-4">
-                {sampleProblems[problemType]?.examples && (
+                {sampleConcepts[problemType]?.examples && (
                   
                   <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-gray-600">Example:</label>
@@ -150,7 +160,7 @@ return (
                       onChange={(e) => changeExample(e.target.value)}
                       className="px-3 py-1 border border-gray-300 rounded-lg text-sm font-medium"
                     >
-                      {Object.keys(sampleProblems[problemType].examples).map(key => (
+                      {Object.keys(sampleConcepts[problemType].examples).map(key => (
                         <option key={key} value={key}>
                           {key.charAt(0).toUpperCase() + key.slice(1)}
                         </option>
@@ -176,8 +186,8 @@ return (
             </div>
 
             <div className="mb-6 min-h-64">
-              <RenderVisualization steps={steps}
-                currentStep={currentStep}
+              <JsRenderVisualization  currentConcept = {currentConcept}
+               currentStep={currentStep}
               />
             </div>
 

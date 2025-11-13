@@ -60,7 +60,13 @@
 ::-webkit-scrollbar-thumb {
   background-color: #807c7c;
   border-radius: 6px;
-  /* display: none; */
+  display: none; 
+}
+
+.code-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #807c7c;
+  border-radius: 6px;
+  display: block; 
 }
 
 /* Handle on hover */

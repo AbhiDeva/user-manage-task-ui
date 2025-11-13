@@ -67,6 +67,7 @@ import { generateMedianTwoSortedArraysSteps } from '../components/visualiser/Med
 import { generateRemoveNthFromEndSteps } from '../components/visualiser/RemoveNthFromEndSteps';
 import { generateCarFleetSteps } from '../components/visualiser/CarFleetSteps';
 import { generateTaskSchedulerSteps } from '../components/visualiser/TaskSchedulerSteps';
+import { generateCopyRandomListSteps } from '../components/visualiser/CopyRandomListSteps';
 
 import {sampleProblems} from '../utils/codedata.js'
 
@@ -209,7 +210,9 @@ export const generateSteps = (problemKey, input) => {
         return generateCarFleetSteps(input.type ? sampleProblems.carFleet.examples[input.type] : input);
       case 'taskScheduler':
         return generateTaskSchedulerSteps(input.type ? sampleProblems.taskScheduler.examples[input.type] : input);
-      default:
+      case 'copyRandomList':
+        return generateCopyRandomListSteps(input.type ? sampleProblems.copyRandomList.examples[input.type] : input.nodes);
+        default:
         return [];
     }
   };

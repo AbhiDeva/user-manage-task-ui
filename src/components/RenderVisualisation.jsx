@@ -3284,6 +3284,166 @@ export const RenderVisualization = ({ steps, currentStep }) => {
           );
         }
 
+         // Copy Random List Visualization
+            if (data.nodes && data.phase && (data.interleaved || data.copied)) {
+              const renderNode = (node, idx, list, isInterleaved = false) => {
+                const isCurrent = idx === data.current || (data.checking !== undefined && idx === data.checking);
+                const isSetting = data.setting !== undefined && idx === data.setting;
+                
+                return (
+                  <div
+                    key={idx}
+                    className={`relative flex flex-col items-center p-3 border-2 rounded-lg transition-all ${
+                      node.isCopy
+                        ? isSetting
+                          ? 'bg-green-400 text-white border-green-600 scale-110'
+                          : isCurrent
+                          ? 'bg-blue-400 text-white border-blue-500 scale-105'
+                          : 'bg-blue-100 border-blue-300'
+                        : isCurrent
+                        ? 'bg-purple-500 text-white border-purple-600 scale-105'
+                        : 'bg-purple-100 border-purple-300'
+                    }`}
+                  >
+                    <div className="text-xs font-bold mb-1">
+                      {node.isCopy ? `Copy ${node.id}` : `Node ${node.id || idx}`}
+                    </div>
+                    <div className="text-2xl font-bold">{node.val}</div>
+                    {node.random !== null && node.random !== undefined && (
+                      <div className="text-xs mt-1 text-red-600 font-bold">
+                        ↻ {node.random}
+                      </div>
+                    )}
+                  </div>
+                );
+              };
+        
+              const renderList = (list, title, isInterleaved = false) => {
+                if (!list || list.length === 0) return null;
+                
+                return (
+                  <div className="space-y-2">
+                    <div className="text-sm font-semibold text-gray-700">{title}:</div>
+                    <div className="relative">
+                      <div className="flex items-center gap-2 flex-wrap justify-center">
+                        {list.map((node, idx) => (
+                          <React.Fragment key={idx}>
+                            {renderNode(node, idx, list, isInterleaved)}
+                            {idx < list.length - 1 && (
+                              <div className="text-gray-400 font-bold">→</div>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      
+                      {/* Random pointer arrows */}
+                      {list.some(n => n.random !== null && n.random !== undefined) && (
+                        <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: -1 }}>
+                          {list.map((node, idx) => {
+                            if (node.random === null || node.random === undefined) return null;
+                            const targetIdx = isInterleaved ? node.random : node.random;
+                            if (targetIdx >= list.length || targetIdx < 0) return null;
+                            
+                            return (
+                              <line
+                                key={`random-${idx}`}
+                                x1="50%"
+                                y1="30"
+                                x2="50%"
+                                y2="30"
+                                stroke={data.setting === idx ? "#22c55e" : "#ef4444"}
+                                strokeWidth="2"
+                                strokeDasharray="4"
+                                opacity="0.6"
+                              />
+                            );
+                          })}
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                );
+              };
+        
+              return (
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-gray-800">
+                      Phase: <span className="text-blue-600">{data.phase.toUpperCase()}</span>
+                    </div>
+                    {data.current >= 0 && (
+                      <div className="text-sm text-gray-600 mt-1">
+                        Processing Node {data.current}
+                      </div>
+                    )}
+                  </div>
+        
+                  {/* Original List */}
+                  <div className="bg-purple-50 p-4 rounded-lg border-2 border-purple-200">
+                    {renderList(data.nodes, 'Original List')}
+                  </div>
+        
+                  {/* Interleaved List */}
+                  {data.interleaved && data.interleaved.length > 0 && (
+                    <div className="bg-blue-50 p-4 rounded-lg border-2 border-blue-200">
+                      {renderList(data.interleaved, 'Interleaved List (Original → Copy)', true)}
+                      <div className="text-xs text-gray-600 mt-2 text-center">
+                        Purple = Original nodes, Blue = Copy nodes
+                      </div>
+                    </div>
+                  )}
+        
+                  {/* Copied List */}
+                  {data.copied && data.copied.length > 0 && (
+                    <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
+                      {renderList(data.copied, 'Copied List (Separated)')}
+                    </div>
+                  )}
+        
+                  {/* Phase descriptions */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-sm space-y-2">
+                      <div className={data.phase === 'interleave' ? 'font-bold text-blue-700' : 'text-gray-600'}>
+                        <span className="font-bold">Phase 1:</span> Create copy nodes and interleave: A → A' → B → B' → C → C'
+                      </div>
+                      <div className={data.phase === 'random' ? 'font-bold text-blue-700' : 'text-gray-600'}>
+                        <span className="font-bold">Phase 2:</span> Set random pointers: If A.random = C, then A'.random = C'
+                      </div>
+                      <div className={data.phase === 'separate' ? 'font-bold text-blue-700' : 'text-gray-600'}>
+                        <span className="font-bold">Phase 3:</span> Separate lists: Restore original and extract copy
+                      </div>
+                    </div>
+                  </div>
+        
+                  {/* Legend */}
+                  <div className="flex gap-6 justify-center text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-purple-100 border-2 border-purple-300 rounded"></div>
+                      <span>Original Node</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 bg-blue-100 border-2 border-blue-300 rounded"></div>
+                      <span>Copy Node</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-1 bg-gray-400"></div>
+                      <span>Next Pointer</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-1 bg-red-500" style={{ borderTop: '2px dashed' }}></div>
+                      <span>Random Pointer</span>
+                    </div>
+                  </div>
+        
+                  {data.complete && (
+                    <div className="text-center text-lg font-bold text-green-600">
+                      ✓ Deep Copy Complete!
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
     if (data.nums && data.hasOwnProperty('left')) {
       // Binary Search Visualization
       return (

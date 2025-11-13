@@ -1691,5 +1691,73 @@ function decode(str) {
         longidle: { tasks: ['A','A','A','B','B','B'], n: 3 },
         simple: { tasks: ['A','B','C','D','E','A','B','C'], n: 2 }
       }
+    },
+    copyRandomList: {
+      name: 'Copy List With Random Pointer',
+      code: `function copyRandomList(head) {
+  if (!head) return null;
+  
+  // Step 1: Create copy nodes interleaved with original
+  let curr = head;
+  while (curr) {
+    const copy = { val: curr.val, next: curr.next, random: null };
+    curr.next = copy;
+    curr = copy.next;
+  }
+  
+  // Step 2: Set random pointers for copy nodes
+  curr = head;
+  while (curr) {
+    if (curr.random) {
+      curr.next.random = curr.random.next;
+    }
+    curr = curr.next.next;
+  }
+  
+  // Step 3: Separate the two lists
+  curr = head;
+  const newHead = head.next;
+  while (curr) {
+    const copy = curr.next;
+    curr.next = copy.next;
+    if (copy.next) {
+      copy.next = copy.next.next;
+    }
+    curr = curr.next;
+  }
+  
+  return newHead;
+}`,
+      input: { 
+        type: 'normal',
+        nodes: [
+          { val: 7, next: 1, random: null },
+          { val: 13, next: 2, random: 0 },
+          { val: 11, next: 3, random: 4 },
+          { val: 10, next: 4, random: 2 },
+          { val: 1, next: null, random: 0 }
+        ]
+      },
+      examples: {
+        normal: [
+          { val: 7, next: 1, random: null },
+          { val: 13, next: 2, random: 0 },
+          { val: 11, next: 3, random: 4 },
+          { val: 10, next: 4, random: 2 },
+          { val: 1, next: null, random: 0 }
+        ],
+        simple: [
+          { val: 1, next: 1, random: 1 },
+          { val: 2, next: null, random: 0 }
+        ],
+        noRandom: [
+          { val: 3, next: 1, random: null },
+          { val: 3, next: 2, random: null },
+          { val: 3, next: null, random: null }
+        ],
+        single: [
+          { val: 1, next: null, random: 0 }
+        ]
+      }
     }
   };
