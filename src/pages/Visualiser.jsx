@@ -84,7 +84,7 @@ return (
                   <span className="text-sm font-bold mb-4 text-blue-800"> {Object.entries(sampleProblems).length}</span> </p>
             </div>
            
-            <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+            <div className="space-y-2 max-h-96 overflow-y-auto pr-2 code-scrollbar">
               {Object.entries(sampleProblems).map(([key, problem]) => (
                 <button
                   key={key}
