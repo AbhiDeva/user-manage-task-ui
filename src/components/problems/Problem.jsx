@@ -1,14 +1,12 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProblemNavbar from "./ProblemNavbar";
-import { PROBLEMS } from '../../utils/problemsdata';
 import { MdCode, MdSearch, MdFilterList, MdCreate, MdAdd } from 'react-icons/md';
 import { getDifficultyBadgeClass } from '../../utils/index.js';
 import { toast } from 'sonner';
 import { useGetAllProblemsQuery, useCreateProblemMutation } from '../../redux/slices/api/problemApiSlice.js';
 import { useSelector } from 'react-redux';
 import CreateProblemModal from "./CreateProblemModal"
-//import { useGetUserSubmissionsQuery } from "../../redux/features/submissions/submissionApiSlice";
 
 const Problem = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -27,10 +25,8 @@ const Problem = () => {
 
     // Create problem mutation
     const [createProblem, { isLoading: isCreating }] = useCreateProblemMutation();
-
-    //const problems = Object.values(PROBLEMS);
     const problems = problemsData && problemsData.data  || [];
-    console.log(problems);
+
     const filteredProblems = problems;
     // const filteredProblems = problems & problems.filter((problem) => {
     //     const matchesSearch = searchTerm ? (problem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -38,8 +34,7 @@ const Problem = () => {
     //     const matchesDifficulty = selectedDifficulty === " " || problem.difficulty === selectedDifficulty;
     //     return matchesSearch && matchesDifficulty;
     // });
-    console.log(filteredProblems)
-
+ 
     const easyProblemsCount = problems.filter((p) => p.difficulty === "Easy").length;
     const mediumProblemsCount = problems.filter((p) => p.difficulty === "Medium").length;
     const hardProblemsCount = problems.filter((p) => p.difficulty === "Hard").length;
@@ -60,7 +55,6 @@ const Problem = () => {
 
     return (
         <div className="min-h-screen">
-            <ProblemNavbar />
             <div className="max-w-6xl mx-auto px-4 py-12">
                 {/* HEADER */}
                 <div className="mb-8 flex items-center justify-between">

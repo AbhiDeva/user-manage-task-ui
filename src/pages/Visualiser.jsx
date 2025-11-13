@@ -78,7 +78,12 @@ return (
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Select Problem</h2>
+            <div className="flex items-center justify-between mb-4">
+                 <h2 className="text-xl font-bold mb-4 text-gray-800">Select Problem</h2>
+                 <p className="text-md font-bold mb-4 text-gray-800">Count :
+                  <span className="text-sm font-bold mb-4 text-blue-800"> {Object.entries(sampleProblems).length}</span> </p>
+            </div>
+           
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {Object.entries(sampleProblems).map(([key, problem]) => (
                 <button
