@@ -134,6 +134,195 @@ export const sampleConcepts = {
         ]
       }
     },
+    'closures': {
+      title: 'Closures',
+      normal: {
+        steps: [
+          { title: 'What is a Closure?', desc: 'Function that remembers its environment', visual: { type: 'closure-concept' } },
+          { title: 'Simple Example', desc: 'Inner function accesses outer variable', code: "function outer() {\n  const name = 'Alice';\n  \n  function inner() {\n    console.log(name); // Can access!\n  }\n  \n  return inner;\n}", visual: { type: 'closure-scope', outerVar: 'name', innerAccess: true } },
+          { title: 'Closure in Action', desc: 'Function keeps reference to variable', code: "const greet = outer();\ngreet(); // 'Alice'\n// Still has access to name!", visual: { type: 'closure-memory', variable: 'name: Alice', kept: true } },
+          { title: 'Why It Works', desc: 'Closure preserves the scope', visual: { type: 'closure-explanation' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Counter Example', desc: 'Private variable with closure', code: "function createCounter() {\n  let count = 0;\n  \n  return {\n    increment: () => ++count,\n    decrement: () => --count,\n    getCount: () => count\n  };\n}", visual: { type: 'counter-closure', count: 0 } },
+          { title: 'Increment Called', desc: 'count is private but accessible', visual: { type: 'counter-closure', count: 1, action: 'increment' } },
+          { title: 'Multiple Closures', desc: 'Each closure has own scope', code: "const counter1 = createCounter();\nconst counter2 = createCounter();\n\ncounter1.increment(); // 1\ncounter2.increment(); // 1\n// Independent!", visual: { type: 'multiple-closures', counters: [1, 1] } },
+          { title: 'Use Cases', desc: 'When closures are useful', example: 'Data privacy, Factory functions, Event handlers, Callbacks' }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Loop Problem', desc: 'Common closure mistake', code: "for (var i = 0; i < 3; i++) {\n  setTimeout(() => {\n    console.log(i); // 3, 3, 3 😱\n  }, 1000);\n}", visual: { type: 'closure-loop-problem', outputs: [3, 3, 3] } },
+          { title: 'Why It Fails', desc: 'All closures share same variable', visual: { type: 'closure-shared-var', variable: 'i', finalValue: 3, closures: 3 } },
+          { title: 'Solution: IIFE', desc: 'Create new scope for each iteration', code: "for (var i = 0; i < 3; i++) {\n  (function(j) {\n    setTimeout(() => {\n      console.log(j); // 0, 1, 2 ✓\n    }, 1000);\n  })(i);\n}", visual: { type: 'closure-loop-solution', outputs: [0, 1, 2] } },
+          { title: 'Modern Solution', desc: 'Use let instead of var', code: "for (let i = 0; i < 3; i++) {\n  setTimeout(() => {\n    console.log(i); // 0, 1, 2 ✓\n  }, 1000);\n}\n// let creates new scope per iteration" }
+        ]
+      }
+    },
+    'closures': {
+      title: 'Closures',
+      normal: {
+        steps: [
+          { title: 'What is a Closure?', desc: 'Function that remembers its environment', visual: { type: 'closure-concept' } },
+          { title: 'Simple Example', desc: 'Inner function accesses outer variable', code: "function outer() {\n  const name = 'Alice';\n  \n  function inner() {\n    console.log(name); // Can access!\n  }\n  \n  return inner;\n}", visual: { type: 'closure-scope', outerVar: 'name', innerAccess: true } },
+          { title: 'Closure in Action', desc: 'Function keeps reference to variable', code: "const greet = outer();\ngreet(); // 'Alice'\n// Still has access to name!", visual: { type: 'closure-memory', variable: 'name: Alice', kept: true } },
+          { title: 'Why It Works', desc: 'Closure preserves the scope', visual: { type: 'closure-explanation' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Counter Example', desc: 'Private variable with closure', code: "function createCounter() {\n  let count = 0;\n  \n  return {\n    increment: () => ++count,\n    decrement: () => --count,\n    getCount: () => count\n  };\n}", visual: { type: 'counter-closure', count: 0 } },
+          { title: 'Increment Called', desc: 'count is private but accessible', visual: { type: 'counter-closure', count: 1, action: 'increment' } },
+          { title: 'Multiple Closures', desc: 'Each closure has own scope', code: "const counter1 = createCounter();\nconst counter2 = createCounter();\n\ncounter1.increment(); // 1\ncounter2.increment(); // 1\n// Independent!", visual: { type: 'multiple-closures', counters: [1, 1] } },
+          { title: 'Real World Uses', desc: 'Closures in practice', visual: { type: 'closure-use-cases' } }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Loop Problem', desc: 'Common closure mistake', code: "for (var i = 0; i < 3; i++) {\n  setTimeout(() => {\n    console.log(i); // 3, 3, 3 😱\n  }, 1000);\n}", visual: { type: 'closure-loop-problem', outputs: [3, 3, 3] } },
+          { title: 'Why It Fails', desc: 'All closures share same variable', visual: { type: 'closure-shared-var', variable: 'i', finalValue: 3, closures: 3 } },
+          { title: 'Solution: IIFE', desc: 'Create new scope for each iteration', code: "for (var i = 0; i < 3; i++) {\n  (function(j) {\n    setTimeout(() => {\n      console.log(j); // 0, 1, 2 ✓\n    }, 1000);\n  })(i);\n}", visual: { type: 'closure-loop-solution', outputs: [0, 1, 2] } },
+          { title: 'Modern Solution', desc: 'Use let instead of var', code: "for (let i = 0; i < 3; i++) {\n  setTimeout(() => {\n    console.log(i); // 0, 1, 2 ✓\n  }, 1000);\n}\n// let creates new scope per iteration" }
+        ]
+      }
+    },
+    'closure-data-privacy': {
+      title: 'Closures - Data Privacy',
+      normal: {
+        steps: [
+          { title: 'The Problem', desc: 'Public variables can be changed', code: "const user = {\n  balance: 1000\n};\n\nuser.balance = 9999999; // Oops! 😱\nconsole.log(user.balance);", visual: { type: 'public-data-problem', value: 9999999 } },
+          { title: 'Private with Closures', desc: 'Hide data inside function scope', code: "function createBankAccount(initial) {\n  let balance = initial; // Private!\n  \n  return {\n    deposit: (amt) => balance += amt,\n    withdraw: (amt) => balance -= amt,\n    getBalance: () => balance\n  };\n}", visual: { type: 'private-data-visual', balance: 1000, locked: true } },
+          { title: 'Cannot Access Directly', desc: 'balance is truly private', code: "const account = createBankAccount(1000);\nconsole.log(account.balance); // undefined\n// Can't cheat! ✓", visual: { type: 'access-denied' } },
+          { title: 'Controlled Access', desc: 'Only through methods', code: "account.deposit(500);  // ✓ Allowed\naccount.getBalance(); // 1500\n// Full control over data!" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Module Pattern', desc: 'Creating private state', code: "const ShoppingCart = (function() {\n  let items = []; // Private\n  let total = 0;  // Private\n  \n  return {\n    addItem(item, price) {\n      items.push(item);\n      total += price;\n    },\n    getTotal() {\n      return total;\n    },\n    getItemCount() {\n      return items.length;\n    }\n  };\n})();", visual: { type: 'module-pattern', private: ['items', 'total'], public: ['addItem', 'getTotal'] } },
+          { title: 'State Encapsulation', desc: 'Private state in action', visual: { type: 'state-encapsulation', items: 2, total: 150, canAccess: false } },
+          { title: 'Validation Example', desc: 'Protect data integrity', code: "function createUser(name, age) {\n  let _age = age;\n  \n  return {\n    setAge(newAge) {\n      if (newAge > 0 && newAge < 150) {\n        _age = newAge;\n      } else {\n        throw new Error('Invalid age');\n      }\n    },\n    getAge: () => _age\n  };\n}", visual: { type: 'validation-visual' } },
+          { title: 'Benefits', desc: 'Why use private data', visual: { type: 'privacy-benefits' } }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Advanced Privacy', desc: 'Multiple private variables', code: "function createSecureVault() {\n  const secrets = new Map();\n  let accessLog = [];\n  const masterKey = generateKey();\n  \n  return {\n    store(key, value) {\n      if (validateKey(key)) {\n        secrets.set(key, encrypt(value));\n        accessLog.push({action: 'store', time: Date.now()});\n      }\n    },\n    retrieve(key) {\n      accessLog.push({action: 'retrieve', time: Date.now()});\n      return decrypt(secrets.get(key));\n    }\n    // secrets, accessLog, masterKey all private!\n  };\n}" },
+          { title: 'WeakMap for Privacy', desc: 'Alternative approach', code: "const privateData = new WeakMap();\n\nclass BankAccount {\n  constructor(balance) {\n    privateData.set(this, { balance });\n  }\n  \n  deposit(amt) {\n    const data = privateData.get(this);\n    data.balance += amt;\n  }\n  \n  getBalance() {\n    return privateData.get(this).balance;\n  }\n}" },
+          { title: 'Symbols for Semi-Private', desc: 'Another pattern', code: "const _balance = Symbol('balance');\n\nclass Account {\n  constructor(initial) {\n    this[_balance] = initial;\n  }\n  \n  deposit(amt) {\n    this[_balance] += amt;\n  }\n}\n// Harder to access, not truly private" },
+          { title: 'Best Practices', desc: 'Choosing the right approach', example: 'Closures: True privacy, simple\nWeakMap: Privacy with classes\nSymbols: Semi-private, documentation\n# prefix: Modern convention' }
+        ]
+      }
+    },
+    'closure-factory-functions': {
+      title: 'Closures - Factory Functions',
+      normal: {
+        steps: [
+          { title: 'What is a Factory?', desc: 'Function that creates objects', visual: { type: 'factory-concept' } },
+          { title: 'Simple Factory', desc: 'Creating dog objects', code: "function createDog(name, breed) {\n  return {\n    name: name,\n    breed: breed,\n    bark() {\n      return `${name} says Woof!`;\n    }\n  };\n}", visual: { type: 'simple-factory', output: 'Dog object' } },
+          { title: 'Factory in Action', desc: 'Multiple objects created', code: "const dog1 = createDog('Max', 'Beagle');\nconst dog2 = createDog('Bella', 'Poodle');\n\ndog1.bark(); // 'Max says Woof!'\ndog2.bark(); // 'Bella says Woof!'", visual: { type: 'multiple-objects', objects: 2 } },
+          { title: 'Closure Magic', desc: 'Each method remembers its data', visual: { type: 'factory-closure-magic', name: 'Max', remembered: true } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Factory with Private State', desc: 'Combining privacy + factory', code: "function createPlayer(name) {\n  let score = 0;     // Private!\n  let level = 1;     // Private!\n  let health = 100;  // Private!\n  \n  return {\n    getName: () => name,\n    addScore(points) {\n      score += points;\n      if (score > 100) level++;\n    },\n    takeDamage(dmg) {\n      health -= dmg;\n    },\n    getStats() {\n      return { name, score, level, health };\n    }\n  };\n}", visual: { type: 'factory-private-state', player: 'Alice', private: ['score', 'level', 'health'] } },
+          { title: 'Multiple Players', desc: 'Each with independent state', visual: { type: 'factory-multiple-players', players: [{ name: 'Alice', score: 50 }, { name: 'Bob', score: 30 }] } },
+          { title: 'Configuration Factory', desc: 'Pre-configured functions', code: "function createMultiplier(factor) {\n  return function(num) {\n    return num * factor;\n  };\n}\n\nconst double = createMultiplier(2);\nconst triple = createMultiplier(3);\n\ndouble(5);  // 10\ntriple(5);  // 15", visual: { type: 'config-factory' } },
+          { title: 'Factory vs Constructor', desc: 'Key differences', visual: { type: 'factory-vs-constructor' } }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Composition Factory', desc: 'Building complex objects', code: "const canEat = () => ({\n  eat(food) {\n    console.log(`Eating ${food}`);\n  }\n});\n\nconst canWalk = () => ({\n  walk() {\n    console.log('Walking...');\n  }\n});\n\nconst canSwim = () => ({\n  swim() {\n    console.log('Swimming...');\n  }\n});\n\nfunction createDuck(name) {\n  return {\n    name,\n    ...canEat(),\n    ...canWalk(),\n    ...canSwim()\n  };\n}" },
+          { title: 'Async Factory', desc: 'Creating objects with async data', code: "async function createUser(userId) {\n  const userData = await fetchUser(userId);\n  const preferences = await fetchPrefs(userId);\n  \n  let cachedPosts = null;\n  \n  return {\n    getName: () => userData.name,\n    async getPosts() {\n      if (!cachedPosts) {\n        cachedPosts = await fetchPosts(userId);\n      }\n      return cachedPosts;\n    }\n  };\n}" },
+          { title: 'Factory with Methods', desc: 'Shared vs instance methods', code: "// Shared methods (better memory)\nconst playerMethods = {\n  attack(target) { /* ... */ },\n  defend() { /* ... */ }\n};\n\nfunction createPlayer(name) {\n  let health = 100;\n  \n  return Object.assign(Object.create(playerMethods), {\n    name,\n    getHealth: () => health\n  });\n}" },
+          { title: 'When to Use', desc: 'Factory vs Class', example: 'Use Factory when:\n- Need data privacy\n- Want functional composition\n- Avoid "new" keyword\n- Dynamic object creation\n\nUse Class when:\n- Need inheritance\n- Want instanceof checks\n- Standard OOP patterns' }
+        ]
+      }
+    },
+    'closure-event-handlers': {
+      title: 'Closures - Event Handlers',
+      normal: {
+        steps: [
+          { title: 'Event Handler Closure', desc: 'Handlers remember their context', code: "function setupButton(message) {\n  const btn = document.querySelector('#myBtn');\n  \n  btn.addEventListener('click', function() {\n    alert(message); // Closure!\n  });\n}", visual: { type: 'event-handler-closure', message: 'Hello!', captured: true } },
+          { title: 'Each Handler Independent', desc: 'Multiple buttons, different messages', code: "setupButton('Button 1 clicked');\nsetupButton('Button 2 clicked');\n// Each remembers its own message!", visual: { type: 'multiple-handlers', handlers: 2 } },
+          { title: 'Visual Flow', desc: 'Click triggers closure', visual: { type: 'event-handler-flow' } },
+          { title: 'Common Pattern', desc: 'Passing data to handlers', code: "buttons.forEach(btn => {\n  const id = btn.dataset.id;\n  btn.addEventListener('click', () => {\n    handleClick(id); // id captured!\n  });\n});" }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Counter in Handler', desc: 'Private state with events', code: "function createClickCounter(elementId) {\n  let count = 0; // Private!\n  const el = document.getElementById(elementId);\n  \n  el.addEventListener('click', () => {\n    count++;\n    el.textContent = `Clicked ${count} times`;\n  });\n  \n  return {\n    reset: () => {\n      count = 0;\n      el.textContent = 'Clicked 0 times';\n    }\n  };\n}", visual: { type: 'handler-counter', count: 0 } },
+          { title: 'After 3 Clicks', desc: 'Count increments privately', visual: { type: 'handler-counter', count: 3 } },
+          { title: 'Debounce Pattern', desc: 'Closure in practical use', code: "function setupSearch() {\n  let timeoutId; // Captured!\n  const input = document.querySelector('#search');\n  \n  input.addEventListener('input', (e) => {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => {\n      search(e.target.value);\n    }, 500);\n  });\n}", visual: { type: 'debounce-handler' } },
+          { title: 'Cleanup Important', desc: 'Remove listeners to avoid leaks', code: "function setupTemporary() {\n  const handler = () => console.log('clicked');\n  \n  button.addEventListener('click', handler);\n  \n  // Later: cleanup\n  return () => {\n    button.removeEventListener('click', handler);\n  };\n}" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'State Machine', desc: 'Complex state with handlers', code: "function createToggle(elementId) {\n  const states = ['off', 'loading', 'on'];\n  let currentState = 0;\n  const el = document.getElementById(elementId);\n  \n  el.addEventListener('click', () => {\n    currentState = (currentState + 1) % states.length;\n    el.className = states[currentState];\n    el.textContent = states[currentState];\n  });\n  \n  return {\n    getState: () => states[currentState],\n    setState: (state) => {\n      const idx = states.indexOf(state);\n      if (idx !== -1) currentState = idx;\n    }\n  };\n}" },
+          { title: 'Event Delegation', desc: 'Single handler, multiple items', code: "function setupList() {\n  const activeItems = new Set(); // Closure!\n  const list = document.querySelector('#list');\n  \n  list.addEventListener('click', (e) => {\n    if (e.target.matches('.item')) {\n      const id = e.target.dataset.id;\n      \n      if (activeItems.has(id)) {\n        activeItems.delete(id);\n        e.target.classList.remove('active');\n      } else {\n        activeItems.add(id);\n        e.target.classList.add('active');\n      }\n    }\n  });\n  \n  return {\n    getActive: () => Array.from(activeItems)\n  };\n}" },
+          { title: 'React-like Hooks', desc: 'Closure-based state management', code: "function useState(initial) {\n  let state = initial;\n  const subscribers = [];\n  \n  function setState(newState) {\n    state = newState;\n    subscribers.forEach(fn => fn(state));\n  }\n  \n  function subscribe(fn) {\n    subscribers.push(fn);\n    return () => {\n      const idx = subscribers.indexOf(fn);\n      subscribers.splice(idx, 1);\n    };\n  }\n  \n  return [() => state, setState, subscribe];\n}" },
+          { title: 'Best Practices', desc: 'Event handler tips', example: 'Store handlers for cleanup\nUse named functions, not anonymous\nAvoid capturing large objects\nClean up on component unmount\nUse event delegation when possible' }
+        ]
+      }
+    },
+    'closure-callbacks': {
+      title: 'Closures - Callbacks',
+      normal: {
+        steps: [
+          { title: 'What are Callbacks?', desc: 'Functions passed as arguments', visual: { type: 'callback-concept' } },
+          { title: 'Simple Callback', desc: 'setTimeout with closure', code: "function greet(name) {\n  setTimeout(function() {\n    console.log(`Hello ${name}`);\n  }, 1000);\n  // Callback remembers name!\n}", visual: { type: 'simple-callback', variable: 'name', captured: true } },
+          { title: 'Array Methods', desc: 'Closures in forEach, map, filter', code: "function multiplyBy(factor) {\n  const numbers = [1, 2, 3, 4, 5];\n  \n  return numbers.map(num => {\n    return num * factor; // factor captured!\n  });\n}\n\nmultiplyBy(10); // [10, 20, 30, 40, 50]", visual: { type: 'array-callback', factor: 10 } },
+          { title: 'Why It Works', desc: 'Callback has access to outer scope', visual: { type: 'callback-scope-access' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Async Callbacks', desc: 'Data available when callback runs', code: "function fetchUserData(userId) {\n  const timestamp = Date.now();\n  \n  fetch(`/api/users/${userId}`)\n    .then(response => response.json())\n    .then(data => {\n      // timestamp captured!\n      console.log(`Fetched at: ${timestamp}`);\n      console.log(data);\n    });\n}", visual: { type: 'async-callback', captured: 'timestamp' } },
+          { title: 'Callback Factory', desc: 'Creating specialized callbacks', code: "function createValidator(field, rules) {\n  return function(value) {\n    // field and rules captured!\n    for (let rule of rules) {\n      if (!rule.test(value)) {\n        return `${field} failed: ${rule.message}`;\n      }\n    }\n    return null;\n  };\n}\n\nconst emailValidator = createValidator('email', [\n  { test: v => v.includes('@'), message: 'needs @' }\n]);\n\nemailValidator('test'); // 'email failed: needs @'", visual: { type: 'callback-factory' } },
+          { title: 'Callback Hell', desc: 'Nested callbacks problem', code: "getData(id, function(data) {\n  getMore(data.id, function(more) {\n    getEvenMore(more.id, function(evenMore) {\n      // Pyramid of doom! 😱\n    });\n  });\n});", visual: { type: 'callback-hell', depth: 3 } },
+          { title: 'Solution: Promises', desc: 'Flatten with promises/async-await', code: "async function getData(id) {\n  const data = await fetchData(id);\n  const more = await fetchMore(data.id);\n  const evenMore = await fetchEvenMore(more.id);\n  return evenMore;\n}" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Memoization', desc: 'Caching with closures', code: "function memoize(fn) {\n  const cache = {}; // Captured!\n  \n  return function(...args) {\n    const key = JSON.stringify(args);\n    \n    if (key in cache) {\n      console.log('From cache');\n      return cache[key];\n    }\n    \n    const result = fn(...args);\n    cache[key] = result;\n    return result;\n  };\n}\n\nconst expensiveCalc = memoize((n) => {\n  // Expensive operation\n  return n * n;\n});\n\nexpensiveCalc(5); // Calculates\nexpensiveCalc(5); // From cache!", visual: { type: 'memoization-visual', cache: { '5': 25 } } },
+          { title: 'Partial Application', desc: 'Pre-filling arguments', code: "function partial(fn, ...fixedArgs) {\n  return function(...remainingArgs) {\n    // fixedArgs captured!\n    return fn(...fixedArgs, ...remainingArgs);\n  };\n}\n\nfunction greet(greeting, name) {\n  return `${greeting}, ${name}!`;\n}\n\nconst sayHello = partial(greet, 'Hello');\nsayHello('Alice'); // 'Hello, Alice!'\nsayHello('Bob');   // 'Hello, Bob!'" },
+          { title: 'Pub/Sub Pattern', desc: 'Event system with closures', code: "function createEventEmitter() {\n  const events = {}; // Private!\n  \n  return {\n    on(event, callback) {\n      if (!events[event]) events[event] = [];\n      events[event].push(callback);\n      \n      // Return unsubscribe function\n      return () => {\n        const idx = events[event].indexOf(callback);\n        events[event].splice(idx, 1);\n      };\n    },\n    \n    emit(event, data) {\n      if (events[event]) {\n        events[event].forEach(cb => cb(data));\n      }\n    }\n  };\n}\n\nconst emitter = createEventEmitter();\nconst unsub = emitter.on('data', (d) => console.log(d));\nemitter.emit('data', 'hello');\nunsub(); // Clean up" },
+          { title: 'Practical Tips', desc: 'Working with callbacks', example: 'Name your callbacks for debugging\nAvoid deep nesting (use promises)\nBe careful with closures in loops\nAlways handle errors\nConsider memory with long-lived callbacks' }
+        ]
+      }
+    },
+    'closure-memory-leaks': {
+      title: 'Closures & Memory Leaks',
+      normal: {
+        steps: [
+          { title: 'What is a Memory Leak?', desc: 'Memory not released when no longer needed', visual: { type: 'memory-leak-concept' } },
+          { title: 'Normal Closure', desc: 'Keeps necessary references', code: "function createGreeter(name) {\n  return function() {\n    console.log(`Hello ${name}`);\n  };\n}\n// name is needed - OK!", visual: { type: 'normal-closure-memory', used: true } },
+          { title: 'Accidental Leak', desc: 'Keeping unnecessary large data', code: "function processData() {\n  const hugeArray = new Array(1000000);\n  \n  return function() {\n    console.log('Done');\n    // hugeArray still in memory! 😱\n  };\n}", visual: { type: 'memory-leak-visual', size: 'large', leaked: true } },
+          { title: 'The Problem', desc: 'Closure keeps entire scope alive', visual: { type: 'leak-explanation' } }
+        ]
+      },
+      medium: {
+        steps: [
+          { title: 'Event Listener Leak', desc: 'Common memory leak pattern', code: "function setupButton() {\n  const bigData = fetchLargeData();\n  \n  button.addEventListener('click', () => {\n    // Only uses button, but bigData\n    // stays in memory!\n    console.log('Clicked');\n  });\n}", visual: { type: 'event-listener-leak', data: 'bigData', retained: true } },
+          { title: 'Fix: Limit Scope', desc: 'Only capture what you need', code: "function setupButton() {\n  const bigData = fetchLargeData();\n  const needed = bigData.id;\n  \n  button.addEventListener('click', () => {\n    console.log(needed); // Only keeps id\n  });\n  // bigData can be garbage collected ✓\n}", visual: { type: 'event-listener-fixed', kept: 'id only' } },
+          { title: 'Timer Leak', desc: 'setInterval keeps closure alive', code: "function startTimer() {\n  const data = new Array(10000);\n  \n  setInterval(() => {\n    console.log('tick');\n  }, 1000);\n  // data never freed! 😱\n}", visual: { type: 'timer-leak', interval: true } },
+          { title: 'Fix: Clear Timer', desc: 'Clean up when done', code: "function startTimer() {\n  const data = new Array(10000);\n  \n  const id = setInterval(() => {\n    console.log('tick');\n  }, 1000);\n  \n  // Later:\n  clearInterval(id); // Cleanup ✓\n}" }
+        ]
+      },
+      complex: {
+        steps: [
+          { title: 'Circular Reference', desc: 'Objects referencing each other', code: "function createLeak() {\n  const obj1 = {};\n  const obj2 = {};\n  \n  obj1.ref = obj2;\n  obj2.ref = obj1;\n  \n  return function() {\n    console.log(obj1.ref.ref);\n  };\n  // Circular reference kept alive!\n}", visual: { type: 'circular-reference', objects: 2 } },
+          { title: 'DOM Reference Leak', desc: 'Keeping removed DOM nodes', code: "let cache = [];\n\nfunction storeElements() {\n  const div = document.querySelector('#temp');\n  cache.push(() => {\n    console.log(div.innerHTML);\n  });\n  // div removed from DOM\n  // but still in memory! 😱\n}", visual: { type: 'dom-leak', element: 'div', inDom: false, inMemory: true } },
+          { title: 'Fix: Weak References', desc: 'Use WeakMap/WeakSet', code: "const cache = new WeakMap();\n\nfunction storeElement(el) {\n  cache.set(el, () => {\n    console.log('data');\n  });\n}\n// When el is removed, entry\n// automatically garbage collected ✓" },
+          { title: 'Best Practices', desc: 'Prevent memory leaks', visual: { type: 'best-practices-table' } }
+        ]
+      }
+    },
     'throttling': {
       title: 'Throttling',
       normal: {
@@ -166,17 +355,17 @@ export const sampleConcepts = {
       normal: {
         steps: [
           { title: 'The Problem', desc: 'User types fast, API called too much', code: "input.addEventListener('input', (e) => {\n  searchAPI(e.target.value);\n  // Called on every keystroke!\n});" },
-          { title: 'What is Debouncing?', desc: 'Wait until user stops typing', visual: { type: 'timeline', events: ['k', 'e', 'y', 's'], executed: [false, false, false, true], label: 'Execute after quiet period' } },
-          { title: 'Basic Debounce', desc: 'Delay execution until pause', code: "function debounce(func, delay) {\n  let timeout;\n  return function(...args) {\n    clearTimeout(timeout);\n    timeout = setTimeout(() => {\n      func.apply(this, args);\n    }, delay);\n  };\n}" },
-          { title: 'Usage', desc: 'Wrap your function', code: "const debouncedSearch = debounce((query) => {\n  searchAPI(query);\n}, 500);\n\ninput.addEventListener('input', (e) => {\n  debouncedSearch(e.target.value);\n});" }
+          { title: 'Visual Problem', desc: 'Too many function calls', visual: { type: 'debounce-problem', inputs: ['h', 'he', 'hel', 'hell', 'hello'], apiCalls: 5 } },
+          { title: 'What is Debouncing?', desc: 'Wait until user stops typing', visual: { type: 'debounce-concept', typing: true } },
+          { title: 'How It Works', desc: 'Timer resets on each keystroke', visual: { type: 'debounce-timer-visual', keystrokes: [0, 100, 200, 300, 400], timer: 300 } }
         ]
       },
       medium: {
         steps: [
-          { title: 'Visual Timeline', desc: '500ms debounce delay', visual: { type: 'debounce-timeline', delay: 500, calls: [0, 100, 200, 300, 400, 700], executed: [1200] } },
-          { title: 'Timer Reset', desc: 'Each call resets the timer', demo: { type: 'timer-reset', resets: [0, 100, 200, 300], final: 800 } },
-          { title: 'Immediate Mode', desc: 'Execute on leading edge', code: "function debounce(func, delay, immediate) {\n  let timeout;\n  return function(...args) {\n    const callNow = immediate && !timeout;\n    clearTimeout(timeout);\n    timeout = setTimeout(() => {\n      timeout = null;\n      if (!immediate) func.apply(this, args);\n    }, delay);\n    if (callNow) func.apply(this, args);\n  };\n}" },
-          { title: 'Use Cases', desc: 'When to use debouncing', example: 'Search input, Form validation, Auto-save, Window resize' }
+          { title: 'Step by Step', desc: 'See timer in action', visual: { type: 'debounce-step-by-step', step: 1 } },
+          { title: 'Timer Resets', desc: 'Each keystroke cancels previous timer', visual: { type: 'debounce-step-by-step', step: 2 } },
+          { title: 'User Stops Typing', desc: 'Timer completes after 500ms', visual: { type: 'debounce-step-by-step', step: 3 } },
+          { title: 'Function Executes', desc: 'API call happens once!', visual: { type: 'debounce-step-by-step', step: 4 } }
         ]
       },
       complex: {
@@ -192,18 +381,18 @@ export const sampleConcepts = {
       title: 'Promises',
       normal: {
         steps: [
-          { title: 'What is a Promise?', desc: 'Represents future value', code: "const promise = new Promise((resolve, reject) => {\n  // Async operation\n  setTimeout(() => {\n    resolve('Success!');\n  }, 1000);\n});" },
-          { title: 'Three States', desc: 'Promise lifecycle', visual: { type: 'promise-states', states: ['Pending', 'Fulfilled', 'Rejected'] } },
-          { title: 'Using Promises', desc: 'then() and catch()', code: "promise\n  .then(result => {\n    console.log(result); // 'Success!'\n  })\n  .catch(error => {\n    console.error(error);\n  });" },
-          { title: 'Chaining', desc: 'Sequential async operations', code: "fetchUser()\n  .then(user => fetchPosts(user.id))\n  .then(posts => console.log(posts))\n  .catch(error => console.error(error));" }
+          { title: 'What is a Promise?', desc: 'Like ordering food - you get a receipt', visual: { type: 'promise-analogy', stage: 'order' } },
+          { title: 'Three States', desc: 'Waiting, Success, or Failure', visual: { type: 'promise-states-visual', currentState: 'pending' } },
+          { title: 'Promise Fulfilled', desc: 'Operation succeeded!', visual: { type: 'promise-states-visual', currentState: 'fulfilled', value: 'Your data!' } },
+          { title: 'Promise Rejected', desc: 'Something went wrong', visual: { type: 'promise-states-visual', currentState: 'rejected', error: 'Network error!' } }
         ]
       },
       medium: {
         steps: [
-          { title: 'Promise Flow', desc: 'State transitions', visual: { type: 'promise-flow', from: 'Pending', to: 'Fulfilled', value: 'data' } },
-          { title: 'Creating Promises', desc: 'Wrapping async code', code: "function fetchData(url) {\n  return new Promise((resolve, reject) => {\n    fetch(url)\n      .then(res => res.json())\n      .then(data => resolve(data))\n      .catch(err => reject(err));\n  });\n}" },
-          { title: 'Promise.resolve', desc: 'Create resolved promise', code: "const promise = Promise.resolve(42);\n// Immediately fulfilled with value 42\n\nconst promise2 = Promise.reject('Error');\n// Immediately rejected" },
-          { title: 'Finally', desc: 'Cleanup regardless of outcome', code: "promise\n  .then(data => process(data))\n  .catch(err => handle(err))\n  .finally(() => {\n    // Always runs\n    cleanup();\n  });" }
+          { title: 'Creating a Promise', desc: 'Fetching data example', visual: { type: 'promise-creation', stage: 'start' } },
+          { title: 'Promise Pending', desc: 'Waiting for server response', visual: { type: 'promise-creation', stage: 'pending' } },
+          { title: 'Data Arrives', desc: 'Resolve with data', visual: { type: 'promise-creation', stage: 'resolve', data: '{name: "Alice"}' } },
+          { title: 'Using .then()', desc: 'Handle the result', visual: { type: 'promise-creation', stage: 'then', result: 'Data processed!' } }
         ]
       },
       complex: {
@@ -219,18 +408,18 @@ export const sampleConcepts = {
       title: 'Async/Await',
       normal: {
         steps: [
-          { title: 'What is Async/Await?', desc: 'Syntactic sugar over promises', code: "// Promise way\nfetchData()\n  .then(data => console.log(data));\n\n// Async/Await way\nconst data = await fetchData();\nconsole.log(data);" },
-          { title: 'Async Function', desc: 'Always returns a promise', code: "async function getData() {\n  return 'Hello';\n}\n// Same as:\nfunction getData() {\n  return Promise.resolve('Hello');\n}" },
-          { title: 'Await Keyword', desc: 'Pause until promise resolves', code: "async function fetchUser() {\n  const response = await fetch('/api/user');\n  const data = await response.json();\n  return data;\n}", visual: { type: 'await-pause' } },
-          { title: 'Sequential Execution', desc: 'One after another', code: "async function process() {\n  const user = await fetchUser();    // Wait\n  const posts = await fetchPosts();  // Then wait\n  return { user, posts };\n}" }
+          { title: 'The Problem with Promises', desc: 'Too many .then() chains', visual: { type: 'promise-chain-messy', chains: 3 } },
+          { title: 'Async/Await Solution', desc: 'Write async code like sync code', visual: { type: 'async-await-clean' } },
+          { title: 'How Await Works', desc: 'Pauses function until promise resolves', visual: { type: 'await-execution', stage: 'waiting' } },
+          { title: 'Result Received', desc: 'Function continues with data', visual: { type: 'await-execution', stage: 'received', data: 'User data' } }
         ]
       },
       medium: {
         steps: [
-          { title: 'Error Handling', desc: 'Use try/catch with await', code: "async function getData() {\n  try {\n    const data = await fetch('/api');\n    return data;\n  } catch (error) {\n    console.error('Failed:', error);\n  }\n}" },
-          { title: 'Parallel Execution', desc: 'Run multiple awaits together', code: "async function getData() {\n  // Sequential (slow)\n  const user = await fetchUser();\n  const posts = await fetchPosts();\n  \n  // Parallel (fast)\n  const [user, posts] = await Promise.all([\n    fetchUser(),\n    fetchPosts()\n  ]);\n}", visual: { type: 'parallel-vs-sequential' } },
-          { title: 'Top-level Await', desc: 'Modern JavaScript feature', code: "// In ES modules\nconst data = await fetch('/api');\n\n// No need to wrap in async function!" },
-          { title: 'Async Loops', desc: 'Iterate over promises', code: "async function processItems(items) {\n  for (const item of items) {\n    await processItem(item);\n  }\n}" }
+          { title: 'Step 1: Function Starts', desc: 'Async function begins execution', visual: { type: 'async-flow', step: 1, line: 'async function getData()' } },
+          { title: 'Step 2: Hit Await', desc: 'Function pauses at await', visual: { type: 'async-flow', step: 2, line: 'await fetch(url)', status: 'paused' } },
+          { title: 'Step 3: Waiting', desc: 'Promise is pending', visual: { type: 'async-flow', step: 3, line: 'await fetch(url)', status: 'waiting' } },
+          { title: 'Step 4: Continue', desc: 'Got data, function resumes', visual: { type: 'async-flow', step: 4, line: 'const data = response', status: 'resumed', data: 'Response' } }
         ]
       },
       complex: {
@@ -246,18 +435,18 @@ export const sampleConcepts = {
       title: 'Try/Catch Error Handling',
       normal: {
         steps: [
-          { title: 'Basic Try/Catch', desc: 'Handle runtime errors', code: "try {\n  const data = JSON.parse(invalidJSON);\n  console.log(data);\n} catch (error) {\n  console.error('Parse failed:', error);\n}" },
-          { title: 'Error Object', desc: 'Catch provides error details', code: "catch (error) {\n  console.log(error.name);    // 'SyntaxError'\n  console.log(error.message); // Description\n  console.log(error.stack);   // Stack trace\n}", visual: { type: 'error-object' } },
-          { title: 'Finally Block', desc: 'Always executes', code: "try {\n  openFile();\n  processFile();\n} catch (error) {\n  handleError(error);\n} finally {\n  closeFile(); // Always runs\n}" },
-          { title: 'Flow Control', desc: 'How execution flows', visual: { type: 'try-catch-flow' } }
+          { title: 'Code Without Error Handling', desc: 'One error crashes everything', visual: { type: 'code-crash', crashed: true } },
+          { title: 'Try Block', desc: 'Code that might throw error', visual: { type: 'try-catch-flow', block: 'try', status: 'running' } },
+          { title: 'Error Occurs!', desc: 'Something went wrong', visual: { type: 'try-catch-flow', block: 'try', status: 'error', error: 'TypeError' } },
+          { title: 'Catch Block Saves Us', desc: 'Error is caught and handled', visual: { type: 'try-catch-flow', block: 'catch', status: 'handled', message: 'Error logged, app continues' } }
         ]
       },
       medium: {
         steps: [
-          { title: 'Nested Try/Catch', desc: 'Multiple error handlers', code: "try {\n  try {\n    riskyOperation();\n  } catch (innerError) {\n    // Handle specific error\n    throw innerError; // Re-throw if needed\n  }\n} catch (outerError) {\n  // Handle any error\n}" },
-          { title: 'Specific Error Types', desc: 'Catch different errors differently', code: "try {\n  operation();\n} catch (error) {\n  if (error instanceof TypeError) {\n    // Handle type error\n  } else if (error instanceof RangeError) {\n    // Handle range error\n  } else {\n    // Handle others\n  }\n}" },
-          { title: 'Async Try/Catch', desc: 'Works with async/await', code: "async function fetchData() {\n  try {\n    const response = await fetch('/api');\n    return await response.json();\n  } catch (error) {\n    console.error('Fetch failed:', error);\n    return null;\n  }\n}" },
-          { title: 'Custom Errors', desc: 'Create your own error types', code: "class ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = 'ValidationError';\n  }\n}\n\nthrow new ValidationError('Invalid input');" }
+          { title: 'Execution Flow - Try', desc: 'Code runs normally', visual: { type: 'try-catch-execution', step: 1, currentLine: 'let data = parseData()', success: true } },
+          { title: 'Error Thrown', desc: 'parseData() throws error', visual: { type: 'try-catch-execution', step: 2, currentLine: 'let data = parseData()', success: false, jump: true } },
+          { title: 'Jump to Catch', desc: 'Execution jumps to catch block', visual: { type: 'try-catch-execution', step: 3, currentLine: 'catch (error)', catching: true } },
+          { title: 'Finally Always Runs', desc: 'Cleanup code executes', visual: { type: 'try-catch-execution', step: 4, currentLine: 'finally { cleanup() }', cleanup: true } }
         ]
       },
       complex: {

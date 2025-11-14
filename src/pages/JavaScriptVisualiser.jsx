@@ -186,7 +186,18 @@ const JavaScriptCodeVisualizer = () => {
               />
             </div>
 
-            <div className="flex items-center gap-3 justify-end">
+            {currentStep.code && (
+            <div className="mt-6 bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+              <pre className="whitespace-pre-wrap">{currentStep.code}</pre>
+              {currentStep.highlight && (
+                <div className="mt-2 text-yellow-400 text-xs">
+                  💡 Focus: {currentStep.highlight}
+                </div>
+              )}
+            </div>
+          )}
+
+            <div className="flex items-center gap-3 justify-center mt-4">
               <button
                 onClick={() => setStep(Math.max(0, step - 1))}
                 disabled={currentStep === 0}
