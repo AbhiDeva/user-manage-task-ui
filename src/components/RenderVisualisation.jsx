@@ -1,6 +1,22 @@
  import React from "react";
  import { FiChevronRight } from "react-icons/fi";
 
+  const TreeNode = ({ value, left, right, highlight }) => (
+    <div className="flex flex-col items-center">
+      <div className={`w-10 h-10 rounded-full border-4 flex items-center justify-center font-bold text-sm transition-all ${
+        highlight ? 'bg-blue-500 border-blue-700 text-white scale-110' : 'bg-gray-100 border-gray-300'
+      }`}>
+        {value}
+      </div>
+      {(left || right) && (
+        <div className="flex gap-6 mt-3">
+          {left ? <TreeNode {...left} /> : <div className="w-10" />}
+          {right ? <TreeNode {...right} /> : <div className="w-10" />}
+        </div>
+      )}
+    </div>
+  );
+
 export const RenderVisualization = ({ steps, currentStep }) => {
     if (steps.length === 0 || currentStep >= steps.length) return null;
     
@@ -3721,6 +3737,139 @@ export const RenderVisualization = ({ steps, currentStep }) => {
             </div>
           );
         }
+
+         if (data.nodes && data.hasOwnProperty('cycleAt')) {
+              return (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    {data.nodes.map((val, i) => (
+                      <React.Fragment key={i}>
+                        <div className="relative">
+                          <div className={`w-14 h-14 rounded-full border-4 flex items-center justify-center font-bold transition-all ${
+                            data.slow === i && data.fast === i ? 'bg-purple-500 border-purple-700 text-white scale-110' :
+                            data.slow === i ? 'bg-blue-500 border-blue-700 text-white scale-110' :
+                            data.fast === i ? 'bg-green-500 border-green-700 text-white scale-110' :
+                            i >= data.cycleAt ? 'bg-yellow-100 border-yellow-400' : 'bg-gray-100 border-gray-300'
+                          }`}>
+                            {val}
+                          </div>
+                          {data.slow === i && <div className="absolute -bottom-8 text-xs text-blue-600 font-bold">Slow</div>}
+                          {data.fast === i && <div className="absolute -top-8 text-xs text-green-600 font-bold">Fast</div>}
+                        </div>
+                        {i < data.nodes.length - 1 && <FiChevronRight className="text-gray-400" size={20} />}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  {data.found && <div className="text-center text-lg text-green-600 font-bold">✓ Cycle Detected!</div>}
+                </div>
+              );
+            }
+        
+            if (data.nums && data.hasOwnProperty('phase')) {
+              return (
+                <div className="space-y-6">
+                  <div className="text-center text-sm font-semibold bg-blue-100 px-4 py-2 rounded mx-auto w-fit">
+                    Phase {data.phase}
+                  </div>
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    {data.nums.map((val, i) => (
+                      <div key={i} className={`w-16 h-16 rounded border-4 flex flex-col items-center justify-center font-bold transition-all ${
+                        data.slow === i || data.fast === i ? 'bg-blue-500 border-blue-700 text-white scale-110' : 
+                        data.found && data.duplicate === val ? 'bg-red-500 border-red-700 text-white' : 'bg-gray-100 border-gray-300'
+                      }`}>
+                        <div className="text-xs opacity-70">i={i}</div>
+                        <div className="text-lg">{val}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {data.found && <div className="text-center text-lg text-red-600 font-bold">✓ Duplicate: {data.duplicate}</div>}
+                </div>
+              );
+            }
+        
+            if (data.tree && !data.tree1) {
+              if (selectedAlgo === 'diameter') {
+                return (
+                  <div className="space-y-6">
+                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-600">Diameter: {data.diameter} edges</div>
+                      {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+                    </div>
+                  </div>
+                );
+              } else if (selectedAlgo === 'maxDepth') {
+                return (
+                  <div className="space-y-6">
+                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-600">Depth: {data.depth}</div>
+                    </div>
+                  </div>
+                );
+              } else if (selectedAlgo === 'balanced') {
+                return (
+                  <div className="space-y-6">
+                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="text-center">
+                      <div className={`text-lg font-bold ${data.balanced ? 'text-green-600' : 'text-red-600'}`}>
+                        {data.balanced ? '✓ Balanced' : '✗ Not Balanced'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              } else if (selectedAlgo === 'lca') {
+                return (
+                  <div className="space-y-6">
+                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.lca === data.tree.value} /></div>
+                    <div className="text-center">
+                      <div className="text-sm">LCA of {data.p} and {data.q}</div>
+                      {data.lca && <div className="text-lg font-bold text-purple-600">✓ LCA: {data.lca}</div>}
+                    </div>
+                  </div>
+                );
+              }
+            }
+        
+            if (data.tree1 && data.tree2) {
+              return (
+                <div className="space-y-6">
+                  <div className="flex justify-center gap-12 flex-wrap">
+                    <div className="text-center">
+                      <div className="text-sm font-semibold mb-2">Tree 1</div>
+                      <TreeNode {...data.tree1} />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-semibold mb-2">Tree 2</div>
+                      <TreeNode {...data.tree2} />
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-lg font-bold ${data.same ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.same ? '✓ Same' : '✗ Different'}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+        
+            if (data.mainTree && data.subTree) {
+              return (
+                <div className="space-y-6">
+                  <div className="flex justify-center gap-12 flex-wrap">
+                    <div className="text-center">
+                      <div className="text-sm font-semibold mb-2">Main Tree</div>
+                      <TreeNode {...data.mainTree} />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-semibold mb-2">Subtree</div>
+                      <TreeNode {...data.subTree} />
+                    </div>
+                  </div>
+                  {data.found && <div className="text-center text-lg text-green-600 font-bold">✓ Found!</div>}
+                </div>
+              );
+            }
 
     if (data.nums && data.hasOwnProperty('left')) {
       // Binary Search Visualization

@@ -191,6 +191,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SiReact, SiAngular, SiJavascript, SiTypescript } from "react-icons/si";
 import { FaCode } from "react-icons/fa";
 import TwoSumVisualizer from "./TwoSumVisualizer"; // <- visualiser component below
+import NestedCommentsUIVisualizer from "./NestedCommentsUIVisualizer";
 
 const techFilters = [
   { name: "All", value: "all" },
@@ -222,6 +223,14 @@ const sampleCards = [
   {
     id: 2,
     title: "React State Management",
+    tech: "react",
+    code: `const [count, setCount] = useState(0);`,
+    likes: 12,
+    dislikes: 1,
+  },
+   {
+    id: 3,
+    title: "Nested Comments UI Visualizer",
     tech: "react",
     code: `const [count, setCount] = useState(0);`,
     likes: 12,
@@ -333,7 +342,10 @@ function ModalTabs({ card }) {
         )}
 
         {tab === "visualizer" && (
+          <>
           <TwoSumVisualizer initialCode={card.code} />
+          <NestedCommentsUIVisualizer />
+          </>
         )}
       </div>
     </div>

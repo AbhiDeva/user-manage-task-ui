@@ -73,6 +73,9 @@ import { generateLRUCacheSteps } from '../components/visualiser/LRUCacheSteps';
 import { generateMergeKListsSteps } from '../components/visualiser/MergeKListsSteps';
 import { generateReverseKGroupSteps } from '../components/visualiser/ReverseKGroupSteps';
 import { generateInvertTreeSteps } from '../components/visualiser/InvertTreeSteps';
+import { generateLinkedListCycleSteps } from '../components/visualiser/LinkedListCycleSteps';
+import { generateFindDuplicateSteps } from '../components/visualiser/FindDuplicateSteps';
+import { generateTreeSteps } from '../components/visualiser/TreeSteps';
 
 import {sampleProblems} from '../utils/codedata.js'
 
@@ -225,6 +228,23 @@ export const generateSteps = (problemKey, input) => {
         return generateReverseKGroupSteps(input.type ? sampleProblems.reverseKGroup.examples[input.type] : input);
       case 'invertTree':
         return generateInvertTreeSteps(input.type ? sampleProblems.invertTree.examples[input.type] : input.tree);
+      case  'linkedListCycle':
+        return generateLinkedListCycleSteps(input.type ? sampleProblems.linkedListCycle.examples[input.type] : input);
+      case 'findDuplicateII' :
+       return generateFindDuplicateSteps(input.type ? sampleProblems.findDuplicateII.examples[input.type] : input.nums);
+      case 'diameter':
+          return generateTreeSteps(input.type ? sampleProblems.diameter.examples[input.type] : input, problemKey);
+      case 'maxDepth' :
+         return generateTreeSteps(input.type ? sampleProblems.maxDepth.examples[input.type] : input, problemKey);
+      case 'balanced' :
+         return generateTreeSteps(input.type ? sampleProblems.balanced.examples[input.type] : input, problemKey);
+      case 'sameTree' :
+        return generateTreeSteps(input.type ? sampleProblems.sameTree.examples[input.type] : input, problemKey);
+      case 'subtree':
+        return generateTreeSteps(input.type ? sampleProblems.subtree.examples[input.type] : input, problemKey);
+      case 'lca' :
+          return generateTreeSteps(input.type ? sampleProblems.lca.examples[input.type] : input, problemKey);
+       
         default:
         return [];
     }

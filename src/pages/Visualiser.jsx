@@ -23,7 +23,7 @@ const LeetCodeVisualizer = () => {
 
     setCode(problem.code);
     setProblemType(selectedProblem);
-    const visualSteps = generateSteps(selectedProblem, problem.input);
+    const visualSteps = generateSteps(selectedProblem, problem.input, problem.input.type);
     setSteps(visualSteps);
     setCurrentStep(0);
   };

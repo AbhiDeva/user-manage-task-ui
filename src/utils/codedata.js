@@ -1906,5 +1906,194 @@ function mergeTwoLists(l1, l2) {
         unbalanced: [1,2,null,3,null,4],
         single: [1]
       }
+    },
+    linkedListCycle: {
+      name: 'Linked List Cycle',
+      code: `function hasCycle(head) {
+  if (!head || !head.next) return false;
+  let slow = head, fast = head;
+  
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) return true;
+  }
+  return false;
+}`,
+  input: { 
+        type: 'normal',
+        nodes: [1, 2, 3, 4, 5],
+        cycleAt: 2
+      },
+      examples: {
+        normal: { nodes: [1, 2, 3, 4, 5], cycleAt: 2 },
+        medium: { nodes: [1, 2, 3, 4, 5, 6, 7, 8], cycleAt: 4 },
+        hard: { nodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], cycleAt: 6 }
+      }
+    },
+    findDuplicateII: {
+      name: 'Find Duplicate Number',
+      code: `function findDuplicate(nums) {
+  let slow = nums[0], fast = nums[0];
+  do {
+    slow = nums[slow];
+    fast = nums[nums[fast]];
+  } while (slow !== fast);
+  
+  slow = nums[0];
+  while (slow !== fast) {
+    slow = nums[slow];
+    fast = nums[fast];
+  }
+  return slow;
+}`,
+   input: { 
+        type: 'normal',
+        nums: [1, 3, 4, 2, 2]
+      },
+      examples: {
+        normal: { nums: [1, 3, 4, 2, 2] },
+        medium: { nums: [3, 1, 3, 4, 2] },
+        hard: { nums: [2, 5, 9, 6, 9, 3, 8, 9, 7, 1, 4] }
+      }
+    },
+    diameter: {
+      name: 'Diameter of Binary Tree',
+      code: `function diameterOfBinaryTree(root) {
+  let diameter = 0;
+  
+  function height(node) {
+    if (!node) return 0;
+    const left = height(node.left);
+    const right = height(node.right);
+    diameter = Math.max(diameter, left + right);
+    return 1 + Math.max(left, right);
+  }
+  
+  height(root);
+  return diameter;
+}`,
+  input: { 
+        type: 'normal',
+        value: 1, 
+        left: { value: 2 }, 
+        right: { value: 3 }
+      },
+      examples: {
+        normal: { value: 1, left: { value: 2 }, right: { value: 3 } },
+        medium: { value: 1, left: { value: 2, left: { value: 4 }, right: { value: 5 } }, right: { value: 3 } },
+        hard: { value: 1, left: { value: 2, left: { value: 4, left: { value: 7 } }, right: { value: 5 } }, right: { value: 3, right: { value: 6 } } }
+      }
+    },
+    maxDepth: {
+      name: 'Maximum Depth of Binary Tree',
+      code: `function maxDepth(root) {
+  if (!root) return 0;
+  return 1 + Math.max(
+    maxDepth(root.left),
+    maxDepth(root.right)
+  );
+}`,
+  input: { 
+        type: 'normal',
+        value: 3,
+        left: { value: 9 }, 
+        right: { 
+          value: 20,
+          left: { value: 15 },
+          right: { value: 7 } 
+        }
+      },
+      examples: {
+        normal: { value: 3, left: { value: 9 }, right: { value: 20, left: { value: 15 }, right: { value: 7 } } },
+        medium: { value: 1, left: { value: 2, left: { value: 4 } }, right: { value: 3 } },
+        hard: { value: 1, left: { value: 2, left: { value: 3, left: { value: 4, left: { value: 5 } } } } }
+      }
+    },
+    balanced: {
+      name: 'Balanced Binary Tree',
+      code: `function isBalanced(root) {
+  function check(node) {
+    if (!node) return 0;
+    const left = check(node.left);
+    if (left === -1) return -1;
+    const right = check(node.right);
+    if (right === -1) return -1;
+    if (Math.abs(left - right) > 1) return -1;
+    return 1 + Math.max(left, right);
+  }
+  return check(root) !== -1;
+}`,
+ input: { 
+        type: 'normal',
+        value: 1,
+         left: { value: 2, left: { value: 4 }, right: { value: 5 } },
+         right: { value: 3, right: { value: 6 } },
+          balanced: true
+      },
+      examples: {
+        normal: { value: 1, left: { value: 2, left: { value: 4 }, right: { value: 5 } }, right: { value: 3, right: { value: 6 } }, balanced: true },
+        medium: { value: 1, left: { value: 2, left: { value: 3, left: { value: 4 } } }, balanced: false },
+        hard: { value: 1, left: { value: 2 }, right: { value: 3, left: { value: 4, left: { value: 5 }, right: { value: 6 } }, right: { value: 7 } }, balanced: true }
+      }
+    },
+    sameTree: {
+      name: 'Same Tree',
+      code: `function isSameTree(p, q) {
+  if (!p && !q) return true;
+  if (!p || !q) return false;
+  if (p.val !== q.val) return false;
+  return isSameTree(p.left, q.left) &&
+         isSameTree(p.right, q.right);
+}`,
+    input: { 
+        type: 'normal',
+       tree1: { value: 1, left: { value: 2 }, right: { value: 3 } }, tree2: { value: 1, left: { value: 2 }, right: { value: 3 } }, same: true 
+      },
+      examples: {
+        normal: { tree1: { value: 1, left: { value: 2 }, right: { value: 3 } }, tree2: { value: 1, left: { value: 2 }, right: { value: 3 } }, same: true },
+        medium: { tree1: { value: 1, left: { value: 2 }, right: { value: 3 } }, tree2: { value: 1, left: { value: 2 }, right: { value: 4 } }, same: false },
+        hard: { tree1: { value: 1, left: { value: 2, left: { value: 4 } }, right: { value: 3 } }, tree2: { value: 1, left: { value: 2, left: { value: 4 } }, right: { value: 3 } }, same: true }
+      }
+    },
+    subtree: {
+      name: 'Subtree of Another Tree',
+      code: `function isSubtree(root, subRoot) {
+  if (!root) return false;
+  if (isSameTree(root, subRoot)) return true;
+  return isSubtree(root.left, subRoot) ||
+         isSubtree(root.right, subRoot);
+}`,
+input: { 
+        type: 'normal',
+        mainTree: { value: 3, left: { value: 4, left: { value: 1 }, right: { value: 2 } }, right: { value: 5 } }, subTree: { value: 4, left: { value: 1 }, right: { value: 2 } } 
+      },
+      examples: {
+        normal: { mainTree: { value: 3, left: { value: 4, left: { value: 1 }, right: { value: 2 } }, right: { value: 5 } }, subTree: { value: 4, left: { value: 1 }, right: { value: 2 } } },
+        medium: { mainTree: { value: 3, left: { value: 4, left: { value: 1 }, right: { value: 2 } }, right: { value: 5 } }, subTree: { value: 4, left: { value: 1 } } },
+        hard: { mainTree: { value: 1, left: { value: 2, left: { value: 4 }, right: { value: 5 } }, right: { value: 3 } }, subTree: { value: 2, left: { value: 4 }, right: { value: 5 } } }
+      }
+    },
+    lca: {
+      name: 'Lowest Common Ancestor of BST',
+      code: `function lowestCommonAncestor(root, p, q) {
+  if (p.val > root.val && q.val > root.val) {
+    return lowestCommonAncestor(root.right, p, q);
+  }
+  if (p.val < root.val && q.val < root.val) {
+    return lowestCommonAncestor(root.left, p, q);
+  }
+  return root;
+}`, 
+    input: { 
+        type: 'normal',
+        tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 2, q: 8, lca: 6 
+      },
+      examples: {
+        normal: { tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 2, q: 8, lca: 6 },
+        medium: { tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 2, q: 4, lca: 2 },
+        hard: { tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 3, q: 5, lca: 4 }
+      }
     }
+
   };
