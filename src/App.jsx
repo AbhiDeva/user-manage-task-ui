@@ -21,6 +21,7 @@ import LeetCodeVisualizer from "./pages/Visualiser";
 import JavaScriptCodeVisualizer from "./pages/JavaScriptVisualiser";
 import CodeVisualizerForStack from "./pages/CodeVisualiserforStack";
 import CardParentComponent from "./pages/CardParentComponent";
+import GameHub from "./pages/GameHub";
 
 function Layout() {
   const { user } = useSelector((state) => state.auth);
@@ -120,6 +121,7 @@ const App = () => {
             <Route path='/web-visualiser' element={<CodeVisualizerForStack />} />
             <Route path='/js-visualiser' element={<JavaScriptCodeVisualizer />} />
             <Route path='/stack-visualiser' element={<CardParentComponent />} />
+            <Route path='/games' element={<GameHub />} />
           </Route>
 
           <Route path='/log-in' element={<Login />} />

@@ -83,6 +83,11 @@ const linkData = [
     icon: <FaCodepen />,
   },
   {
+    label: "Games",
+    link: "games",
+    icon: <FaCodepen />,
+  },
+  {
     label: "Trash",
     link: "trashed",
     icon: <FaTrashAlt />,
