@@ -3,6 +3,7 @@ import React from "react";
 import { TicTacToe } from "../components/games/gamelist/TicTacToe";
 import { ScissorSnap } from "../components/games/gamelist/ScissorSnap";
 import { MemoryFlip } from "../components/games/gamelist/MemoryFlip";
+import { MemoryGame } from "../components/games/gamelist/MemoryGame";
 
 
 export const GameLoader = ({ id, onWin, playSound, theme }) => {
@@ -13,6 +14,8 @@ export const GameLoader = ({ id, onWin, playSound, theme }) => {
       return <ScissorSnap onWin={onWin} playSound={playSound} theme={theme} />;
     case "memory":
       return <MemoryFlip onWin={onWin} playSound={playSound} theme={theme} />;
+    case "memorygame":
+      return <MemoryGame onWin={onWin} playSound={playSound} theme={theme} />;
     // placeholders for future full games
     default:
       return (

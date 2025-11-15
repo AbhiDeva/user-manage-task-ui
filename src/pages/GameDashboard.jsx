@@ -8,6 +8,7 @@ export const GameDashboard = ({ openGame, playSound, scores, theme }) => {
     { id: "tic-tac", title: "Tic-Tac-Toe", desc: "Classic 3×3", icon: <MdSportsEsports size={44} /> },
     { id: "scissor", title: "Scissor-Snap", desc: "Two-hand RPS", icon: <MdStars size={44} /> },
     { id: "memory", title: "Memory Flip", desc: "Match the pairs", icon: <MdReplay size={44} /> },
+    { id: "memorygame", title: "Memory Game", desc: "Advanced pairs", icon: <MdReplay size={44} /> },
     { id: "snake", title: "Snake", desc: "Grow & survive", icon: <MdSportsEsports size={44} /> },
     { id: "flappy", title: "Flappy", desc: "Tap to fly", icon: <MdSportsEsports size={44} /> },
     { id: "2048", title: "2048", desc: "Combine tiles", icon: <MdStars size={44} /> },
@@ -23,6 +24,7 @@ export const GameDashboard = ({ openGame, playSound, scores, theme }) => {
           key={g.id}
           onClick={() => {
             playSound();
+            alert(g.id);
             openGame(g.id);
           }}
           whileHover={{ scale: 1.03 }}
