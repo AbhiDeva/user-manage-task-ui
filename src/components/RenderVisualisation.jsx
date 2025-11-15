@@ -1,23 +1,92 @@
  import React from "react";
  import { FiChevronRight } from "react-icons/fi";
 
-  const TreeNode = ({ value, left, right, highlight }) => (
-    <div className="flex flex-col items-center">
-      <div className={`w-10 h-10 rounded-full border-4 flex items-center justify-center font-bold text-sm transition-all ${
-        highlight ? 'bg-blue-500 border-blue-700 text-white scale-110' : 'bg-gray-100 border-gray-300'
-      }`}>
-        {value}
-      </div>
-      {(left || right) && (
-        <div className="flex gap-6 mt-3">
-          {left ? <TreeNode {...left} /> : <div className="w-10" />}
-          {right ? <TreeNode {...right} /> : <div className="w-10" />}
+  const TreeNode = ({ value, left, right, highlight, depth = 0 }) => {
+    const hasChildren = left || right;
+    const gap = depth === 0 ? 32 : depth === 1 ? 24 : 16;
+    
+    return (
+      <div className="flex flex-col items-center relative">
+        <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-sm transition-all z-10 shadow-md ${
+          highlight ? 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-700 text-white scale-110 shadow-blue-300' : 'bg-gradient-to-br from-white to-gray-100 border-gray-400 text-gray-800'
+        }`}>
+          {value}
         </div>
-      )}
-    </div>
-  );
+        {hasChildren && (
+          <div className="relative">
+            {/* Connection lines with arrows */}
+            <svg className="absolute top-0 left-1/2 -translate-x-1/2" width="280" height="50" style={{ overflow: 'visible' }}>
+              <defs>
+                {/* Arrow marker for left connection */}
+                <marker
+                  id={`arrowLeft-${depth}-${value}`}
+                  markerWidth="10"
+                  markerHeight="10"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6" />
+                </marker>
+                {/* Arrow marker for right connection */}
+                <marker
+                  id={`arrowRight-${depth}-${value}`}
+                  markerWidth="10"
+                  markerHeight="10"
+                  refX="8"
+                  refY="3"
+                  orient="auto"
+                  markerUnits="strokeWidth"
+                >
+                  <path d="M0,0 L0,6 L9,3 z" fill="#10b981" />
+                </marker>
+              </defs>
+              
+              {left && (
+                <g>
+                  <line 
+                    x1="140" 
+                    y1="8" 
+                    x2="50" 
+                    y2="45" 
+                    stroke="#3b82f6" 
+                    strokeWidth="3"
+                    markerEnd={`url(#arrowLeft-${depth}-${value})`}
+                    strokeLinecap="round"
+                  />
+                  <circle cx="80" cy="20" r="10" fill="#3b82f6" opacity="0.9" />
+                  <text x="76" y="25" fill="white" fontSize="11" fontWeight="bold">L</text>
+                </g>
+              )}
+              {right && (
+                <g>
+                  <line 
+                    x1="140" 
+                    y1="8" 
+                    x2="230" 
+                    y2="45" 
+                    stroke="#10b981" 
+                    strokeWidth="3"
+                    markerEnd={`url(#arrowRight-${depth}-${value})`}
+                    strokeLinecap="round"
+                  />
+                  <circle cx="200" cy="20" r="10" fill="#10b981" opacity="0.9" />
+                  <text x="196" y="25" fill="white" fontSize="11" fontWeight="bold">R</text>
+                </g>
+              )}
+            </svg>
+            <div className={`flex mt-14`} style={{ gap: `${gap * 4}px` }}>
+              {left ? <TreeNode {...left} depth={depth + 1} /> : <div className="w-12" />}
+              {right ? <TreeNode {...right} depth={depth + 1} /> : <div className="w-12" />}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
-export const RenderVisualization = ({ steps, currentStep }) => {
+export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
     if (steps.length === 0 || currentStep >= steps.length) return null;
     
     const step = steps[currentStep];
@@ -3756,7 +3825,7 @@ export const RenderVisualization = ({ steps, currentStep }) => {
                           {data.slow === i && <div className="absolute -bottom-8 text-xs text-blue-600 font-bold">Slow</div>}
                           {data.fast === i && <div className="absolute -top-8 text-xs text-green-600 font-bold">Fast</div>}
                         </div>
-                        {i < data.nodes.length - 1 && <FiChevronRight className="text-gray-400" size={20} />}
+                        {i < data.nodes.length - 1 && <ChevronRight className="text-gray-400" size={20} />}
                       </React.Fragment>
                     ))}
                   </div>
@@ -3768,21 +3837,67 @@ export const RenderVisualization = ({ steps, currentStep }) => {
             if (data.nums && data.hasOwnProperty('phase')) {
               return (
                 <div className="space-y-6">
-                  <div className="text-center text-sm font-semibold bg-blue-100 px-4 py-2 rounded mx-auto w-fit">
-                    Phase {data.phase}
-                  </div>
+                  {data.phase > 0 && (
+                    <div className="text-center text-sm font-semibold bg-blue-100 px-4 py-2 rounded mx-auto w-fit">
+                      Phase {data.phase}: {data.phase === 1 ? 'Find Intersection' : 'Find Duplicate'}
+                    </div>
+                  )}
+                  
                   <div className="flex items-center justify-center gap-2 flex-wrap">
                     {data.nums.map((val, i) => (
                       <div key={i} className={`w-16 h-16 rounded border-4 flex flex-col items-center justify-center font-bold transition-all ${
-                        data.slow === i || data.fast === i ? 'bg-blue-500 border-blue-700 text-white scale-110' : 
-                        data.found && data.duplicate === val ? 'bg-red-500 border-red-700 text-white' : 'bg-gray-100 border-gray-300'
+                        data.slow === i && data.fast === i ? 'bg-purple-500 border-purple-700 text-white scale-110' :
+                        data.slow === i ? 'bg-blue-500 border-blue-700 text-white scale-110' : 
+                        data.fast === i ? 'bg-green-500 border-green-700 text-white scale-110' :
+                        data.found && data.duplicate === i ? 'bg-red-500 border-red-700 text-white scale-110' :
+                        data.indices && data.indices.includes(i) ? 'bg-red-300 border-red-500' :
+                        'bg-gray-100 border-gray-300'
                       }`}>
                         <div className="text-xs opacity-70">i={i}</div>
                         <div className="text-lg">{val}</div>
                       </div>
                     ))}
                   </div>
-                  {data.found && <div className="text-center text-lg text-red-600 font-bold">✓ Duplicate: {data.duplicate}</div>}
+        
+                  {data.explanation === 'setup' && (
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm">
+                      <strong>Key Concept:</strong> We treat the array as a linked list where nums[i] points to index nums[i].
+                    </div>
+                  )}
+        
+                  {data.explanation === 'array' && (
+                    <div className="bg-blue-50 border-l-4 border-blue-400 p-3 text-sm">
+                      <strong>Example:</strong> nums[0]={data.nums[0]} means index 0 points to index {data.nums[0]}. 
+                      Following this chain creates a cycle at the duplicate!
+                    </div>
+                  )}
+        
+                  {data.prevSlow !== undefined && (
+                    <div className="text-center text-xs text-gray-600">
+                      <div>Previous: Slow at {data.prevSlow}, Fast at {data.prevFast}</div>
+                      <div>Current: Slow at {data.slow}, Fast at {data.fast}</div>
+                    </div>
+                  )}
+        
+                  {data.found && (
+                    <div className="space-y-3">
+                      <div className="text-center text-lg text-red-600 font-bold">
+                        ✓ Duplicate: {data.duplicate}
+                      </div>
+                      {data.indices && (
+                        <div className="bg-green-50 border-l-4 border-green-400 p-3 text-sm">
+                          <strong>Proof:</strong> Value {data.duplicate} appears at indices [{data.indices.join(', ')}]. 
+                          This means multiple elements point to index {data.duplicate}, creating the cycle entrance!
+                        </div>
+                      )}
+                    </div>
+                  )}
+        
+                  {data.intersection && !data.found && (
+                    <div className="text-center text-sm text-purple-600 font-semibold">
+                      ✓ Cycle detected! Now finding the entry point...
+                    </div>
+                  )}
                 </div>
               );
             }
@@ -3791,9 +3906,19 @@ export const RenderVisualization = ({ steps, currentStep }) => {
               if (selectedAlgo === 'diameter') {
                 return (
                   <div className="space-y-6">
-                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-blue-600">Diameter: {data.diameter} edges</div>
+                      <div className="text-lg font-bold text-blue-600">Current Diameter: {data.diameter} edges</div>
+                      {data.leftHeight !== undefined && (
+                        <div className="text-sm text-gray-600 mt-2">
+                          Left Height: {data.leftHeight}, Right Height: {data.rightHeight}
+                        </div>
+                      )}
+                      {data.path && (
+                        <div className="text-xs text-gray-500 mt-2">
+                          Path: {data.path.join(' → ')}
+                        </div>
+                      )}
                       {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
                     </div>
                   </div>
@@ -3801,30 +3926,61 @@ export const RenderVisualization = ({ steps, currentStep }) => {
               } else if (selectedAlgo === 'maxDepth') {
                 return (
                   <div className="space-y-6">
-                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
                     <div className="text-center">
-                      <div className="text-lg font-bold text-blue-600">Depth: {data.depth}</div>
+                      <div className="text-lg font-bold text-blue-600">Current Depth: {data.depth}</div>
+                      {data.maxDepth !== undefined && (
+                        <div className="text-sm text-gray-600 mt-2">Max Depth So Far: {data.maxDepth}</div>
+                      )}
+                      {data.visited && data.visited.length > 0 && (
+                        <div className="text-xs text-gray-500 mt-2">
+                          Visited: {data.visited.join(', ')}
+                        </div>
+                      )}
+                      {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
                     </div>
                   </div>
                 );
               } else if (selectedAlgo === 'balanced') {
                 return (
                   <div className="space-y-6">
-                    <div className="flex justify-center"><TreeNode {...data.tree} /></div>
+                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
                     <div className="text-center">
                       <div className={`text-lg font-bold ${data.balanced ? 'text-green-600' : 'text-red-600'}`}>
                         {data.balanced ? '✓ Balanced' : '✗ Not Balanced'}
                       </div>
+                      {data.leftHeight !== undefined && (
+                        <div className="text-sm text-gray-600 mt-2">
+                          Left: {data.leftHeight}, Right: {data.rightHeight}, Diff: {data.heightDiff}
+                        </div>
+                      )}
+                      {data.path && (
+                        <div className="text-xs text-gray-500 mt-2">
+                          Path: {data.path.join(' → ')}
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
               } else if (selectedAlgo === 'lca') {
                 return (
                   <div className="space-y-6">
-                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.lca === data.tree.value} /></div>
+                    <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
                     <div className="text-center">
-                      <div className="text-sm">LCA of {data.p} and {data.q}</div>
-                      {data.lca && <div className="text-lg font-bold text-purple-600">✓ LCA: {data.lca}</div>}
+                      <div className="text-sm mb-2">
+                        Finding LCA of <span className="font-bold text-blue-600">{data.p}</span> and <span className="font-bold text-green-600">{data.q}</span>
+                      </div>
+                      {data.direction && (
+                        <div className="text-sm text-purple-600 font-semibold mt-2">
+                          Direction: {data.direction.toUpperCase()}
+                        </div>
+                      )}
+                      {data.path && (
+                        <div className="text-xs text-gray-500 mt-2">
+                          Path: {data.path.join(' → ')}
+                        </div>
+                      )}
+                      {data.lca && <div className="text-lg font-bold text-purple-600 mt-2">✓ LCA: {data.lca}</div>}
                     </div>
                   </div>
                 );
@@ -3846,8 +4002,17 @@ export const RenderVisualization = ({ steps, currentStep }) => {
                   </div>
                   <div className="text-center">
                     <div className={`text-lg font-bold ${data.same ? 'text-green-600' : 'text-red-600'}`}>
-                      {data.same ? '✓ Same' : '✗ Different'}
+                      {data.same ? '✓ Trees are Same' : '✗ Trees are Different'}
                     </div>
+                    {data.path1 && data.path2 && (
+                      <div className="text-xs text-gray-500 mt-2">
+                        <div>Path 1: {data.path1.join(' → ')}</div>
+                        <div>Path 2: {data.path2.join(' → ')}</div>
+                      </div>
+                    )}
+                    {data.currentDepth !== undefined && (
+                      <div className="text-sm text-blue-600 mt-2">Current Depth: {data.currentDepth}</div>
+                    )}
                   </div>
                 </div>
               );
@@ -3859,17 +4024,306 @@ export const RenderVisualization = ({ steps, currentStep }) => {
                   <div className="flex justify-center gap-12 flex-wrap">
                     <div className="text-center">
                       <div className="text-sm font-semibold mb-2">Main Tree</div>
-                      <TreeNode {...data.mainTree} />
+                      <TreeNode {...data.mainTree} highlight={data.currentNode} />
                     </div>
                     <div className="text-center">
-                      <div className="text-sm font-semibold mb-2">Subtree</div>
+                      <div className="text-sm font-semibold mb-2">Subtree to Find</div>
                       <TreeNode {...data.subTree} />
                     </div>
                   </div>
-                  {data.found && <div className="text-center text-lg text-green-600 font-bold">✓ Found!</div>}
+                  <div className="text-center">
+                    {data.currentNode && (
+                      <div className="text-sm text-blue-600 mb-2">
+                        Checking node: {data.currentNode}
+                      </div>
+                    )}
+                    {data.checkedNodes && data.checkedNodes.length > 0 && (
+                      <div className="text-xs text-gray-500 mb-2">
+                        Checked: {data.checkedNodes.join(', ')}
+                      </div>
+                    )}
+                    {data.found && (
+                      <div className="text-lg text-green-600 font-bold">✓ Subtree Found!</div>
+                    )}
+                  </div>
                 </div>
               );
             }
+        
+            if (data.original && data.hasOwnProperty('sorted')) {
+              const maxTime = Math.max(...data.intervals.flat());
+              const timelineWidth = 600;
+              const scale = timelineWidth / maxTime;
+              
+              return (
+                <div className="space-y-6">
+                  <div className="text-center text-sm font-semibold bg-green-100 px-4 py-2 rounded mx-auto w-fit">
+                    {data.phase === 'setup' && 'Setup: Can Attend All Meetings?'}
+                    {data.phase === 'sorting' && 'Step 1: Sorting by Start Time'}
+                    {data.phase === 'sorted' && 'Sorted Intervals'}
+                    {(data.phase === 'checking' || data.phase === 'comparing' || data.phase === 'no-overlap') && 'Checking for Overlaps'}
+                    {data.phase === 'overlap' && 'Overlap Detected!'}
+                    {data.phase === 'complete' && 'Result'}
+                  </div>
+        
+                  {/* Original vs Sorted */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-50 p-3 rounded">
+                      <div className="text-sm font-semibold text-gray-800 mb-2">Original Intervals</div>
+                      <div className="flex flex-col gap-2">
+                        {data.original.map((interval, idx) => (
+                          <div key={idx} className="px-3 py-2 bg-gray-200 rounded text-sm font-mono">
+                            [{interval[0]}, {interval[1]}]
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+        
+                    {data.sorted && (
+                      <div className="bg-blue-50 p-3 rounded">
+                        <div className="text-sm font-semibold text-blue-800 mb-2">Sorted by Start Time</div>
+                        <div className="flex flex-col gap-2">
+                          {data.intervals.map((interval, idx) => (
+                            <div key={idx} className={`px-3 py-2 rounded text-sm font-mono ${
+                              data.currentIdx === idx ? 'bg-green-400 text-white font-bold' :
+                              data.currentIdx - 1 === idx ? 'bg-yellow-400 text-white font-bold' :
+                              data.phase === 'overlap' && (idx === data.currentIdx || idx === data.currentIdx - 1) ? 'bg-red-400 text-white font-bold' :
+                              'bg-blue-200'
+                            }`}>
+                              [{interval[0]}, {interval[1]}]
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+        
+                  {/* Timeline Visualization */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-xs text-gray-600 mb-2">Meeting Timeline:</div>
+                    <div className="relative" style={{ height: `${data.intervals.length * 40 + 40}px` }}>
+                      {/* Time axis */}
+                      <div className="absolute bottom-0 left-0 right-0 h-8 border-t-2 border-gray-400">
+                        {Array.from({ length: maxTime + 1 }, (_, i) => (
+                          <div key={i} className="absolute text-xs text-gray-600" style={{ left: `${i * scale}px`, top: '5px' }}>
+                            {i}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Meeting intervals */}
+                      {data.intervals.map((interval, idx) => {
+                        const [start, end] = interval;
+                        const left = start * scale;
+                        const width = (end - start) * scale;
+                        const isHighlight = data.currentIdx === idx || data.currentIdx - 1 === idx;
+                        const isOverlap = data.phase === 'overlap' && (idx === data.currentIdx || idx === data.currentIdx - 1);
+                        
+                        return (
+                          <div
+                            key={idx}
+                            className={`absolute h-8 border-2 rounded flex items-center justify-center text-xs font-bold text-white shadow-md ${
+                              isOverlap ? 'bg-red-500 border-red-700' :
+                              isHighlight ? 'bg-yellow-500 border-yellow-700' :
+                              'bg-blue-400 border-blue-600'
+                            }`}
+                            style={{
+                              left: `${left}px`,
+                              width: `${width}px`,
+                              top: `${idx * 40}px`
+                            }}
+                          >
+                            [{start}, {end}]
+                          </div>
+                        );
+                      })}
+        
+                      {/* Overlap indicator */}
+                      {data.phase === 'overlap' && data.overlapStart !== undefined && (
+                        <div
+                          className="absolute h-2 bg-red-600 opacity-70"
+                          style={{
+                            left: `${data.overlapStart * scale}px`,
+                            width: `${(data.overlapEnd - data.overlapStart) * scale}px`,
+                            top: `${(data.currentIdx - 1) * 40 + 35}px`
+                          }}
+                        >
+                          <div className="text-xs text-red-600 font-bold whitespace-nowrap absolute -top-5">
+                            OVERLAP REGION
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+        
+                  {/* Current Comparison */}
+                  {data.prevInterval && data.currInterval && (
+                    <div className="bg-blue-50 border-l-4 border-blue-400 p-3">
+                      <div className="font-semibold text-blue-800">Comparing:</div>
+                      <div className="text-sm grid grid-cols-2 gap-2 mt-2">
+                        <div className="bg-yellow-200 p-2 rounded">
+                          Previous: [{data.prevInterval[0]}, {data.prevInterval[1]}]
+                          <div className="text-xs text-gray-700">Ends at: {data.prevInterval[1]}</div>
+                        </div>
+                        <div className="bg-green-200 p-2 rounded">
+                          Current: [{data.currInterval[0]}, {data.currInterval[1]}]
+                          <div className="text-xs text-gray-700">Starts at: {data.currInterval[0]}</div>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-sm font-semibold">
+                        {data.currInterval[0] < data.prevInterval[1] ? (
+                          <span className="text-red-600">❌ {data.currInterval[0]} &lt; {data.prevInterval[1]} - OVERLAP!</span>
+                        ) : (
+                          <span className="text-green-600">✓ {data.currInterval[0]} &gt;= {data.prevInterval[1]} - No overlap</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+        
+                  {/* Result */}
+                  <div className="text-center">
+                    <div className={`text-2xl font-bold ${data.canAttend ? 'text-green-600' : 'text-red-600'}`}>
+                      {data.canAttend ? '✓ CAN Attend All Meetings' : '✗ CANNOT Attend All Meetings'}
+                    </div>
+                    {data.complete && (
+                      <div className="text-sm mt-2">
+                        {data.canAttend ? 'No overlapping intervals found!' : 'Found overlapping intervals!'}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+        
+            if (data.intervals && data.hasOwnProperty('phase')) {
+              const maxTime = Math.max(...data.intervals.flat());
+              const timelineWidth = 600;
+              const scale = timelineWidth / maxTime;
+              
+              return (
+                <div className="space-y-6">
+                  <div className="text-center text-sm font-semibold bg-purple-100 px-4 py-2 rounded mx-auto w-fit">
+                    {data.phase === 'setup' && 'Setup: Analyzing Meetings'}
+                    {data.phase === 'sort-starts' && 'Step 1: Sort Start Times'}
+                    {data.phase === 'sort-ends' && 'Step 2: Sort End Times'}
+                    {data.phase === 'explain' && 'Step 3: Two Pointer Approach'}
+                    {(data.phase === 'compare' || data.phase === 'allocate' || data.phase === 'reuse') && 'Processing Meetings'}
+                    {data.phase === 'complete' && 'Result'}
+                  </div>
+        
+                  {/* Timeline Visualization */}
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="text-xs text-gray-600 mb-2">Meeting Timeline:</div>
+                    <div className="relative" style={{ height: `${data.intervals.length * 40 + 40}px` }}>
+                      {/* Time axis */}
+                      <div className="absolute bottom-0 left-0 right-0 h-8 border-t-2 border-gray-400">
+                        {Array.from({ length: maxTime + 1 }, (_, i) => (
+                          <div key={i} className="absolute text-xs text-gray-600" style={{ left: `${i * scale}px`, top: '5px' }}>
+                            {i}
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Meeting intervals */}
+                      {data.intervals.map((interval, idx) => {
+                        const [start, end] = interval;
+                        const left = start * scale;
+                        const width = (end - start) * scale;
+                        const roomColor = data.roomAllocations && data.roomAllocations[idx] 
+                          ? data.roomAllocations[idx].room === 'reuse' 
+                            ? 'bg-green-400' 
+                            : `bg-blue-${Math.min(data.roomAllocations[idx].room * 100, 600)}`
+                          : 'bg-gray-300';
+                        
+                        return (
+                          <div
+                            key={idx}
+                            className={`absolute h-8 ${roomColor} border-2 border-gray-700 rounded flex items-center justify-center text-xs font-bold text-white shadow-md`}
+                            style={{
+                              left: `${left}px`,
+                              width: `${width}px`,
+                              top: `${idx * 40}px`
+                            }}
+                          >
+                            [{start}, {end}]
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+        
+                  {/* Start and End Times */}
+                  {data.starts && data.starts.length > 0 && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-blue-50 p-3 rounded">
+                        <div className="text-sm font-semibold text-blue-800 mb-2">Start Times (Sorted)</div>
+                        <div className="flex gap-2 flex-wrap">
+                          {data.starts.map((time, idx) => (
+                            <div key={idx} className={`px-3 py-1 rounded font-bold ${
+                              data.startPtr === idx ? 'bg-blue-500 text-white scale-110' : 'bg-blue-200 text-blue-800'
+                            }`}>
+                              {time}
+                            </div>
+                          ))}
+                        </div>
+                        {data.startPtr !== undefined && (
+                          <div className="text-xs text-blue-600 mt-2">Pointer at index: {data.startPtr}</div>
+                        )}
+                      </div>
+        
+                      <div className="bg-green-50 p-3 rounded">
+                        <div className="text-sm font-semibold text-green-800 mb-2">End Times (Sorted)</div>
+                        <div className="flex gap-2 flex-wrap">
+                          {data.ends.map((time, idx) => (
+                            <div key={idx} className={`px-3 py-1 rounded font-bold ${
+                              data.endPtr === idx ? 'bg-green-500 text-white scale-110' : 'bg-green-200 text-green-800'
+                            }`}>
+                              {time}
+                            </div>
+                          ))}
+                        </div>
+                        {data.endPtr !== undefined && (
+                          <div className="text-xs text-green-600 mt-2">Pointer at index: {data.endPtr}</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+        
+                  {/* Current Comparison */}
+                  {data.comparing && (
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3">
+                      <div className="font-semibold text-yellow-800">Comparing:</div>
+                      <div className="text-sm">Start Time: {data.comparing.start} vs End Time: {data.comparing.end}</div>
+                    </div>
+                  )}
+        
+                  {/* Action Taken */}
+                  {data.action && (
+                    <div className={`p-3 rounded border-l-4 ${
+                      data.action === 'allocate' 
+                        ? 'bg-red-50 border-red-400' 
+                        : 'bg-green-50 border-green-400'
+                    }`}>
+                      <div className="font-semibold">
+                        {data.action === 'allocate' ? '🆕 Allocated New Room' : '♻️ Reused Existing Room'}
+                      </div>
+                    </div>
+                  )}
+        
+                  {/* Rooms Count */}
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-600">
+                      Rooms Needed: {data.rooms}
+                    </div>
+                    {data.complete && (
+                      <div className="text-sm text-green-600 mt-2">✓ Minimum rooms calculated!</div>
+                    )}
+                  </div>
+                </div>
+              );
+            }
+
+        
 
     if (data.nums && data.hasOwnProperty('left')) {
       // Binary Search Visualization

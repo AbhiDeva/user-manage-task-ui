@@ -178,6 +178,7 @@ return (
             <div className="mb-6 min-h-64">
               <RenderVisualization steps={steps}
                 currentStep={currentStep}
+                selectedAlgo={problemType}
               />
             </div>
 

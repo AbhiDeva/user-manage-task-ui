@@ -76,6 +76,13 @@ import { generateInvertTreeSteps } from '../components/visualiser/InvertTreeStep
 import { generateLinkedListCycleSteps } from '../components/visualiser/LinkedListCycleSteps';
 import { generateFindDuplicateSteps } from '../components/visualiser/FindDuplicateSteps';
 import { generateTreeSteps } from '../components/visualiser/TreeSteps';
+import { generateDiameterSteps } from '../components/visualiser/DiameterSteps';
+import { generateMaxDepthSteps } from '../components/visualiser/MaxDepthSteps';
+import { generateBalancedSteps } from '../components/visualiser/BalancedSteps';
+import { generateSameTreeSteps } from '../components/visualiser/SameTreeSteps';
+import { generateSubtreeSteps } from '../components/visualiser/SubtreeSteps';
+import { generateMeetingRoomsSteps } from '../components/visualiser/MeetingRoomsSteps';
+import { generateCanAttendMeetingsSteps } from '../components/visualiser/CanAttendMeetingsSteps';
 
 import {sampleProblems} from '../utils/codedata.js'
 
@@ -233,19 +240,22 @@ export const generateSteps = (problemKey, input) => {
       case 'findDuplicateII' :
        return generateFindDuplicateSteps(input.type ? sampleProblems.findDuplicateII.examples[input.type] : input.nums);
       case 'diameter':
-          return generateTreeSteps(input.type ? sampleProblems.diameter.examples[input.type] : input, problemKey);
+          return generateDiameterSteps(input.type ? sampleProblems.diameter.examples[input.type] : input, problemKey);
       case 'maxDepth' :
-         return generateTreeSteps(input.type ? sampleProblems.maxDepth.examples[input.type] : input, problemKey);
+         return generateMaxDepthSteps(input.type ? sampleProblems.maxDepth.examples[input.type] : input. problemKey);
       case 'balanced' :
-         return generateTreeSteps(input.type ? sampleProblems.balanced.examples[input.type] : input, problemKey);
+         return generateBalancedSteps(input.type ? sampleProblems.balanced.examples[input.type] : input, problemKey);
       case 'sameTree' :
-        return generateTreeSteps(input.type ? sampleProblems.sameTree.examples[input.type] : input, problemKey);
+        return generateSameTreeSteps(input.type ? sampleProblems.sameTree.examples[input.type] : input, problemKey);
       case 'subtree':
-        return generateTreeSteps(input.type ? sampleProblems.subtree.examples[input.type] : input, problemKey);
+        return generateSubtreeSteps(input.type ? sampleProblems.subtree.examples[input.type] : input, problemKey);
       case 'lca' :
-          return generateTreeSteps(input.type ? sampleProblems.lca.examples[input.type] : input, problemKey);
-       
-        default:
+          return generateLCASteps(input.type ? sampleProblems.lca.examples[input.type] : input);
+      case 'meetingRooms':
+        return generateMeetingRoomsSteps(input.type ? sampleProblems.meetingRooms.examples[input.type] : input);
+      case 'canAttendMeetings':
+        return generateCanAttendMeetingsSteps(input.type ? sampleProblems.canAttendMeetings.examples[input.type] : input);   
+      default:
         return [];
     }
   };

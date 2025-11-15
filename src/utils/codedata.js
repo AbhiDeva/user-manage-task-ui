@@ -2094,6 +2094,61 @@ input: {
         medium: { tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 2, q: 4, lca: 2 },
         hard: { tree: { value: 6, left: { value: 2, left: { value: 0 }, right: { value: 4, left: { value: 3 }, right: { value: 5 } } }, right: { value: 8, left: { value: 7 }, right: { value: 9 } } }, p: 3, q: 5, lca: 4 }
       }
+    },
+     meetingRooms: {
+      name: 'Meeting Rooms II',
+      code: `function minMeetingRooms(intervals) {
+  if (!intervals.length) return 0;
+  
+  const starts = intervals.map(i => i[0]).sort((a,b) => a-b);
+  const ends = intervals.map(i => i[1]).sort((a,b) => a-b);
+  
+  let rooms = 0, endPtr = 0;
+  
+  for (let i = 0; i < starts.length; i++) {
+    if (starts[i] < ends[endPtr]) {
+      rooms++;
+    } else {
+      endPtr++;
+    }
+  }
+  
+  return rooms;
+}
+
+// Time: O(n log n), Space: O(n)`,
+      input: { type: 'normal', intervals: [[0,30],[5,10],[15,20]] },
+      examples: {
+        normal: { intervals: [[0,30],[5,10],[15,20]] },
+        medium: { intervals: [[0,30],[5,10],[15,20],[20,25]] },
+        hard: { intervals: [[1,5],[2,6],[3,7],[4,8],[5,9]] }
+      }
+    },
+    canAttendMeetings: {
+      name: 'Meeting Rooms I',
+      code: `function canAttendMeetings(intervals) {
+  if (!intervals.length) return true;
+  
+  // Sort by start time
+  intervals.sort((a, b) => a[0] - b[0]);
+  
+  // Check if any meeting overlaps
+  for (let i = 1; i < intervals.length; i++) {
+    if (intervals[i][0] < intervals[i-1][1]) {
+      return false; // Overlap found
+    }
+  }
+  
+  return true; // No overlaps
+}
+
+// Time: O(n log n), Space: O(1)`,
+      input: { type: 'normal', intervals: [[0,30],[5,10],[15,20]] },
+      examples: {
+        normal: { intervals: [[0,30],[5,10],[15,20]] },
+        medium: { intervals: [[7,10],[2,4]] },
+        hard: { intervals: [[1,5],[8,12],[14,18],[20,25]] }
+      }
     }
 
   };
