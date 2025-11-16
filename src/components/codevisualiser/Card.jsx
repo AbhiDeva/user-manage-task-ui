@@ -1,0 +1,77 @@
+import React, { useState } from "react";
+import { AnalyticsModal } from "./AnalyticsModal"
+
+export default function Card({ card }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const renderModalContent = () => {
+    switch (card.modalType) {
+      case 'analytics':
+        return <AnalyticsModal />;
+      case 'settings':
+        return;
+      case 'users':
+        return ;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <div className={`group h-full bg-white rounded-xl shadow-lg hover:shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer`}>
+        <div className={`${card.gradient} h-32 flex items-center justify-center`}>
+          <div className={`${card.iconColor} p-4 rounded-xl bg-white/20 backdrop-blur-sm group-hover:scale-110 transition-transform`}>
+            {card.icon}
+          </div>
+        </div>
+
+        <div className="p-6 flex flex-col h-full">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              {card.title}
+            </h3>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {card.description}
+            </p>
+
+            <button
+            onClick={() => setIsModalOpen(true)}
+            className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-md hover:shadow-lg group/btn"
+          >
+            {/* <Eye className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" /> */}
+            View Details
+          </button>
+          </div>
+
+          
+        </div>
+      </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
+            <div className={`${card.gradient} px-8 py-6 flex items-center justify-between`}>
+              <div className="flex items-center gap-4">
+                <div className={`${card.iconColor} p-3 rounded-lg bg-white/20 backdrop-blur-sm`}>
+                  {card.icon}
+                </div>
+                <h2 className="text-2xl font-bold text-white">{card.title}</h2>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
+              >
+                {/* <X className="w-6 h-6" /> */}
+              </button>
+            </div>
+
+            <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-8">
+              {renderModalContent()}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

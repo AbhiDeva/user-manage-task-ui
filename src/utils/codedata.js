@@ -2149,6 +2149,711 @@ input: {
         medium: { intervals: [[7,10],[2,4]] },
         hard: { intervals: [[1,5],[8,12],[14,18],[20,25]] }
       }
+    },
+        levelOrder: {
+      name: 'Binary Tree Level Order Traversal',
+      code: `function levelOrder(root) {
+  if (!root) return [];
+  
+  const result = [];
+  const queue = [root];
+  
+  while (queue.length) {
+    const levelSize = queue.length;
+    const currentLevel = [];
+    
+    for (let i = 0; i < levelSize; i++) {
+      const node = queue.shift();
+      currentLevel.push(node.val);
+      
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    
+    result.push(currentLevel);
+  }
+  
+  return result;
+}
+
+// Time: O(n), Space: O(n)`,
+      input: { type: 'normal', value: 3, left: { value: 9 }, right: { value: 20, left: { value: 15 }, right: { value: 7 } } },
+      examples: {
+        normal: { value: 3, left: { value: 9 }, right: { value: 20, left: { value: 15 }, right: { value: 7 } } },
+        medium: { value: 1, left: { value: 2, left: { value: 4 }, right: { value: 5 } }, right: { value: 3 } },
+        hard: { value: 1, left: { value: 2, left: { value: 4, left: { value: 8 } }, right: { value: 5 } }, right: { value: 3, left: { value: 6 }, right: { value: 7 } } }
+      }
+    },
+    rightSideView: {
+      name: 'Binary Tree Right Side View',
+      code: `function rightSideView(root) {
+  if (!root) return [];
+  
+  const result = [];
+  const queue = [root];
+  
+  while (queue.length) {
+    const levelSize = queue.length;
+    
+    for (let i = 0; i < levelSize; i++) {
+      const node = queue.shift();
+      
+      // Last node of each level is visible
+      if (i === levelSize - 1) {
+        result.push(node.val);
+      }
+      
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+  }
+  
+  return result;
+}
+
+// Time: O(n), Space: O(n)`,
+      input: { type: 'normal', value: 1, left: { value: 2, right: { value: 5 } }, right: { value: 3, right: { value: 4 } } },
+      examples: {
+        normal: { value: 1, left: { value: 2, right: { value: 5 } }, right: { value: 3, right: { value: 4 } } },
+        medium: { value: 1, left: { value: 2 }, right: { value: 3 } },
+        hard: { value: 1, left: { value: 2, left: { value: 4 } }, right: { value: 3 } }
+      }
+    },
+    goodNodes: {
+      name: 'Count Good Nodes In Binary Tree',
+      code: `function goodNodes(root) {
+  function dfs(node, maxSoFar) {
+    if (!node) return 0;
+    
+    let count = 0;
+    if (node.val >= maxSoFar) {
+      count = 1;
+    }
+    
+    const newMax = Math.max(maxSoFar, node.val);
+    count += dfs(node.left, newMax);
+    count += dfs(node.right, newMax);
+    
+    return count;
+  }
+  
+  return dfs(root, root.val);
+}
+
+// Time: O(n), Space: O(h)`,
+      input: { type: 'normal', value: 3, left: { value: 1, right: { value: 3 } }, right: { value: 4, left: { value: 1 }, right: { value: 5 } } },
+      examples: {
+        normal: { value: 3, left: { value: 1, right: { value: 3 } }, right: { value: 4, left: { value: 1 }, right: { value: 5 } } },
+        medium: { value: 3, left: { value: 3, left: { value: 4 }, right: { value: 2 } } },
+        hard: { value: 2, right: { value: 4, left: { value: 10, left: { value: 8 } }, right: { value: 8, right: { value: 4 } } } }
+      }
+    },
+    isValidBST: {
+      name: 'Validate Binary Search Tree',
+      code: `function isValidBST(root) {
+  function validate(node, min, max) {
+    if (!node) return true;
+    
+    if (node.val <= min || node.val >= max) {
+      return false;
+    }
+    
+    return validate(node.left, min, node.val) &&
+           validate(node.right, node.val, max);
+  }
+  
+  return validate(root, -Infinity, Infinity);
+}
+
+// Time: O(n), Space: O(h)`,
+      input: { type: 'normal', value: 2, left: { value: 1 }, right: { value: 3 }, isValid: true },
+      examples: {
+        normal: { value: 2, left: { value: 1 }, right: { value: 3 }, isValid: true },
+        medium: { value: 5, left: { value: 1 }, right: { value: 4, left: { value: 3 }, right: { value: 6 } }, isValid: false },
+        hard: { value: 5, left: { value: 4 }, right: { value: 6, left: { value: 3 }, right: { value: 7 } }, isValid: false }
+      }
+    },
+    kthSmallest: {
+      name: 'Kth Smallest Element In BST',
+      code: `function kthSmallest(root, k) {
+  const result = [];
+  
+  function inorder(node) {
+    if (!node || result.length >= k) return;
+    
+    inorder(node.left);
+    result.push(node.val);
+    inorder(node.right);
+  }
+  
+  inorder(root);
+  return result[k - 1];
+}
+
+// Optimized with early exit
+function kthSmallestOptimized(root, k) {
+  let count = 0;
+  let result = null;
+  
+  function inorder(node) {
+    if (!node || result !== null) return;
+    
+    inorder(node.left);
+    count++;
+    if (count === k) {
+      result = node.val;
+      return;
+    }
+    inorder(node.right);
+  }
+  
+  inorder(root);
+  return result;
+}
+
+// Time: O(n), Space: O(h)`,
+      input: { type: 'normal', value: 3, left: { value: 1, right: { value: 2 } }, right: { value: 4 }, k: 1 },
+      examples: {
+        normal: { value: 3, left: { value: 1, right: { value: 2 } }, right: { value: 4 }, k: 1 },
+        medium: { value: 5, left: { value: 3, left: { value: 2, left: { value: 1 } }, right: { value: 4 } }, right: { value: 6 }, k: 3 },
+        hard: { value: 4, left: { value: 2, left: { value: 1 }, right: { value: 3 } }, right: { value: 6, left: { value: 5 }, right: { value: 7 } }, k: 4 }
+      }
+    },
+    buildTree: {
+      name: 'Construct Binary Tree from Preorder and Inorder',
+      code: `function buildTree(preorder, inorder) {
+  if (!preorder.length || !inorder.length) return null;
+  
+  const root = new TreeNode(preorder[0]);
+  const mid = inorder.indexOf(preorder[0]);
+  
+  root.left = buildTree(
+    preorder.slice(1, mid + 1),
+    inorder.slice(0, mid)
+  );
+  
+  root.right = buildTree(
+    preorder.slice(mid + 1),
+    inorder.slice(mid + 1)
+  );
+  
+  return root;
+}
+
+// Time: O(n), Space: O(n)`,
+      input: { type: 'normal', preorder: [3, 9, 20, 15, 7], inorder: [9, 3, 15, 20, 7] },
+      examples: {
+        normal: { preorder: [3, 9, 20, 15, 7], inorder: [9, 3, 15, 20, 7] },
+        medium: { preorder: [1, 2, 4, 5, 3], inorder: [4, 2, 5, 1, 3] },
+        hard: { preorder: [1, 2, 4, 8, 9, 5, 3, 6, 7], inorder: [8, 4, 9, 2, 5, 1, 6, 3, 7] }
+      }
+    },
+    maxPathSum: {
+      name: 'Binary Tree Maximum Path Sum',
+      code: `function maxPathSum(root) {
+  let maxSum = -Infinity;
+  
+  function maxGain(node) {
+    if (!node) return 0;
+    
+    // Max sum on left and right subtrees
+    const leftGain = Math.max(maxGain(node.left), 0);
+    const rightGain = Math.max(maxGain(node.right), 0);
+    
+    // Path through current node
+    const pathSum = node.val + leftGain + rightGain;
+    maxSum = Math.max(maxSum, pathSum);
+    
+    // Return max gain if continue to parent
+    return node.val + Math.max(leftGain, rightGain);
+  }
+  
+  maxGain(root);
+  return maxSum;
+}
+
+// Time: O(n), Space: O(h)`,
+      input: { type: 'normal', value: 1, left: { value: 2 }, right: { value: 3 } },
+      examples: {
+        normal: { value: 1, left: { value: 2 }, right: { value: 3 } },
+        medium: { value: -10, left: { value: 9 }, right: { value: 20, left: { value: 15 }, right: { value: 7 } } },
+        hard: { value: 5, left: { value: 4, left: { value: 11, left: { value: 7 }, right: { value: 2 } } }, right: { value: 8, left: { value: 13 }, right: { value: 4, right: { value: 1 } } } }
+      }
+    },
+    codec: {
+      name: 'Serialize and Deserialize Binary Tree',
+      code: `class Codec {
+  // Serialize tree to string
+  serialize(root) {
+    if (!root) return 'null';
+    
+    const left = this.serialize(root.left);
+    const right = this.serialize(root.right);
+    
+    return root.val + ',' + left + ',' + right;
+  }
+  
+  // Deserialize string to tree
+  deserialize(data) {
+    const values = data.split(',');
+    
+    function build() {
+      const val = values.shift();
+      if (val === 'null') return null;
+      
+      const node = new TreeNode(parseInt(val));
+      node.left = build();
+      node.right = build();
+      
+      return node;
+    }
+    
+    return build();
+  }
+}
+
+// BFS approach
+class CodecBFS {
+  serialize(root) {
+    if (!root) return '';
+    const result = [];
+    const queue = [root];
+    
+    while (queue.length) {
+      const node = queue.shift();
+      if (node) {
+        result.push(node.val);
+        queue.push(node.left);
+        queue.push(node.right);
+      } else {
+        result.push('null');
+      }
+    }
+    
+    return result.join(',');
+  }
+  
+  deserialize(data) {
+    if (!data) return null;
+    const values = data.split(',');
+    const root = new TreeNode(parseInt(values[0]));
+    const queue = [root];
+    let i = 1;
+    
+    while (queue.length) {
+      const node = queue.shift();
+      
+      if (values[i] !== 'null') {
+        node.left = new TreeNode(parseInt(values[i]));
+        queue.push(node.left);
+      }
+      i++;
+      
+      if (values[i] !== 'null') {
+        node.right = new TreeNode(parseInt(values[i]));
+        queue.push(node.right);
+      }
+      i++;
+    }
+    
+    return root;
+  }
+}
+
+// Time: O(n), Space: O(n)`,
+      input: { type: 'normal', value: 1, left: { value: 2 }, right: { value: 3, left: { value: 4 }, right: { value: 5 } } },
+      examples: {
+        normal: { value: 1, left: { value: 2 }, right: { value: 3, left: { value: 4 }, right: { value: 5 } } },
+        medium: { value: 1, left: { value: 2, left: { value: 4 } }, right: { value: 3 } },
+        hard: { value: 1, left: { value: 2, left: { value: 4, left: { value: 6 } }, right: { value: 5 } }, right: { value: 3, right: { value: 7 } } }
+      }
+    },
+    trie: {
+      name: 'Implement Trie (Prefix Tree)',
+      code: `class TrieNode {
+  constructor() {
+    this.children = {};
+    this.isEndOfWord = false;
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode();
+  }
+  
+  insert(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char]) {
+        node.children[char] = new TrieNode();
+      }
+      node = node.children[char];
+    }
+    node.isEndOfWord = true;
+  }
+  
+  search(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node.children[char]) {
+        return false;
+      }
+      node = node.children[char];
+    }
+    return node.isEndOfWord;
+  }
+  
+  startsWith(prefix) {
+    let node = this.root;
+    for (const char of prefix) {
+      if (!node.children[char]) {
+        return false;
+      }
+      node = node.children[char];
+    }
+    return true;
+  }
+}
+
+// Time: O(m) for all operations where m is key length
+// Space: O(n*m) where n is number of keys`,
+      input: { type: 'normal', operations: [
+        ['insert', 'apple'],
+        ['search', 'apple'],
+        ['search', 'app'],
+        ['startsWith', 'app'],
+        ['insert', 'app'],
+        ['search', 'app']
+      ]},
+      examples: {
+        normal: { operations: [
+          ['insert', 'apple'],
+          ['search', 'apple'],
+          ['search', 'app'],
+          ['startsWith', 'app'],
+          ['insert', 'app'],
+          ['search', 'app']
+        ]},
+        medium: { operations: [
+          ['insert', 'cat'],
+          ['insert', 'car'],
+          ['insert', 'card'],
+          ['search', 'car'],
+          ['startsWith', 'ca'],
+          ['search', 'can']
+        ]},
+        hard: { operations: [
+          ['insert', 'hello'],
+          ['insert', 'help'],
+          ['insert', 'hell'],
+          ['startsWith', 'hel'],
+          ['search', 'hello'],
+          ['insert', 'heap'],
+          ['startsWith', 'he'],
+          ['search', 'helper']
+        ]}
+      }
+    },
+    wordDictionary: {
+      name: 'Design Add and Search Words Data Structure',
+      code: `class WordDictionary {
+  constructor() {
+    this.root = {};
+  }
+  
+  addWord(word) {
+    let node = this.root;
+    for (const char of word) {
+      if (!node[char]) {
+        node[char] = {};
+      }
+      node = node[char];
+    }
+    node.isEnd = true;
+  }
+  
+  search(word) {
+    return this.searchInNode(word, 0, this.root);
+  }
+  
+  searchInNode(word, index, node) {
+    if (index === word.length) {
+      return node.isEnd === true;
+    }
+    
+    const char = word[index];
+    
+    // Wildcard: try all possible characters
+    if (char === '.') {
+      for (const key in node) {
+        if (key !== 'isEnd') {
+          if (this.searchInNode(word, index + 1, node[key])) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+    
+    // Regular character
+    if (!node[char]) {
+      return false;
+    }
+    
+    return this.searchInNode(word, index + 1, node[char]);
+  }
+}
+
+// Time: O(m) for add, O(26^m) worst case for search
+// Space: O(n*m) where n is number of words`,
+      input: { type: 'normal', operations: [
+        ['addWord', 'bad'],
+        ['addWord', 'dad'],
+        ['addWord', 'mad'],
+        ['search', 'pad'],
+        ['search', 'bad'],
+        ['search', '.ad'],
+        ['search', 'b..']
+      ]},
+      examples: {
+        normal: { operations: [
+          ['addWord', 'bad'],
+          ['addWord', 'dad'],
+          ['addWord', 'mad'],
+          ['search', 'pad'],
+          ['search', 'bad'],
+          ['search', '.ad'],
+          ['search', 'b..']
+        ]},
+        medium: { operations: [
+          ['addWord', 'at'],
+          ['addWord', 'and'],
+          ['addWord', 'an'],
+          ['addWord', 'add'],
+          ['search', 'a'],
+          ['search', '.at'],
+          ['search', 'an.'],
+          ['search', '.']
+        ]},
+        hard: { operations: [
+          ['addWord', 'a'],
+          ['addWord', 'ab'],
+          ['addWord', 'abc'],
+          ['addWord', 'abcd'],
+          ['search', '.'],
+          ['search', '..'],
+          ['search', '...'],
+          ['search', 'a.c'],
+          ['search', 'a..d']
+        ]}
+      }
+    },
+    wordSearchII: {
+      name: 'Word Search II',
+      code: `function findWords(board, words) {
+  // Build Trie from words
+  const root = {};
+  for (const word of words) {
+    let node = root;
+    for (const char of word) {
+      if (!node[char]) node[char] = {};
+      node = node[char];
+    }
+    node.word = word;
+  }
+  
+  const result = [];
+  const rows = board.length;
+  const cols = board[0].length;
+  
+  function dfs(r, c, node) {
+    if (r < 0 || r >= rows || c < 0 || c >= cols) return;
+    
+    const char = board[r][c];
+    if (char === '#' || !node[char]) return;
+    
+    node = node[char];
+    
+    // Found a word
+    if (node.word) {
+      result.push(node.word);
+      delete node.word; // Avoid duplicates
+    }
+    
+    // Mark visited
+    board[r][c] = '#';
+    
+    // Explore 4 directions
+    dfs(r + 1, c, node);
+    dfs(r - 1, c, node);
+    dfs(r, c + 1, node);
+    dfs(r, c - 1, node);
+    
+    // Restore
+    board[r][c] = char;
+  }
+  
+  // Try starting from each cell
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      dfs(r, c, root);
+    }
+  }
+  
+  return result;
+}
+
+// Time: O(m*n*4^L) where L is max word length
+// Space: O(k*L) where k is number of words`,
+      input: { 
+        type: 'normal', 
+        board: [
+          ['o','a','a','n'],
+          ['e','t','a','e'],
+          ['i','h','k','r'],
+          ['i','f','l','v']
+        ],
+        words: ['oath','pea','eat','rain']
+      },
+      examples: {
+        normal: { 
+          board: [
+            ['o','a','a','n'],
+            ['e','t','a','e'],
+            ['i','h','k','r'],
+            ['i','f','l','v']
+          ],
+          words: ['oath','pea','eat','rain']
+        },
+        medium: { 
+          board: [
+            ['a','b'],
+            ['c','d']
+          ],
+          words: ['ab','cb','ad','bd','ac','ca','da','bc','db','adcb','dabc','abb','acb']
+        },
+        hard: { 
+          board: [
+            ['o','a','b','n'],
+            ['o','t','a','e'],
+            ['a','h','k','r'],
+            ['a','f','l','v']
+          ],
+          words: ['oa','oaa','oat','oath','oaths','oaba','oat','eat','aate']
+        }
+      }
+    },
+    kthLargest: {
+      name: 'Kth Largest Element in a Stream',
+      code: `class KthLargest {
+  constructor(k, nums) {
+    this.k = k;
+    this.minHeap = [];
+    
+    // Add initial numbers
+    for (const num of nums) {
+      this.add(num);
+    }
+  }
+  
+  add(val) {
+    // Add to heap
+    this.minHeap.push(val);
+    this.bubbleUp(this.minHeap.length - 1);
+    
+    // Keep only k largest elements
+    if (this.minHeap.length > this.k) {
+      this.extractMin();
+    }
+    
+    // Root is kth largest
+    return this.minHeap[0];
+  }
+  
+  bubbleUp(index) {
+    while (index > 0) {
+      const parentIdx = Math.floor((index - 1) / 2);
+      if (this.minHeap[index] >= this.minHeap[parentIdx]) break;
+      
+      [this.minHeap[index], this.minHeap[parentIdx]] = 
+        [this.minHeap[parentIdx], this.minHeap[index]];
+      index = parentIdx;
+    }
+  }
+  
+  extractMin() {
+    const min = this.minHeap[0];
+    const last = this.minHeap.pop();
+    
+    if (this.minHeap.length > 0) {
+      this.minHeap[0] = last;
+      this.bubbleDown(0);
+    }
+    
+    return min;
+  }
+  
+  bubbleDown(index) {
+    while (true) {
+      const leftIdx = 2 * index + 1;
+      const rightIdx = 2 * index + 2;
+      let smallest = index;
+      
+      if (leftIdx < this.minHeap.length && 
+          this.minHeap[leftIdx] < this.minHeap[smallest]) {
+        smallest = leftIdx;
+      }
+      
+      if (rightIdx < this.minHeap.length && 
+          this.minHeap[rightIdx] < this.minHeap[smallest]) {
+        smallest = rightIdx;
+      }
+      
+      if (smallest === index) break;
+      
+      [this.minHeap[index], this.minHeap[smallest]] = 
+        [this.minHeap[smallest], this.minHeap[index]];
+      index = smallest;
+    }
+  }
+}
+
+// Time: O(log k) per add operation
+// Space: O(k) to store k elements`,
+      input: { type: 'normal', k: 3, operations: [
+        ['KthLargest', [4, 5, 8, 2]],
+        ['add', 3],
+        ['add', 5],
+        ['add', 10],
+        ['add', 9],
+        ['add', 4]
+      ]},
+      examples: {
+        normal: { k: 3, operations: [
+          ['KthLargest', [4, 5, 8, 2]],
+          ['add', 3],
+          ['add', 5],
+          ['add', 10],
+          ['add', 9],
+          ['add', 4]
+        ]},
+        medium: { k: 2, operations: [
+          ['KthLargest', [0]],
+          ['add', -1],
+          ['add', 1],
+          ['add', -2],
+          ['add', -4],
+          ['add', 3]
+        ]},
+        hard: { k: 4, operations: [
+          ['KthLargest', [7, 7, 7, 7, 8, 3]],
+          ['add', 2],
+          ['add', 10],
+          ['add', 9],
+          ['add', 9]
+        ]}
+      }
     }
 
   };

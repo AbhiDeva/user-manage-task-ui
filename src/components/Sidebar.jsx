@@ -66,11 +66,17 @@ const linkData = [
     link: "visualiser",
     icon: <FaCodepen />,
   },
-  {
-    label: "WebVisualiser",
-    link: "web-visualiser",
+
+   {
+    label: "Code Visualiser",
+    link: "code-visualiser",
     icon: <FaCodepen />,
   },
+  // {
+  //   label: "WebVisualiser",
+  //   link: "web-visualiser",
+  //   icon: <FaCodepen />,
+  // },
 
   {
     label: "JavascriptVisualiser",

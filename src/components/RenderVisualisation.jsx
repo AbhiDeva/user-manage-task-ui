@@ -4323,6 +4323,1473 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
               );
             }
 
+             if (data.nums && data.hasOwnProperty('phase')) {
+      return (
+        <div className="space-y-6">
+          {data.phase > 0 && (
+            <div className="text-center text-sm font-semibold bg-blue-100 px-4 py-2 rounded mx-auto w-fit">
+              Phase {data.phase}: {data.phase === 1 ? 'Find Intersection' : 'Find Duplicate'}
+            </div>
+          )}
+          
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            {data.nums.map((val, i) => (
+              <div key={i} className={`w-16 h-16 rounded border-4 flex flex-col items-center justify-center font-bold transition-all ${
+                data.slow === i && data.fast === i ? 'bg-purple-500 border-purple-700 text-white scale-110' :
+                data.slow === i ? 'bg-blue-500 border-blue-700 text-white scale-110' : 
+                data.fast === i ? 'bg-green-500 border-green-700 text-white scale-110' :
+                data.found && data.duplicate === i ? 'bg-red-500 border-red-700 text-white scale-110' :
+                data.indices && data.indices.includes(i) ? 'bg-red-300 border-red-500' :
+                'bg-gray-100 border-gray-300'
+              }`}>
+                <div className="text-xs opacity-70">i={i}</div>
+                <div className="text-lg">{val}</div>
+              </div>
+            ))}
+          </div>
+
+          {data.explanation === 'setup' && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm">
+              <strong>Key Concept:</strong> We treat the array as a linked list where nums[i] points to index nums[i].
+            </div>
+          )}
+
+          {data.explanation === 'array' && (
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 text-sm">
+              <strong>Example:</strong> nums[0]={data.nums[0]} means index 0 points to index {data.nums[0]}. 
+              Following this chain creates a cycle at the duplicate!
+            </div>
+          )}
+
+          {data.prevSlow !== undefined && (
+            <div className="text-center text-xs text-gray-600">
+              <div>Previous: Slow at {data.prevSlow}, Fast at {data.prevFast}</div>
+              <div>Current: Slow at {data.slow}, Fast at {data.fast}</div>
+            </div>
+          )}
+
+          {data.found && (
+            <div className="space-y-3">
+              <div className="text-center text-lg text-red-600 font-bold">
+                ✓ Duplicate: {data.duplicate}
+              </div>
+              {data.indices && (
+                <div className="bg-green-50 border-l-4 border-green-400 p-3 text-sm">
+                  <strong>Proof:</strong> Value {data.duplicate} appears at indices [{data.indices.join(', ')}]. 
+                  This means multiple elements point to index {data.duplicate}, creating the cycle entrance!
+                </div>
+              )}
+            </div>
+          )}
+
+          {data.intersection && !data.found && (
+            <div className="text-center text-sm text-purple-600 font-semibold">
+              ✓ Cycle detected! Now finding the entry point...
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Kth Largest visualization
+    if (data.minHeap && data.hasOwnProperty('k')) {
+      const renderHeap = (heap) => {
+        if (heap.length === 0) return null;
+        
+        const levels = [];
+        let level = 0;
+        let idx = 0;
+        
+        while (idx < heap.length) {
+          const nodesInLevel = Math.pow(2, level);
+          const levelNodes = [];
+          
+          for (let i = 0; i < nodesInLevel && idx < heap.length; i++) {
+            levelNodes.push({ value: heap[idx], index: idx });
+            idx++;
+          }
+          
+          levels.push(levelNodes);
+          level++;
+        }
+
+        return (
+          <div className="flex flex-col items-center gap-4">
+            {levels.map((levelNodes, levelIdx) => (
+              <div key={levelIdx} className="flex gap-4 justify-center">
+                {levelNodes.map((node, nodeIdx) => {
+                  const isRoot = node.index === 0;
+                  const isSwapping = data.swapIdx === node.index || data.parentIdx === node.index || data.childIdx === node.index;
+                  
+                  return (
+                    <div key={nodeIdx} className="flex flex-col items-center">
+                      <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold transition-all ${
+                        isRoot ? 'bg-red-500 border-red-700 text-white scale-110' :
+                        isSwapping ? 'bg-yellow-400 border-yellow-600 text-gray-800 scale-110' :
+                        node.value === data.addedNum ? 'bg-green-400 border-green-600 text-white' :
+                        node.value === data.removed ? 'bg-gray-400 border-gray-600 text-white' :
+                        'bg-blue-400 border-blue-600 text-white'
+                      }`}>
+                        {node.value}
+                      </div>
+                      {isRoot && (
+                        <div className="text-xs text-red-600 font-bold mt-1">MIN</div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        );
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-pink-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.phase === 'init' && '🔧 Initialization'}
+            {data.phase === 'explain' && '💡 Concept Explanation'}
+            {data.phase === 'constructor' && '🏗️ Building Initial Heap'}
+            {data.phase === 'add-to-heap' && '➕ Adding to Heap'}
+            {data.phase === 'bubble-up' && '⬆️ Bubble Up (Heapify)'}
+            {data.phase === 'remove-min' && '🗑️ Remove Minimum'}
+            {data.phase === 'bubble-down' && '⬇️ Bubble Down (Heapify)'}
+            {data.phase === 'add-start' && '📥 Add Operation'}
+            {data.phase === 'push' && '➕ Push to Heap'}
+            {data.phase === 'add-complete' && '✅ Add Complete'}
+            {data.phase === 'constructor-complete' && '✅ Constructor Complete'}
+            {data.phase === 'complete' && '🎉 All Operations Complete'}
+          </div>
+
+          {/* Key Info */}
+          <div className="bg-purple-50 p-4 rounded border-l-4 border-purple-400">
+            <div className="text-center">
+              <div className="text-lg font-semibold text-purple-800">
+                k = {data.k} (Find {data.k}th largest element)
+              </div>
+              <div className="text-sm text-gray-700 mt-1">
+                Heap Size: {data.minHeap.length} | {data.minHeap.length === data.k ? 'Full' : `${data.k - data.minHeap.length} more needed`}
+              </div>
+            </div>
+          </div>
+
+          {/* Min Heap Visualization */}
+          <div className="bg-gray-50 p-6 rounded-lg min-h-64">
+            <div className="text-xs text-gray-600 mb-4 text-center">Min Heap (Root = Smallest)</div>
+            <div className="flex justify-center">
+              {data.minHeap.length > 0 ? renderHeap(data.minHeap) : (
+                <div className="text-gray-400 text-sm">Heap is empty</div>
+              )}
+            </div>
+          </div>
+
+          {/* Operation Details */}
+          {data.addNum !== undefined && (
+            <div className="bg-green-50 p-3 rounded border-l-4 border-green-400">
+              <div className="text-sm font-semibold text-green-800">
+                Adding: {data.addNum}
+              </div>
+            </div>
+          )}
+
+          {data.removed !== undefined && (
+            <div className="bg-red-50 p-3 rounded border-l-4 border-red-400">
+              <div className="text-sm font-semibold text-red-800">
+                Removed: {data.removed} (heap size exceeded k)
+              </div>
+            </div>
+          )}
+
+          {/* Result Display */}
+          {data.result !== undefined && (
+            <div className="bg-blue-100 border-2 border-blue-500 p-4 rounded text-center">
+              <div className="text-sm text-blue-700 font-semibold">Kth Largest Element:</div>
+              <div className="text-3xl font-bold text-blue-800 mt-1">{data.result}</div>
+              <div className="text-xs text-gray-600 mt-2">
+                (Root of min heap with k elements)
+              </div>
+            </div>
+          )}
+
+          {/* Heap Array */}
+          {data.minHeap.length > 0 && (
+            <div className="bg-blue-50 p-3 rounded">
+              <div className="text-sm font-semibold text-blue-800 mb-2">Heap Array:</div>
+              <div className="flex gap-2 flex-wrap justify-center">
+                {data.minHeap.map((val, idx) => (
+                  <div key={idx} className={`px-3 py-2 rounded font-mono font-bold ${
+                    idx === 0 ? 'bg-red-400 text-white' :
+                    val === data.addedNum ? 'bg-green-400 text-white' :
+                    'bg-blue-200 text-blue-800'
+                  }`}>
+                    {val}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Algorithm Explanation */}
+          {data.phase === 'explain' && (
+            <div className="bg-yellow-50 p-4 rounded border-l-4 border-yellow-400">
+              <div className="text-sm font-semibold text-yellow-800 mb-2">Why Min Heap?</div>
+              <div className="text-xs text-gray-700 space-y-1">
+                <div>• Keep only k largest elements in heap</div>
+                <div>• Smallest among k largest is at root</div>
+                <div>• Root = kth largest element!</div>
+                <div>• When adding: if heap size {`>`} k, remove minimum</div>
+              </div>
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="bg-gray-100 p-3 rounded">
+            <div className="text-xs font-semibold text-gray-700 mb-2">Legend:</div>
+            <div className="flex gap-4 flex-wrap text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-red-500 border-2 border-red-700"></div>
+                <span>Root (Min/Kth Largest)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-yellow-400 border-2 border-yellow-600"></div>
+                <span>Swapping</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-green-400 border-2 border-green-600"></div>
+                <span>Just Added</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-blue-400 border-2 border-blue-600"></div>
+                <span>Regular Node</span>
+              </div>
+            </div>
+          </div>
+
+          {data.complete && (
+            <div className="text-center text-green-600 font-bold text-lg">
+              ✓ Stream processing complete!
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Word Search II visualization
+    if (data.board && data.words) {
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-cyan-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.phase === 'setup' && '📋 Setup'}
+            {data.phase === 'build-trie' && '🌳 Building Trie'}
+            {data.phase === 'add-to-trie' && '➕ Adding to Trie'}
+            {data.phase === 'start-search' && '🔍 Starting Search'}
+            {data.phase === 'start-from-cell' && '📍 New Starting Point'}
+            {data.phase === 'exploring' && '🔎 Exploring Path'}
+            {data.phase === 'found-word' && '🎯 Word Found!'}
+            {data.phase === 'complete' && '✅ Complete'}
+          </div>
+
+          {/* 2D Board Visualization */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="text-xs text-gray-600 mb-3 text-center">2D Board</div>
+            <div className="flex justify-center">
+              <div className="inline-block">
+                {data.board.map((row, r) => (
+                  <div key={r} className="flex gap-1 mb-1">
+                    {row.map((cell, c) => {
+                      const isStart = data.startPos && data.startPos[0] === r && data.startPos[1] === c;
+                      const isCurrent = data.currentPos && data.currentPos[0] === r && data.currentPos[1] === c;
+                      const isVisited = data.visited && data.visited[r] && data.visited[r][c];
+                      
+                      return (
+                        <div
+                          key={c}
+                          className={`w-12 h-12 border-2 flex items-center justify-center font-bold text-lg transition-all ${
+                            isCurrent ? 'bg-blue-500 border-blue-700 text-white scale-110 shadow-lg' :
+                            isStart ? 'bg-purple-400 border-purple-600 text-white' :
+                            isVisited ? 'bg-yellow-200 border-yellow-400 text-gray-800' :
+                            'bg-white border-gray-300 text-gray-700'
+                          }`}
+                        >
+                          {cell}
+                          {(isStart || isCurrent) && (
+                            <div className="absolute -top-6 text-xs font-semibold">
+                              [{r},{c}]
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Current Path */}
+          {data.currentPath && (
+            <div className="bg-blue-50 p-3 rounded border-l-4 border-blue-400">
+              <div className="text-sm font-semibold text-blue-800">
+                Current Path: <span className="font-mono text-lg">{data.currentPath}</span>
+              </div>
+              {data.currentPos && (
+                <div className="text-xs text-gray-700 mt-1">
+                  Position: [{data.currentPos[0]}, {data.currentPos[1]}]
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Words to Find */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-purple-50 p-3 rounded">
+              <div className="text-sm font-semibold text-purple-800 mb-2">Words to Find:</div>
+              <div className="flex flex-wrap gap-2">
+                {data.words.map((word, idx) => (
+                  <div
+                    key={idx}
+                    className={`px-3 py-1 rounded text-sm font-mono font-semibold ${
+                      data.found.includes(word) ? 'bg-green-400 text-white line-through' :
+                      data.currentWord === word ? 'bg-purple-400 text-white' :
+                      'bg-purple-200 text-purple-800'
+                    }`}
+                  >
+                    {word}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-green-50 p-3 rounded">
+              <div className="text-sm font-semibold text-green-800 mb-2">
+                Found Words: ({data.found.length})
+              </div>
+              {data.found.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {data.found.map((word, idx) => (
+                    <div key={idx} className="px-3 py-1 bg-green-400 text-white rounded text-sm font-mono font-semibold">
+                      ✓ {word}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-600">No words found yet</div>
+              )}
+            </div>
+          </div>
+
+          {/* Found Word Highlight */}
+          {data.foundWord && (
+            <div className="bg-green-100 border-2 border-green-500 p-4 rounded text-center">
+              <div className="text-2xl font-bold text-green-700">
+                🎉 Found: "{data.foundWord}"!
+              </div>
+            </div>
+          )}
+
+          {/* Building Trie Indicator */}
+          {data.buildingTrie && (
+            <div className="bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
+              <div className="text-sm">
+                {data.currentWord && (
+                  <span>Building Trie: Adding <span className="font-mono font-bold">"{data.currentWord}"</span></span>
+                )}
+                {!data.currentWord && <span>Trie allows efficient prefix matching during DFS</span>}
+              </div>
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="bg-gray-100 p-3 rounded">
+            <div className="text-xs font-semibold text-gray-700 mb-2">Legend:</div>
+            <div className="flex gap-4 flex-wrap text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 border-2 bg-blue-500 border-blue-700"></div>
+                <span>Current Position</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 border-2 bg-purple-400 border-purple-600"></div>
+                <span>Start Cell</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 border-2 bg-yellow-200 border-yellow-400"></div>
+                <span>Visited</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 border-2 bg-white border-gray-300"></div>
+                <span>Unvisited</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Algorithm Info */}
+          <div className="bg-cyan-50 p-3 rounded border-l-4 border-cyan-400">
+            <div className="text-sm font-semibold text-cyan-800 mb-1">Algorithm:</div>
+            <div className="text-xs text-gray-700 space-y-1">
+              <div>1. Build Trie from word list</div>
+              <div>2. DFS from each cell exploring 4 directions</div>
+              <div>3. Use Trie to check valid prefixes efficiently</div>
+              <div>4. Mark cells as visited during DFS to avoid cycles</div>
+            </div>
+          </div>
+
+          {data.complete && (
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                ✓ Search Complete!
+              </div>
+              <div className="text-sm text-gray-600 mt-2">
+                Found {data.found.length} out of {data.words.length} words
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Word Dictionary with wildcard support
+    if (data.operations && data.hasOwnProperty('addedWords')) {
+      const renderDictTree = (node, prefix = '', depth = 0) => {
+        if (!node) return null;
+        
+        const chars = Object.keys(node).filter(k => k !== 'isEnd');
+        if (chars.length === 0) return null;
+
+        return (
+          <div className="flex flex-col items-center">
+            <div className="flex gap-4 justify-center flex-wrap">
+              {chars.map(char => {
+                const childNode = node[char];
+                const currentPath = prefix + char;
+                const isCurrentPath = data.path && data.path === currentPath;
+                const isEnd = childNode.isEnd;
+                
+                return (
+                  <div key={char} className="flex flex-col items-center">
+                    <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-lg transition-all ${
+                      isCurrentPath ? 'bg-blue-500 border-blue-700 text-white scale-125 shadow-lg' :
+                      isEnd ? 'bg-green-400 border-green-600 text-white' :
+                      'bg-gray-200 border-gray-400 text-gray-800'
+                    }`}>
+                      {char}
+                    </div>
+                    {isEnd && (
+                      <div className="text-xs text-green-600 font-bold mt-1">END</div>
+                    )}
+                    <div className="mt-2">
+                      {renderDictTree(childNode, currentPath, depth + 1)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-orange-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.operation === 'addWord' && '📝 Add Word'}
+            {data.operation === 'search' && '🔍 Search with Wildcards (.)'}
+            {!data.operation && 'Word Dictionary'}
+          </div>
+
+          {/* Operation Details */}
+          {data.word && (
+            <div className="bg-blue-50 p-4 rounded border-l-4 border-blue-400">
+              <div className="text-center">
+                <div className="text-lg font-semibold text-blue-800 mb-2">
+                  {data.operation}("{data.word}")
+                  {data.hasWildcard && <span className="ml-2 text-sm text-orange-600">(contains wildcard)</span>}
+                </div>
+                {data.char && (
+                  <div className="text-sm text-gray-700">
+                    {data.char === '.' ? (
+                      <span className="font-mono font-bold text-orange-600">Wildcard '.' at position {data.position}</span>
+                    ) : (
+                      <span>Character: <span className="font-mono font-bold text-blue-600">'{data.char}'</span> at position {data.position}</span>
+                    )}
+                  </div>
+                )}
+                {data.path && (
+                  <div className="text-sm text-gray-700 mt-1">
+                    Current path: <span className="font-mono font-bold">{data.path}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Dictionary Tree Visualization */}
+          <div className="bg-gray-50 p-6 rounded-lg min-h-64 overflow-x-auto">
+            <div className="text-xs text-gray-600 mb-4 text-center">Dictionary Structure (Trie with Wildcard Support)</div>
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full bg-orange-500 border-4 border-orange-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                  ROOT
+                </div>
+                <div className="mt-4">
+                  {data.dict && data.dict.root && renderDictTree(data.dict.root)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Added Words */}
+          {data.addedWords && data.addedWords.length > 0 && (
+            <div className="bg-green-50 p-4 rounded border-l-4 border-green-400">
+              <div className="text-sm font-semibold text-green-800 mb-2">Dictionary Words:</div>
+              <div className="flex gap-2 flex-wrap">
+                {data.addedWords.map((w, idx) => (
+                  <div key={idx} className="px-3 py-1 bg-green-200 text-green-800 rounded font-mono text-sm font-semibold">
+                    {w}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Result Display */}
+          {data.result !== undefined && data.phase === 'complete' && (
+            <div className={`p-4 rounded text-center border-2 ${
+              data.result ? 'bg-green-100 border-green-500' : 'bg-red-100 border-red-500'
+            }`}>
+              <div className={`text-lg font-bold ${data.result ? 'text-green-700' : 'text-red-700'}`}>
+                {data.operation === 'addWord' && '✓ Word added to dictionary'}
+                {data.operation === 'search' && (data.result ? `✓ Match found for "${data.word}"!` : `✗ No match for "${data.word}"`)}
+              </div>
+            </div>
+          )}
+
+          {/* Phase Indicators */}
+          {data.phase && (
+            <div className="text-center text-sm">
+              {data.phase === 'start' && '🚀 Starting operation...'}
+              {data.phase === 'create' && '🆕 Creating new node'}
+              {data.phase === 'traverse' && '➡️ Following path'}
+              {data.phase === 'wildcard' && '🎲 Wildcard - trying all branches'}
+              {data.phase === 'try-wildcard' && '🔄 Testing wildcard match'}
+              {data.phase === 'wildcard-fail' && '❌ Wildcard branch failed'}
+              {data.phase === 'not-found' && '❌ Path not found'}
+              {data.phase === 'check-end' && '🏁 Checking word end marker'}
+              {data.phase === 'complete' && '✅ Operation complete'}
+            </div>
+          )}
+
+          {/* Wildcard Explanation */}
+          {data.hasWildcard && (
+            <div className="bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
+              <div className="text-sm font-semibold text-yellow-800 mb-1">Wildcard Search:</div>
+              <div className="text-xs text-gray-700">
+                The '.' character matches any single letter. The algorithm uses DFS to try all possible branches.
+              </div>
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="bg-gray-100 p-3 rounded">
+            <div className="text-xs font-semibold text-gray-700 mb-2">Legend:</div>
+            <div className="flex gap-4 flex-wrap text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-orange-500 border-2 border-orange-700"></div>
+                <span>Root</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-blue-700"></div>
+                <span>Current Path</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-green-400 border-2 border-green-600"></div>
+                <span>Word End</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-400"></div>
+                <span>Regular Node</span>
+              </div>
+            </div>
+          </div>
+
+          {data.complete && (
+            <div className="text-center text-green-600 font-bold text-lg">
+              ✓ All operations complete!
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Trie visualization
+    if (data.operations && data.hasOwnProperty('insertedWords')) {
+      const renderTrieTree = (node, prefix = '', depth = 0) => {
+        if (!node || !node.children) return null;
+        
+        const chars = Object.keys(node.children);
+        if (chars.length === 0) return null;
+
+        return (
+          <div className="flex flex-col items-center">
+            <div className="flex gap-4 justify-center">
+              {chars.map(char => {
+                const childNode = node.children[char];
+                const currentPath = prefix + char;
+                const isCurrentPath = data.path && data.path === currentPath;
+                const isEnd = childNode.isEnd;
+                
+                return (
+                  <div key={char} className="flex flex-col items-center">
+                    <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center font-bold text-lg transition-all ${
+                      isCurrentPath ? 'bg-blue-500 border-blue-700 text-white scale-125' :
+                      isEnd ? 'bg-green-400 border-green-600 text-white' :
+                      'bg-gray-200 border-gray-400 text-gray-800'
+                    }`}>
+                      {char}
+                    </div>
+                    {isEnd && (
+                      <div className="text-xs text-green-600 font-bold mt-1">END</div>
+                    )}
+                    <div className="mt-2">
+                      {renderTrieTree(childNode, currentPath, depth + 1)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-indigo-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.operation === 'insert' && '📝 Insert Operation'}
+            {data.operation === 'search' && '🔍 Search Operation'}
+            {data.operation === 'startsWith' && '🔎 StartsWith Operation'}
+            {!data.operation && 'Trie (Prefix Tree)'}
+          </div>
+
+          {/* Operation Details */}
+          {data.word && (
+            <div className="bg-blue-50 p-4 rounded">
+              <div className="text-center">
+                <div className="text-lg font-semibold text-blue-800 mb-2">
+                  {data.operation}("{data.word}")
+                </div>
+                {data.char && (
+                  <div className="text-sm text-gray-700">
+                    Processing: <span className="font-mono font-bold text-blue-600">'{data.char}'</span> at position {data.position}
+                  </div>
+                )}
+                {data.path && (
+                  <div className="text-sm text-gray-700 mt-1">
+                    Current path: <span className="font-mono font-bold">{data.path}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Trie Visualization */}
+          <div className="bg-gray-50 p-6 rounded-lg min-h-64 overflow-x-auto">
+            <div className="text-xs text-gray-600 mb-4 text-center">Trie Structure</div>
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full bg-purple-500 border-4 border-purple-700 flex items-center justify-center text-white font-bold text-lg">
+                  ROOT
+                </div>
+                <div className="mt-4">
+                  {data.trie && data.trie.root && renderTrieTree(data.trie.root)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Inserted Words */}
+          {data.insertedWords && data.insertedWords.length > 0 && (
+            <div className="bg-green-50 p-4 rounded">
+              <div className="text-sm font-semibold text-green-800 mb-2">Inserted Words:</div>
+              <div className="flex gap-2 flex-wrap">
+                {data.insertedWords.map((w, idx) => (
+                  <div key={idx} className="px-3 py-1 bg-green-200 text-green-800 rounded font-mono text-sm">
+                    {w}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Result Display */}
+          {data.result !== undefined && data.phase === 'complete' && (
+            <div className={`p-4 rounded text-center ${
+              data.result ? 'bg-green-100 border-2 border-green-500' : 'bg-red-100 border-2 border-red-500'
+            }`}>
+              <div className={`text-lg font-bold ${data.result ? 'text-green-700' : 'text-red-700'}`}>
+                {data.operation === 'insert' && '✓ Word inserted successfully'}
+                {data.operation === 'search' && (data.result ? `✓ Word "${data.word}" found!` : `✗ Word "${data.word}" not found`)}
+                {data.operation === 'startsWith' && (data.result ? `✓ Prefix "${data.word}" exists!` : `✗ Prefix "${data.word}" not found`)}
+              </div>
+            </div>
+          )}
+
+          {/* Phase Indicators */}
+          {data.phase && (
+            <div className="text-center text-xs text-gray-600">
+              {data.phase === 'start' && 'Starting operation...'}
+              {data.phase === 'create' && '🆕 Creating new node'}
+              {data.phase === 'traverse' && '➡️ Traversing existing path'}
+              {data.phase === 'not-found' && '❌ Path not found'}
+              {data.phase === 'complete' && '✅ Operation complete'}
+            </div>
+          )}
+
+          {/* Legend */}
+          <div className="bg-gray-100 p-3 rounded">
+            <div className="text-xs font-semibold text-gray-700 mb-2">Legend:</div>
+            <div className="flex gap-4 flex-wrap text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-purple-500 border-2 border-purple-700"></div>
+                <span>Root</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-blue-500 border-2 border-blue-700"></div>
+                <span>Current</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-green-400 border-2 border-green-600"></div>
+                <span>End of Word</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-400"></div>
+                <span>Regular Node</span>
+              </div>
+            </div>
+          </div>
+
+          {data.complete && (
+            <div className="text-center text-green-600 font-bold">
+              ✓ All Trie operations complete!
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Build Tree - Special handling since it has preorder/inorder arrays
+    if (data.preorder && data.inorder && selectedAlgo === 'buildTree') {
+      return (
+        <div className="space-y-6">
+          {data.builtTree && (
+            <div className="flex justify-center mb-4">
+              <TreeNode {...data.builtTree} depth={0} />
+            </div>
+          )}
+          
+          <div className="text-center mb-4">
+            <div className="text-lg font-semibold text-purple-600">
+              {data.phase === 'setup' && 'Building Binary Tree'}
+              {data.phase === 'explain-preorder' && 'Preorder Traversal Explained'}
+              {data.phase === 'explain-inorder' && 'Inorder Traversal Explained'}
+              {data.phase === 'build' && `Building with Root: ${data.rootVal}`}
+              {data.phase === 'left' && `Processing Left Subtree of ${data.rootVal}`}
+              {data.phase === 'right' && `Processing Right Subtree of ${data.rootVal}`}
+              {data.phase === 'complete' && 'Tree Construction Complete!'}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-purple-50 p-3 rounded">
+              <div className="text-sm font-semibold text-purple-800 mb-2">
+                Preorder (Root → Left → Right)
+              </div>
+              <div className="flex gap-1 flex-wrap">
+                {data.preorder.map((val, idx) => (
+                  <div key={idx} className={`px-3 py-2 rounded text-sm font-mono font-bold ${
+                    idx === 0 && (data.phase === 'build' || data.phase === 'left' || data.phase === 'right') ? 'bg-purple-500 text-white scale-110' : 'bg-purple-200 text-purple-800'
+                  }`}>
+                    {val}
+                  </div>
+                ))}
+              </div>
+              {data.phase === 'explain-preorder' && (
+                <div className="text-xs text-gray-600 mt-2">First element is always the root!</div>
+              )}
+            </div>
+            
+            <div className="bg-blue-50 p-3 rounded">
+              <div className="text-sm font-semibold text-blue-800 mb-2">
+                Inorder (Left → Root → Right)
+              </div>
+              <div className="flex gap-1 flex-wrap">
+                {data.inorder.map((val, idx) => (
+                  <div key={idx} className={`px-3 py-2 rounded text-sm font-mono font-bold ${
+                    idx === data.mid ? 'bg-blue-500 text-white scale-110' : 'bg-blue-200 text-blue-800'
+                  }`}>
+                    {val}
+                  </div>
+                ))}
+              </div>
+              {data.phase === 'explain-inorder' && (
+                <div className="text-xs text-gray-600 mt-2">Root position divides left and right subtrees!</div>
+              )}
+            </div>
+          </div>
+
+          {data.rootVal !== undefined && (
+            <div className="bg-yellow-50 border-2 border-yellow-400 p-4 rounded">
+              <div className="text-center">
+                <div className="text-lg font-bold text-yellow-800 mb-2">
+                  Current Root: {data.rootVal} {data.mid !== undefined && `(at index ${data.mid} in inorder)`}
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-3">
+                  <div className="bg-blue-100 p-2 rounded">
+                    <div className="text-xs font-semibold text-blue-700">Left Subtree</div>
+                    <div className="text-sm font-mono mt-1">
+                      {data.leftInorder && data.leftInorder.length > 0 ? `[${data.leftInorder.join(', ')}]` : 'empty'}
+                    </div>
+                  </div>
+                  <div className="bg-green-100 p-2 rounded">
+                    <div className="text-xs font-semibold text-green-700">Right Subtree</div>
+                    <div className="text-sm font-mono mt-1">
+                      {data.rightInorder && data.rightInorder.length > 0 ? `[${data.rightInorder.join(', ')}]` : 'empty'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {data.complete && (
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">✓ Tree Built Successfully!</div>
+              <div className="text-sm text-gray-600 mt-2">
+                Final tree constructed from preorder and inorder traversals
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (data.tree && !data.tree1 && !data.intervals) {
+      // Level Order, Right Side View, Good Nodes, Valid BST
+      if (selectedAlgo === 'levelOrder') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.queue && data.queue.length > 0 && (
+                <div className="bg-blue-50 p-3 rounded mb-3">
+                  <div className="text-sm font-semibold text-blue-800">Queue: [{data.queue.join(', ')}]</div>
+                </div>
+              )}
+              {data.result && data.result.length > 0 && (
+                <div className="bg-green-50 p-3 rounded">
+                  <div className="text-sm font-semibold text-green-800">Result: {JSON.stringify(data.result)}</div>
+                </div>
+              )}
+              {data.visited && (
+                <div className="text-xs text-gray-600 mt-2">Visited: [{data.visited.join(', ')}]</div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'rightSideView') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.isRightmost && (
+                <div className="bg-yellow-100 p-2 rounded mb-2 text-sm font-semibold">
+                  👉 Rightmost at level {data.currentLevel}
+                </div>
+              )}
+              {data.result && data.result.length > 0 && (
+                <div className="bg-green-50 p-3 rounded">
+                  <div className="text-sm font-semibold text-green-800">Right Side View: [{data.result.join(', ')}]</div>
+                </div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'goodNodes') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.currentNode && (
+                <div className={`p-3 rounded mb-2 ${data.isGood ? 'bg-green-100' : 'bg-gray-100'}`}>
+                  <div className="text-sm font-semibold">
+                    Node {data.currentNode}: {data.isGood ? '✓ GOOD' : '✗ Not Good'}
+                  </div>
+                  <div className="text-xs text-gray-600">Max in path: {data.maxSoFar}</div>
+                </div>
+              )}
+              <div className="text-2xl font-bold text-green-600">
+                Good Nodes Count: {data.goodCount}
+              </div>
+              {data.path && (
+                <div className="text-xs text-gray-600 mt-2">Path: {data.path.join(' → ')}</div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'isValidBST') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.currentNode && data.min !== undefined && (
+                <div className={`p-3 rounded mb-2 ${data.valid ? 'bg-green-100' : 'bg-red-100'}`}>
+                  <div className="text-sm font-semibold">
+                    Node {data.currentNode}: Range ({data.min === -Infinity ? '-∞' : data.min}, {data.max === Infinity ? '∞' : data.max})
+                  </div>
+                  <div className="text-xs">
+                    {data.valid ? '✓ Valid' : '✗ Invalid'}
+                  </div>
+                </div>
+              )}
+              {data.direction && (
+                <div className="text-sm text-blue-600 mb-2">
+                  → Going {data.direction} to node {data.nextNode}
+                </div>
+              )}
+              <div className={`text-2xl font-bold ${data.isValid ? 'text-green-600' : 'text-red-600'}`}>
+                {data.isValid ? '✓ Valid BST' : '✗ Invalid BST'}
+              </div>
+              {data.path && (
+                <div className="text-xs text-gray-600 mt-2">Path: {data.path.join(' → ')}</div>
+              )}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'kthSmallest') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              <div className="bg-blue-50 p-3 rounded mb-3">
+                <div className="text-sm font-semibold text-blue-800">
+                  Finding {data.k}{data.k === 1 ? 'st' : data.k === 2 ? 'nd' : data.k === 3 ? 'rd' : 'th'} Smallest Element
+                </div>
+                <div className="text-xs text-gray-600 mt-1">Inorder Traversal: Left → Root → Right</div>
+              </div>
+              {data.inorderList && data.inorderList.length > 0 && (
+                <div className="bg-green-50 p-3 rounded mb-3">
+                  <div className="text-sm font-semibold text-green-800">Inorder List: [{data.inorderList.join(', ')}]</div>
+                  <div className="text-xs text-gray-600">Count: {data.count}</div>
+                </div>
+              )}
+              {data.found && (
+                <div className="text-2xl font-bold text-green-600">
+                  ✓ Result: {data.result}
+                </div>
+              )}
+              {data.path && (
+                <div className="text-xs text-gray-600 mt-2">Path: {data.path.join(' → ')}</div>
+              )}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'maxPathSum') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.currentNode && data.leftGain !== undefined && (
+                <div className="bg-blue-50 p-3 rounded mb-3">
+                  <div className="text-sm font-semibold text-blue-800">Node {data.currentNode}</div>
+                  <div className="text-xs text-gray-600">
+                    Left Gain: {data.leftGain}, Right Gain: {data.rightGain}
+                  </div>
+                  {data.pathSum !== undefined && (
+                    <div className="text-xs font-semibold text-blue-700 mt-1">
+                      Path Sum: {data.pathSum}
+                    </div>
+                  )}
+                </div>
+              )}
+              <div className="text-2xl font-bold text-green-600">
+                Max Path Sum: {data.maxSum === -Infinity ? '...' : data.maxSum}
+              </div>
+              {data.path && (
+                <div className="text-xs text-gray-600 mt-2">Path: {data.path.join(' → ')}</div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'codec') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center">
+              <TreeNode {...data.tree} highlight={data.currentNode} depth={0} />
+            </div>
+            <div className="text-center">
+              {data.phase && data.phase.includes('serialize') && (
+                <div className="bg-purple-50 p-3 rounded mb-3">
+                  <div className="text-sm font-semibold text-purple-800">Serialization</div>
+                  {data.serialized && (
+                    <div className="text-xs font-mono text-gray-700 mt-2 break-all">
+                      "{data.serialized}"
+                    </div>
+                  )}
+                </div>
+              )}
+              {data.phase && data.phase.includes('deserialize') && (
+                <div className="bg-green-50 p-3 rounded mb-3">
+                  <div className="text-sm font-semibold text-green-800">Deserialization</div>
+                  {data.currentValue !== undefined && (
+                    <div className="text-xs text-gray-700 mt-2">
+                      Current: {data.currentValue}
+                    </div>
+                  )}
+                </div>
+              )}
+              {data.path && data.path.length > 0 && (
+                <div className="text-xs text-gray-600">Path: {data.path.join(' → ')}</div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      }
+      
+      // Original tree visualizations (diameter, maxDepth, balanced, lca)
+      if (selectedAlgo === 'diameter') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-blue-600">Current Diameter: {data.diameter} edges</div>
+              {data.leftHeight !== undefined && (
+                <div className="text-sm text-gray-600 mt-2">
+                  Left Height: {data.leftHeight}, Right Height: {data.rightHeight}
+                </div>
+              )}
+              {data.path && (
+                <div className="text-xs text-gray-500 mt-2">
+                  Path: {data.path.join(' → ')}
+                </div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'maxDepth') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
+            <div className="text-center">
+              <div className="text-lg font-bold text-blue-600">Current Depth: {data.depth}</div>
+              {data.maxDepth !== undefined && (
+                <div className="text-sm text-gray-600 mt-2">Max Depth So Far: {data.maxDepth}</div>
+              )}
+              {data.visited && data.visited.length > 0 && (
+                <div className="text-xs text-gray-500 mt-2">
+                  Visited: {data.visited.join(', ')}
+                </div>
+              )}
+              {data.complete && <div className="text-sm text-green-600 mt-2">✓ Complete!</div>}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'balanced') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
+            <div className="text-center">
+              <div className={`text-lg font-bold ${data.balanced ? 'text-green-600' : 'text-red-600'}`}>
+                {data.balanced ? '✓ Balanced' : '✗ Not Balanced'}
+              </div>
+              {data.leftHeight !== undefined && (
+                <div className="text-sm text-gray-600 mt-2">
+                  Left: {data.leftHeight}, Right: {data.rightHeight}, Diff: {data.heightDiff}
+                </div>
+              )}
+              {data.path && (
+                <div className="text-xs text-gray-500 mt-2">
+                  Path: {data.path.join(' → ')}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      } else if (selectedAlgo === 'lca') {
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-center"><TreeNode {...data.tree} highlight={data.currentNode} /></div>
+            <div className="text-center">
+              <div className="text-sm mb-2">
+                Finding LCA of <span className="font-bold text-blue-600">{data.p}</span> and <span className="font-bold text-green-600">{data.q}</span>
+              </div>
+              {data.direction && (
+                <div className="text-sm text-purple-600 font-semibold mt-2">
+                  Direction: {data.direction.toUpperCase()}
+                </div>
+              )}
+              {data.path && (
+                <div className="text-xs text-gray-500 mt-2">
+                  Path: {data.path.join(' → ')}
+                </div>
+              )}
+              {data.lca && <div className="text-lg font-bold text-purple-600 mt-2">✓ LCA: {data.lca}</div>}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    if (data.tree1 && data.tree2) {
+      return (
+        <div className="space-y-6">
+          <div className="flex justify-center gap-12 flex-wrap">
+            <div className="text-center">
+              <div className="text-sm font-semibold mb-2">Tree 1</div>
+              <TreeNode {...data.tree1} />
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-semibold mb-2">Tree 2</div>
+              <TreeNode {...data.tree2} />
+            </div>
+          </div>
+          <div className="text-center">
+            <div className={`text-lg font-bold ${data.same ? 'text-green-600' : 'text-red-600'}`}>
+              {data.same ? '✓ Trees are Same' : '✗ Trees are Different'}
+            </div>
+            {data.path1 && data.path2 && (
+              <div className="text-xs text-gray-500 mt-2">
+                <div>Path 1: {data.path1.join(' → ')}</div>
+                <div>Path 2: {data.path2.join(' → ')}</div>
+              </div>
+            )}
+            {data.currentDepth !== undefined && (
+              <div className="text-sm text-blue-600 mt-2">Current Depth: {data.currentDepth}</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (data.mainTree && data.subTree) {
+      return (
+        <div className="space-y-6">
+          <div className="flex justify-center gap-12 flex-wrap">
+            <div className="text-center">
+              <div className="text-sm font-semibold mb-2">Main Tree</div>
+              <TreeNode {...data.mainTree} highlight={data.currentNode} />
+            </div>
+            <div className="text-center">
+              <div className="text-sm font-semibold mb-2">Subtree to Find</div>
+              <TreeNode {...data.subTree} />
+            </div>
+          </div>
+          <div className="text-center">
+            {data.currentNode && (
+              <div className="text-sm text-blue-600 mb-2">
+                Checking node: {data.currentNode}
+              </div>
+            )}
+            {data.checkedNodes && data.checkedNodes.length > 0 && (
+              <div className="text-xs text-gray-500 mb-2">
+                Checked: {data.checkedNodes.join(', ')}
+              </div>
+            )}
+            {data.found && (
+              <div className="text-lg text-green-600 font-bold">✓ Subtree Found!</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (data.original && data.hasOwnProperty('sorted')) {
+      const maxTime = Math.max(...data.intervals.flat());
+      const timelineWidth = 600;
+      const scale = timelineWidth / maxTime;
+      
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-green-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.phase === 'setup' && 'Setup: Can Attend All Meetings?'}
+            {data.phase === 'sorting' && 'Step 1: Sorting by Start Time'}
+            {data.phase === 'sorted' && 'Sorted Intervals'}
+            {(data.phase === 'checking' || data.phase === 'comparing' || data.phase === 'no-overlap') && 'Checking for Overlaps'}
+            {data.phase === 'overlap' && 'Overlap Detected!'}
+            {data.phase === 'complete' && 'Result'}
+          </div>
+
+          {/* Original vs Sorted */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-3 rounded">
+              <div className="text-sm font-semibold text-gray-800 mb-2">Original Intervals</div>
+              <div className="flex flex-col gap-2">
+                {data.original.map((interval, idx) => (
+                  <div key={idx} className="px-3 py-2 bg-gray-200 rounded text-sm font-mono">
+                    [{interval[0]}, {interval[1]}]
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {data.sorted && (
+              <div className="bg-blue-50 p-3 rounded">
+                <div className="text-sm font-semibold text-blue-800 mb-2">Sorted by Start Time</div>
+                <div className="flex flex-col gap-2">
+                  {data.intervals.map((interval, idx) => (
+                    <div key={idx} className={`px-3 py-2 rounded text-sm font-mono ${
+                      data.currentIdx === idx ? 'bg-green-400 text-white font-bold' :
+                      data.currentIdx - 1 === idx ? 'bg-yellow-400 text-white font-bold' :
+                      data.phase === 'overlap' && (idx === data.currentIdx || idx === data.currentIdx - 1) ? 'bg-red-400 text-white font-bold' :
+                      'bg-blue-200'
+                    }`}>
+                      [{interval[0]}, {interval[1]}]
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Timeline Visualization */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="text-xs text-gray-600 mb-2">Meeting Timeline:</div>
+            <div className="relative" style={{ height: `${data.intervals.length * 40 + 40}px` }}>
+              {/* Time axis */}
+              <div className="absolute bottom-0 left-0 right-0 h-8 border-t-2 border-gray-400">
+                {Array.from({ length: maxTime + 1 }, (_, i) => (
+                  <div key={i} className="absolute text-xs text-gray-600" style={{ left: `${i * scale}px`, top: '5px' }}>
+                    {i}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Meeting intervals */}
+              {data.intervals.map((interval, idx) => {
+                const [start, end] = interval;
+                const left = start * scale;
+                const width = (end - start) * scale;
+                const isHighlight = data.currentIdx === idx || data.currentIdx - 1 === idx;
+                const isOverlap = data.phase === 'overlap' && (idx === data.currentIdx || idx === data.currentIdx - 1);
+                
+                return (
+                  <div
+                    key={idx}
+                    className={`absolute h-8 border-2 rounded flex items-center justify-center text-xs font-bold text-white shadow-md ${
+                      isOverlap ? 'bg-red-500 border-red-700' :
+                      isHighlight ? 'bg-yellow-500 border-yellow-700' :
+                      'bg-blue-400 border-blue-600'
+                    }`}
+                    style={{
+                      left: `${left}px`,
+                      width: `${width}px`,
+                      top: `${idx * 40}px`
+                    }}
+                  >
+                    [{start}, {end}]
+                  </div>
+                );
+              })}
+
+              {/* Overlap indicator */}
+              {data.phase === 'overlap' && data.overlapStart !== undefined && (
+                <div
+                  className="absolute h-2 bg-red-600 opacity-70"
+                  style={{
+                    left: `${data.overlapStart * scale}px`,
+                    width: `${(data.overlapEnd - data.overlapStart) * scale}px`,
+                    top: `${(data.currentIdx - 1) * 40 + 35}px`
+                  }}
+                >
+                  <div className="text-xs text-red-600 font-bold whitespace-nowrap absolute -top-5">
+                    OVERLAP REGION
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Current Comparison */}
+          {data.prevInterval && data.currInterval && (
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-3">
+              <div className="font-semibold text-blue-800">Comparing:</div>
+              <div className="text-sm grid grid-cols-2 gap-2 mt-2">
+                <div className="bg-yellow-200 p-2 rounded">
+                  Previous: [{data.prevInterval[0]}, {data.prevInterval[1]}]
+                  <div className="text-xs text-gray-700">Ends at: {data.prevInterval[1]}</div>
+                </div>
+                <div className="bg-green-200 p-2 rounded">
+                  Current: [{data.currInterval[0]}, {data.currInterval[1]}]
+                  <div className="text-xs text-gray-700">Starts at: {data.currInterval[0]}</div>
+                </div>
+              </div>
+              <div className="mt-2 text-sm font-semibold">
+                {data.currInterval[0] < data.prevInterval[1] ? (
+                  <span className="text-red-600">❌ {data.currInterval[0]} &lt; {data.prevInterval[1]} - OVERLAP!</span>
+                ) : (
+                  <span className="text-green-600">✓ {data.currInterval[0]} &gt;= {data.prevInterval[1]} - No overlap</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Result */}
+          <div className="text-center">
+            <div className={`text-2xl font-bold ${data.canAttend ? 'text-green-600' : 'text-red-600'}`}>
+              {data.canAttend ? '✓ CAN Attend All Meetings' : '✗ CANNOT Attend All Meetings'}
+            </div>
+            {data.complete && (
+              <div className="text-sm mt-2">
+                {data.canAttend ? 'No overlapping intervals found!' : 'Found overlapping intervals!'}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    if (data.intervals && data.hasOwnProperty('phase')) {
+      const maxTime = Math.max(...data.intervals.flat());
+      const timelineWidth = 600;
+      const scale = timelineWidth / maxTime;
+      
+      return (
+        <div className="space-y-6">
+          <div className="text-center text-sm font-semibold bg-purple-100 px-4 py-2 rounded mx-auto w-fit">
+            {data.phase === 'setup' && 'Setup: Analyzing Meetings'}
+            {data.phase === 'sort-starts' && 'Step 1: Sort Start Times'}
+            {data.phase === 'sort-ends' && 'Step 2: Sort End Times'}
+            {data.phase === 'explain' && 'Step 3: Two Pointer Approach'}
+            {(data.phase === 'compare' || data.phase === 'allocate' || data.phase === 'reuse') && 'Processing Meetings'}
+            {data.phase === 'complete' && 'Result'}
+          </div>
+
+          {/* Timeline Visualization */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="text-xs text-gray-600 mb-2">Meeting Timeline:</div>
+            <div className="relative" style={{ height: `${data.intervals.length * 40 + 40}px` }}>
+              {/* Time axis */}
+              <div className="absolute bottom-0 left-0 right-0 h-8 border-t-2 border-gray-400">
+                {Array.from({ length: maxTime + 1 }, (_, i) => (
+                  <div key={i} className="absolute text-xs text-gray-600" style={{ left: `${i * scale}px`, top: '5px' }}>
+                    {i}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Meeting intervals */}
+              {data.intervals.map((interval, idx) => {
+                const [start, end] = interval;
+                const left = start * scale;
+                const width = (end - start) * scale;
+                const roomColor = data.roomAllocations && data.roomAllocations[idx] 
+                  ? data.roomAllocations[idx].room === 'reuse' 
+                    ? 'bg-green-400' 
+                    : `bg-blue-${Math.min(data.roomAllocations[idx].room * 100, 600)}`
+                  : 'bg-gray-300';
+                
+                return (
+                  <div
+                    key={idx}
+                    className={`absolute h-8 ${roomColor} border-2 border-gray-700 rounded flex items-center justify-center text-xs font-bold text-white shadow-md`}
+                    style={{
+                      left: `${left}px`,
+                      width: `${width}px`,
+                      top: `${idx * 40}px`
+                    }}
+                  >
+                    [{start}, {end}]
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Start and End Times */}
+          {data.starts && data.starts.length > 0 && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-blue-50 p-3 rounded">
+                <div className="text-sm font-semibold text-blue-800 mb-2">Start Times (Sorted)</div>
+                <div className="flex gap-2 flex-wrap">
+                  {data.starts.map((time, idx) => (
+                    <div key={idx} className={`px-3 py-1 rounded font-bold ${
+                      data.startPtr === idx ? 'bg-blue-500 text-white scale-110' : 'bg-blue-200 text-blue-800'
+                    }`}>
+                      {time}
+                    </div>
+                  ))}
+                </div>
+                {data.startPtr !== undefined && (
+                  <div className="text-xs text-blue-600 mt-2">Pointer at index: {data.startPtr}</div>
+                )}
+              </div>
+
+              <div className="bg-green-50 p-3 rounded">
+                <div className="text-sm font-semibold text-green-800 mb-2">End Times (Sorted)</div>
+                <div className="flex gap-2 flex-wrap">
+                  {data.ends.map((time, idx) => (
+                    <div key={idx} className={`px-3 py-1 rounded font-bold ${
+                      data.endPtr === idx ? 'bg-green-500 text-white scale-110' : 'bg-green-200 text-green-800'
+                    }`}>
+                      {time}
+                    </div>
+                  ))}
+                </div>
+                {data.endPtr !== undefined && (
+                  <div className="text-xs text-green-600 mt-2">Pointer at index: {data.endPtr}</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Current Comparison */}
+          {data.comparing && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3">
+              <div className="font-semibold text-yellow-800">Comparing:</div>
+              <div className="text-sm">Start Time: {data.comparing.start} vs End Time: {data.comparing.end}</div>
+            </div>
+          )}
+
+          {/* Action Taken */}
+          {data.action && (
+            <div className={`p-3 rounded border-l-4 ${
+              data.action === 'allocate' 
+                ? 'bg-red-50 border-red-400' 
+                : 'bg-green-50 border-green-400'
+            }`}>
+              <div className="font-semibold">
+                {data.action === 'allocate' ? '🆕 Allocated New Room' : '♻️ Reused Existing Room'}
+              </div>
+            </div>
+          )}
+
+          {/* Rooms Count */}
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600">
+              Rooms Needed: {data.rooms}
+            </div>
+            {data.complete && (
+              <div className="text-sm text-green-600 mt-2">✓ Minimum rooms calculated!</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
         
 
     if (data.nums && data.hasOwnProperty('left')) {

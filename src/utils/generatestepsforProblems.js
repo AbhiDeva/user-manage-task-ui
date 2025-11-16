@@ -83,6 +83,19 @@ import { generateSameTreeSteps } from '../components/visualiser/SameTreeSteps';
 import { generateSubtreeSteps } from '../components/visualiser/SubtreeSteps';
 import { generateMeetingRoomsSteps } from '../components/visualiser/MeetingRoomsSteps';
 import { generateCanAttendMeetingsSteps } from '../components/visualiser/CanAttendMeetingsSteps';
+import { generateLevelOrderSteps } from '../components/visualiser/LevelOrderSteps';
+import { generateRightSideViewSteps } from '../components/visualiser/RightSideViewSteps';
+import { generateGoodNodesSteps } from '../components/visualiser/GoodNodesSteps';
+import { generateValidBSTSteps } from '../components/visualiser/ValidBSTSteps';
+import { generateKthSmallestStepsII } from '../components/visualiser/KthSmallestStepsII';
+import { generateBuildTreeSteps } from '../components/visualiser/BuildTreeSteps';
+import { generateMaxPathSumSteps } from '../components/visualiser/MaxPathSumSteps';
+import { generateCodecSteps } from '../components/visualiser/CodecSteps';
+import { generateTrieStepsII } from '../components/visualiser/TrieStepsII';
+import { generateWordDictionarySteps } from '../components/visualiser/WordDictionarySteps';
+import { generateWordSearchStepsII } from '../components/visualiser/WordSearchStepsII';
+import { generateKthLargestSteps } from '../components/visualiser/KthLargestSteps';
+
 
 import {sampleProblems} from '../utils/codedata.js'
 
@@ -255,7 +268,31 @@ export const generateSteps = (problemKey, input) => {
         return generateMeetingRoomsSteps(input.type ? sampleProblems.meetingRooms.examples[input.type] : input);
       case 'canAttendMeetings':
         return generateCanAttendMeetingsSteps(input.type ? sampleProblems.canAttendMeetings.examples[input.type] : input);   
-      default:
-        return [];
+      case 'levelOrder':
+      return generateLevelOrderSteps(input.type ? sampleProblems.levelOrder.examples[input.type] : input);
+      case 'rightSideView':
+      return generateRightSideViewSteps(input.type ? sampleProblems.rightSideView.examples[input.type] : input);
+     case 'goodNodes':
+      return generateGoodNodesSteps(input.type ? sampleProblems.goodNodes.examples[input.type] : input);
+     case 'isValidBST':
+      return generateValidBSTSteps(input.type ? sampleProblems.isValidBST.examples[input.type] : input);
+    case 'kthSmallest' :
+      return generateKthSmallestStepsII(input.type ? sampleProblems.kthSmallest.examples[input.type] : input);
+    case 'buildTree':
+      return generateBuildTreeSteps(input.type ? sampleProblems.buildTree.examples[input.type] : input);
+    case 'maxPathSum':
+      return generateMaxPathSumSteps(input.type ? sampleProblems.maxPathSum.examples[input.type] : input);
+    case 'codec': 
+      return generateCodecSteps(input.type ? sampleProblems.codec.examples[input.type] : input);
+    case 'trie':
+      return generateTrieStepsII(input.type ? sampleProblems.trie.examples[input.type] : input);
+    case 'wordDictionary':
+      return generateWordDictionarySteps(input.type ? sampleProblems.wordDictionary.examples[input.type] : input);
+    case 'wordSearchII':
+      return generateWordSearchStepsII(input.type ? sampleProblems.wordSearchII.examples[input.type] : input.board);
+    case 'kthLargest':
+      return generateKthLargestSteps(input.type ? sampleProblems.kthLargest.examples[input.type] : input);
+    default:
+      return [];
     }
   };
