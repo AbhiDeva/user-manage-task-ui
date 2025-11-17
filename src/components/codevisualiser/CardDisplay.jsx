@@ -3,33 +3,24 @@ import Card from "./Card";
 
   export default function CardsDisplay() {
   const cards = [
-    {
+     {
       id: '1',
-      title: 'Analytics Dashboard',
+      title: 'Speech Recognition API',
       description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
       icon: <MdChevronRight className="w-8 h-8" />,
-      modalType: 'analytics',
-      gradient: 'bg-gradient-to-br from-blue-400 to-blue-600',
+      modalType: 'speechapi',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
       iconColor: 'text-blue-600'
     },
     {
       id: '2',
-      title: 'Configuration',
-      description: 'Manage application settings, customize preferences, and control system behavior with an intuitive interface.',
-      icon: <MdSettings className="w-8 h-8" />,
-      modalType: 'settings',
-      gradient: 'bg-gradient-to-br from-emerald-400 to-emerald-600',
-      iconColor: 'text-emerald-600'
+      title: 'Callback Hell Visualizer',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'callbackhell',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
     },
-    {
-      id: '3',
-      title: 'Team Members',
-      description: 'Manage your team, assign roles, control permissions, and monitor user activity across your organization.',
-      icon: <MdUndo className="w-8 h-8" />,
-      modalType: 'users',
-      gradient: 'bg-gradient-to-br from-orange-400 to-orange-600',
-      iconColor: 'text-orange-600'
-    }
   ];
 
   return (

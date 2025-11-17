@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { AnalyticsModal } from "./AnalyticsModal"
+import SpeechApi from "./SpeechAPI";
+import CallbackHellVisualizer from "./CallbackHell";
+import { MdClose, MdOutlineVisibility } from "react-icons/md";
+
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const renderModalContent = () => {
     switch (card.modalType) {
-      case 'analytics':
-        return <AnalyticsModal />;
-      case 'settings':
-        return;
-      case 'users':
-        return ;
+      case 'speechapi':
+        return  <SpeechApi />;
+      case 'callbackhell':
+        return <CallbackHellVisualizer/>
       default:
         return null;
     }
@@ -39,7 +41,7 @@ export default function Card({ card }) {
             onClick={() => setIsModalOpen(true)}
             className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-md hover:shadow-lg group/btn"
           >
-            {/* <Eye className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" /> */}
+            <MdOutlineVisibility className="w-5 h-5 group-hover/btn:animate-eye-move" />
             View Details
           </button>
           </div>
@@ -49,11 +51,11 @@ export default function Card({ card }) {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-fade-in">
+          <div className="bg-white rounded-xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
             <div className={`${card.gradient} px-8 py-6 flex items-center justify-between`}>
               <div className="flex items-center gap-4">
-                <div className={`${card.iconColor} p-3 rounded-lg bg-white/20 backdrop-blur-sm`}>
+                <div className={`${card.iconColor} p-3 rounded-lg bg-white/20 backdrop-blur-md`}>
                   {card.icon}
                 </div>
                 <h2 className="text-2xl font-bold text-white">{card.title}</h2>
@@ -62,11 +64,12 @@ export default function Card({ card }) {
                 onClick={() => setIsModalOpen(false)}
                 className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
               >
+                <MdClose className="w-6 h-6"/>
                 {/* <X className="w-6 h-6" /> */}
               </button>
             </div>
 
-            <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-8">
+            <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
               {renderModalContent()}
             </div>
           </div>
