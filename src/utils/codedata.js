@@ -2854,6 +2854,169 @@ class Trie {
           ['add', 9]
         ]}
       }
+    },
+     lastStoneWeight: {
+      name: 'Last Stone Weight',
+      code: `function lastStoneWeight(stones) {
+  const heap = stones.sort((a, b) => b - a);
+  
+  while (heap.length > 1) {
+    const first = heap.shift();
+    const second = heap.shift();
+    
+    if (first !== second) {
+      heap.push(first - second);
+      heap.sort((a, b) => b - a);
+    }
+  }
+  
+  return heap.length ? heap[0] : 0;
+}`,input: { type: 'normal', stones: [2, 7, 4, 1, 8, 1]},
+      examples: {
+        normal: { stones: [2, 7, 4, 1, 8, 1] },
+        medium: { stones: [5, 5, 10, 3, 2, 8] },
+        hard: { stones: [9, 3, 2, 10, 15, 7, 4, 6, 11] }
+      }
+    },
+    letterCombinations: {
+      name: 'Letter Combinations of a Phone Number',
+      code: `function letterCombinations(digits) {
+  if (!digits) return [];
+  
+  const phone = {
+    '2': 'abc', '3': 'def', '4': 'ghi',
+    '5': 'jkl', '6': 'mno', '7': 'pqrs',
+    '8': 'tuv', '9': 'wxyz'
+  };
+  
+  const result = [];
+  
+  function backtrack(index, path) {
+    if (index === digits.length) {
+      result.push(path);
+      return;
+    }
+    
+    const letters = phone[digits[index]];
+    for (let letter of letters) {
+      backtrack(index + 1, path + letter);
+    }
+  }
+  
+  backtrack(0, '');
+  return result;
+}`,input: { type: 'normal', digits: '23' },
+      examples: {
+        normal: { digits: '23' },
+        medium: { digits: '234' },
+        hard: { digits: '2345' }
+      }
+    },
+    palindromePartition: {
+      name: 'Palindrome Partitioning',
+      code: `function partition(s) {
+  const result = [];
+  
+  function isPalindrome(str, left, right) {
+    while (left < right) {
+      if (str[left] !== str[right]) return false;
+      left++;
+      right--;
+    }
+    return true;
+  }
+  
+  function backtrack(start, path) {
+    if (start === s.length) {
+      result.push([...path]);
+      return;
+    }
+    
+    for (let end = start; end < s.length; end++) {
+      if (isPalindrome(s, start, end)) {
+        path.push(s.substring(start, end + 1));
+        backtrack(end + 1, path);
+        path.pop();
+      }
+    }
+  }
+  
+  backtrack(0, []);
+  return result;
+}`,
+      input: { type: 'normal', s: 'aab' },
+      examples: {
+        normal: { s: 'aab' },
+        medium: { s: 'abba' },
+        hard: { s: 'racecar' }
+      }
+    },
+    numIslands: {
+      name: 'Number of Islands',
+      code: `function numIslands(grid) {
+  if (!grid || grid.length === 0) return 0;
+  
+  let count = 0;
+  
+  function dfs(i, j) {
+    if (i < 0 || i >= grid.length || 
+        j < 0 || j >= grid[0].length || 
+        grid[i][j] === '0') {
+      return;
+    }
+    
+    grid[i][j] = '0';
+    dfs(i + 1, j);
+    dfs(i - 1, j);
+    dfs(i, j + 1);
+    dfs(i, j - 1);
+  }
+  
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[0].length; j++) {
+      if (grid[i][j] === '1') {
+        count++;
+        dfs(i, j);
+      }
+    }
+  }
+  
+  return count;
+}`,
+      input: { type: 'normal', grid: [
+        ['1','1','0','0','0'],
+        ['1','1','0','0','0'],
+        ['0','0','1','0','0'],
+        ['0','0','0','1','1']
+      ] },
+      examples: {
+        normal: { 
+          grid: [
+            ['1','1','0','0','0'],
+            ['1','1','0','0','0'],
+            ['0','0','1','0','0'],
+            ['0','0','0','1','1']
+          ]
+        },
+        medium: { 
+          grid: [
+            ['1','1','1','1','0'],
+            ['1','1','0','1','0'],
+            ['1','1','0','0','0'],
+            ['0','0','0','0','1']
+          ]
+        },
+        hard: { 
+          grid: [
+            ['1','0','1','1','0','1','1'],
+            ['1','0','1','0','0','0','1'],
+            ['0','0','0','1','1','0','0'],
+            ['1','1','0','0','0','1','1'],
+            ['0','1','0','1','0','0','0'],
+            ['1','0','0','0','1','1','1']
+          ]
+        }
+      }
     }
 
   };

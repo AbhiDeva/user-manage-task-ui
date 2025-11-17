@@ -95,6 +95,10 @@ import { generateTrieStepsII } from '../components/visualiser/TrieStepsII';
 import { generateWordDictionarySteps } from '../components/visualiser/WordDictionarySteps';
 import { generateWordSearchStepsII } from '../components/visualiser/WordSearchStepsII';
 import { generateKthLargestSteps } from '../components/visualiser/KthLargestSteps';
+import { generateLastStoneWeightSteps } from '../components/visualiser/LastStoneWeightSteps';
+import { generateLetterCombinationsSteps } from '../components/visualiser/LetterCombinationsSteps';
+import { generatePalindromePartitionSteps } from '../components/visualiser/PalindromePartitionSteps';
+import { generateNumIslandsSteps } from '../components/visualiser/NumIslandsSteps';
 
 
 import {sampleProblems} from '../utils/codedata.js'
@@ -292,6 +296,14 @@ export const generateSteps = (problemKey, input) => {
       return generateWordSearchStepsII(input.type ? sampleProblems.wordSearchII.examples[input.type] : input.board);
     case 'kthLargest':
       return generateKthLargestSteps(input.type ? sampleProblems.kthLargest.examples[input.type] : input);
+    case 'lastStoneWeight':
+      return generateLastStoneWeightSteps(input.type ? sampleProblems.lastStoneWeight.examples[input.type] : input);
+    case 'letterCombinations':
+      return generateLetterCombinationsSteps(input.type ? sampleProblems.letterCombinations.examples[input.type] : input);
+    case 'palindromePartition':
+      return generatePalindromePartitionSteps(input.type ? sampleProblems.palindromePartition.examples[input.type] : input);
+    case 'numIslands':
+      return generateNumIslandsSteps(input.type ? sampleProblems.numIslands.examples[input.type] : input);
     default:
       return [];
     }

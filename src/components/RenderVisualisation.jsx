@@ -357,7 +357,7 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
     }
 
     // Backtracking Results Visualization (Permutations, Combinations, Subsets)
-    if (data.hasOwnProperty('result') && Array.isArray(data.result) && data.result.length > 0 && data.result[0] && Array.isArray(data.result[0])) {
+    if (!data.s && data.hasOwnProperty('result') && Array.isArray(data.result) && data.result.length > 0 && data.result[0] && Array.isArray(data.result[0])) {
       return (
         <div className="space-y-4">
           <div className="flex items-center justify-center gap-2">
@@ -4050,7 +4050,7 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
               );
             }
         
-            if (data.original && data.hasOwnProperty('sorted')) {
+            if (data.original && data.hasOwnProperty('sorted') && data.intervals) {
               const maxTime = Math.max(...data.intervals.flat());
               const timelineWidth = 600;
               const scale = timelineWidth / maxTime;
@@ -5517,7 +5517,7 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
       );
     }
 
-    if (data.original && data.hasOwnProperty('sorted')) {
+    if (data.original && data.hasOwnProperty('sorted') && data.intervals) {
       const maxTime = Math.max(...data.intervals.flat());
       const timelineWidth = 600;
       const scale = timelineWidth / maxTime;
@@ -5790,6 +5790,417 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
       );
     }
 
+
+     if (data.grid !== undefined && data.originalGrid) {
+      const islandColors = ['', 'border-blue-500 bg-blue-100', 'border-green-500 bg-green-100', 'border-yellow-500 bg-yellow-100', 'border-purple-500 bg-purple-100', 'border-pink-500 bg-pink-100', 'border-indigo-500 bg-indigo-100', 'border-red-500 bg-red-100', 'border-orange-500 bg-orange-100'];
+      
+      return (
+        <div className="space-y-6">
+          {data.phase && (
+            <div className="text-center text-sm font-semibold bg-teal-100 px-4 py-2 rounded mx-auto w-fit">
+              Phase: {data.phase.toUpperCase()}
+            </div>
+          )}
+
+          {/* Island Counter */}
+          <div className="bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-lg p-4 text-center">
+            <div className="text-3xl font-bold">{data.count}</div>
+            <div className="text-sm">Islands Found</div>
+          </div>
+
+          {/* Grid Display */}
+          <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 text-center">Grid</h3>
+            <div className="inline-block">
+              {data.originalGrid.map((row, i) => (
+                <div key={i} className="flex gap-1 mb-1">
+                  {row.map((cell, j) => {
+                    const isVisiting = data.visiting && data.visiting.i === i && data.visiting.j === j;
+                    const isInCurrentIsland = data.currentIsland.some(c => c.i === i && c.j === j);
+                    const originalValue = data.originalGrid[i][j];
+                    const isMarked = data.grid[i][j] === '0' && originalValue === '1';
+                    
+                    return (
+                      <div
+                        key={j}
+                        className={'w-12 h-12 flex items-center justify-center rounded font-bold text-sm border-2 transition-all ' + 
+                          (isVisiting 
+                            ? 'bg-red-500 text-white border-red-700 scale-110 animate-pulse' 
+                            : isInCurrentIsland && data.islandNum
+                            ? (islandColors[data.islandNum % islandColors.length] || 'border-blue-500 bg-blue-100') + ' scale-105'
+                            : isMarked
+                            ? 'bg-gray-300 text-gray-600 border-gray-400'
+                            : originalValue === '1'
+                            ? 'bg-green-400 text-white border-green-600'
+                            : 'bg-blue-50 text-blue-300 border-blue-200')}
+                      >
+                        <div className="text-center">
+                          <div>{originalValue === '1' ? '🏝️' : '🌊'}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 text-xs text-gray-600 text-center">
+              <span className="inline-block mr-3">🏝️ = Land (1)</span>
+              <span className="inline-block">🌊 = Water (0)</span>
+            </div>
+          </div>
+
+          {/* Current Position Info */}
+          {data.visiting && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4">
+              <div className="font-semibold text-gray-700 mb-1">
+                Current Position: ({data.visiting.i}, {data.visiting.j})
+              </div>
+              <div className="text-sm text-gray-600">
+                {data.phase === 'scanning' ? 'Scanning this cell...' : 
+                 data.phase === 'found' ? 'New island found! Starting DFS exploration...' :
+                 data.phase === 'visiting' ? 'Visiting and marking as part of island ' + data.islandNum :
+                 data.phase === 'marked' ? 'Marked as visited, exploring neighbors...' : ''}
+              </div>
+            </div>
+          )}
+
+          {/* Current Island Info */}
+          {data.currentIsland && data.currentIsland.length > 0 && (
+            <div className={'border-l-4 p-4 ' + (data.phase === 'completed' ? 'bg-green-50 border-green-400' : 'bg-blue-50 border-blue-400')}>
+              <div className="font-semibold text-gray-700 mb-2">
+                Island #{data.islandNum} - Cells: {data.currentIsland.length}
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {data.currentIsland.map((cell, idx) => (
+                  <div key={idx} className="px-2 py-1 bg-blue-500 text-white rounded text-sm">
+                    ({cell.i},{cell.j})
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Setup Explanation */}
+          {data.phase === 'setup' && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm">
+              <strong>DFS Algorithm:</strong> We scan the grid row by row. When we find a land cell (1), 
+              we increment the island count and use DFS to mark all connected land cells as visited.
+            </div>
+          )}
+
+          {/* Complete */}
+          {data.complete && (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4">
+              <div className="text-center text-2xl font-bold text-green-700 mb-2">
+                Grid Scan Complete!
+              </div>
+              <div className="text-sm text-center text-gray-600">
+                Total islands found: {data.count}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Palindrome Partitioning Visualization
+    if (data.s !== undefined && data.currentPath !== undefined && !data.digits) {
+      return (
+        <div className="space-y-6">
+          {data.phase && (
+            <div className="text-center text-sm font-semibold bg-pink-100 px-4 py-2 rounded mx-auto w-fit">
+              Phase: {data.phase.toUpperCase()}
+            </div>
+          )}
+
+          {/* String Display */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 text-center">Input String</h3>
+            <div className="flex justify-center gap-1">
+              {data.s.split('').map((char, idx) => (
+                <div
+                  key={idx}
+                  className={'w-12 h-12 flex items-center justify-center rounded-lg font-bold text-xl border-2 transition-all ' + 
+                    (data.checking && idx >= data.checking.start && idx <= data.checking.end 
+                      ? (data.checking.isPalindrome ? 'bg-green-500 text-white border-green-700' : 'bg-red-500 text-white border-red-700')
+                      : idx === data.currentStart 
+                      ? 'bg-blue-500 text-white border-blue-700' 
+                      : idx < data.currentStart 
+                      ? 'bg-gray-400 text-white border-gray-600'
+                      : 'bg-white text-gray-700 border-gray-300')}
+                >
+                  {char}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center gap-1 mt-1">
+              {data.s.split('').map((_, idx) => (
+                <div key={idx} className="w-12 text-center text-xs text-gray-500">{idx}</div>
+              ))}
+            </div>
+          </div>
+
+          {/* Current Checking Substring */}
+          {data.checking && (
+            <div className={'border-l-4 p-4 ' + (data.checking.isPalindrome ? 'bg-green-50 border-green-400' : 'bg-red-50 border-red-400')}>
+              <div className="font-semibold text-gray-700 mb-2">
+                Checking substring: {data.checking.substring}
+              </div>
+              <div className="text-sm space-y-1">
+                <div>Position: index {data.checking.start} to {data.checking.end}</div>
+                <div className={'font-bold ' + (data.checking.isPalindrome ? 'text-green-700' : 'text-red-700')}>
+                  {data.checking.isPalindrome ? 'Valid Palindrome!' : 'Not a palindrome'}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Current Path */}
+          <div className="bg-purple-50 border-l-4 border-purple-400 p-4">
+            <div className="font-semibold text-gray-700 mb-2">Current Partition Path:</div>
+            <div className="flex items-center gap-2 flex-wrap">
+              {data.currentPath.length > 0 ? data.currentPath.map((substring, idx) => (
+                <div key={idx} className="flex items-center gap-1">
+                  <div className="px-4 py-2 bg-purple-500 text-white rounded-lg font-bold">
+                    {substring}
+                  </div>
+                  {idx < data.currentPath.length - 1 && (
+                    <span className="text-purple-400 font-bold">|</span>
+                  )}
+                </div>
+              )) : <span className="text-gray-500 italic">empty</span>}
+            </div>
+          </div>
+
+          {/* Found Partition */}
+          {data.foundPartition && (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4">
+              <div className="text-center text-lg font-bold text-green-700 mb-2">
+                Found Valid Partition!
+              </div>
+              <div className="flex justify-center gap-2 flex-wrap">
+                {data.foundPartition.map((substring, idx) => (
+                  <div key={idx} className="flex items-center gap-1">
+                    <div className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">
+                      {substring}
+                    </div>
+                    {idx < data.foundPartition.length - 1 && (
+                      <span className="text-green-400 font-bold">|</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Results */}
+          {data.result && data.result.length > 0 && (
+            <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
+              <div className="font-semibold text-gray-700 mb-3">
+                Partitions Found ({data.result.length}):
+              </div>
+              <div className="space-y-2">
+                {data.result.map((partition, idx) => (
+                  <div
+                    key={idx}
+                    className={'px-3 py-2 rounded-lg transition-all flex gap-2 flex-wrap items-center ' + 
+                      (JSON.stringify(partition) === JSON.stringify(data.foundPartition)
+                        ? 'bg-green-500 text-white border-2 border-green-700'
+                        : 'bg-gray-100 text-gray-700')}
+                  >
+                    {partition.map((substr, subIdx) => (
+                      <span key={subIdx}>
+                        {substr}
+                        {subIdx < partition.length - 1 && ' | '}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Setup Explanation */}
+          {data.phase === 'setup' && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 text-sm">
+              <strong>Backtracking Algorithm:</strong> We explore all ways to partition the string into palindromic substrings. 
+              At each position, we check all possible substrings starting from that position.
+            </div>
+          )}
+
+          {/* Complete */}
+          {data.complete && (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4">
+              <div className="text-center text-2xl font-bold text-green-700 mb-2">
+                All Partitions Found!
+              </div>
+              <div className="text-sm text-center text-gray-600">
+                Total partitions: {data.result.length}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Letter Combinations Visualization
+    if (data.digits !== undefined && data.phone) {
+      return (
+        <div className="space-y-6">
+          {data.phase && (
+            <div className="text-center text-sm font-semibold bg-indigo-100 px-4 py-2 rounded mx-auto w-fit">
+              Phase: {data.phase.toUpperCase()}
+            </div>
+          )}
+
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3 text-center">Phone Keypad Mapping</h3>
+            <div className="grid grid-cols-3 gap-2 max-w-xs mx-auto">
+              {Object.entries(data.phone).map(([digit, letters]) => (
+                <div
+                  key={digit}
+                  className={'p-3 rounded-lg border-2 text-center transition-all ' + (data.currentDigit === digit ? 'bg-blue-500 border-blue-700 text-white scale-105' : 'bg-white border-gray-300')}
+                >
+                  <div className="text-2xl font-bold">{digit}</div>
+                  <div className={'text-xs ' + (data.currentDigit === digit ? 'text-white' : 'text-gray-500')}>
+                    {letters}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <span className="text-gray-600 font-semibold">Input:</span>
+            {data.digits.split('').map((digit, idx) => (
+              <div
+                key={idx}
+                className={'w-12 h-12 flex items-center justify-center rounded-lg font-bold text-xl transition-all ' + (idx === data.currentIndex ? 'bg-blue-500 text-white border-2 border-blue-700 scale-110' : idx < data.currentIndex ? 'bg-green-500 text-white border-2 border-green-700' : 'bg-gray-200 text-gray-700 border-2 border-gray-300')}
+              >
+                {digit}
+              </div>
+            ))}
+          </div>
+
+          {data.currentPath !== undefined && (
+            <div className="bg-purple-50 border-l-4 border-purple-400 p-4">
+              <div className="font-semibold text-gray-700 mb-2">Current Path:</div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {data.currentPath.length > 0 ? data.currentPath.split('').map((letter, idx) => (
+                  <div
+                    key={idx}
+                    className="w-10 h-10 flex items-center justify-center bg-purple-500 text-white rounded-lg font-bold text-lg"
+                  >
+                    {letter}
+                  </div>
+                )) : <span className="text-gray-500 italic">empty</span>}
+              </div>
+            </div>
+          )}
+
+          {data.availableLetters && (
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+              <div className="font-semibold text-gray-700 mb-2">
+                Available letters for digit {data.currentDigit}:
+              </div>
+              <div className="flex gap-2">
+                {data.availableLetters.split('').map((letter, idx) => (
+                  <div
+                    key={idx}
+                    className={'w-10 h-10 flex items-center justify-center rounded-lg font-bold transition-all ' + (data.selectedLetter === letter ? 'bg-yellow-500 text-white border-2 border-yellow-700 scale-110' : 'bg-white text-gray-700 border-2 border-gray-300')}
+                  >
+                    {letter}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {data.result && data.result.length > 0 && (
+            <div className="bg-white rounded-lg border-2 border-gray-200 p-4">
+              <div className="font-semibold text-gray-700 mb-2">
+                Combinations Found ({data.result.length}):
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {data.result.map((combo, idx) => (
+                  <div
+                    key={idx}
+                    className={'px-3 py-2 rounded-lg font-semibold transition-all ' + (combo === data.foundCombination ? 'bg-green-500 text-white border-2 border-green-700 scale-105' : 'bg-gray-200 text-gray-700')}
+                  >
+                    {combo}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    // Last Stone Weight Visualization
+    if(data.original && data.hasOwnProperty('sorted')){
+      return (
+      <div className="space-y-6">
+        {data.phase && (
+          <div className="text-center text-sm font-semibold bg-purple-100 px-4 py-2 rounded mx-auto w-fit">
+            Phase: {data.phase.toUpperCase()}
+          </div>
+        )}
+
+        <div className="flex items-end justify-center gap-3 flex-wrap min-h-[200px]">
+          {data.heap && data.heap.length === 0 ? (
+            <div className="text-center text-gray-500 text-lg font-semibold">
+              No stones remaining
+            </div>
+          ) : (
+            data.heap && data.heap.map((stone, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <div className={'rounded-lg flex items-center justify-center font-bold text-white transition-all duration-500 shadow-lg ' + (data.firstIdx === i ? 'bg-red-500 border-4 border-red-700 scale-110 animate-pulse' : data.secondIdx === i ? 'bg-orange-500 border-4 border-orange-700 scale-110 animate-pulse' : data.newStone === stone && data.phase === 'adding' ? 'bg-green-500 border-4 border-green-700 scale-110 animate-pulse' : data.complete ? 'bg-blue-500 border-4 border-blue-700 scale-125' : 'bg-purple-500 border-2 border-purple-700')}
+                style={{
+                  width: Math.min(60 + stone * 3, 100) + 'px',
+                  height: Math.min(60 + stone * 3, 100) + 'px',
+                  fontSize: Math.min(18 + stone * 0.5, 28) + 'px'
+                }}>
+                  {stone}
+                </div>
+                <div className="text-xs text-gray-600">idx: {i}</div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {data.first !== undefined && data.second !== undefined && (
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+            <div className="font-semibold mb-2">Operation:</div>
+            <div className="text-sm space-y-1">
+              <div>First stone (heaviest): <span className="font-bold text-red-600">{data.first}</span></div>
+              <div>Second stone: <span className="font-bold text-orange-600">{data.second}</span></div>
+              {data.result !== undefined && (
+                <div className="mt-2 pt-2 border-t border-blue-300">
+                  {data.result === 0 ? (
+                    <span className="text-gray-600">Both stones destroyed (equal weight)</span>
+                  ) : (
+                    <span>New stone created: <span className="font-bold text-green-600">{data.result}</span></span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {data.complete && (
+          <div className="bg-green-50 border-l-4 border-green-400 p-4">
+            <div className="text-center text-2xl font-bold text-green-700 mb-2">
+              Final Answer: {data.final}
+            </div>
+            <div className="text-sm text-center text-gray-600">
+              {data.final === 0 ? 'All stones were destroyed!' : 'One stone remains with weight ' + data.final}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+    }
+
         
 
     if (data.nums && data.hasOwnProperty('left')) {
@@ -5899,6 +6310,8 @@ export const RenderVisualization = ({ steps, currentStep, selectedAlgo }) => {
         </div>
       );
     }
+
+    
 
     return null;
   };
