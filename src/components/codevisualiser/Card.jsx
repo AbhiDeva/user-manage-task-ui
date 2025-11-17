@@ -2,7 +2,18 @@ import React, { useState } from "react";
 import SpeechApi from "./SpeechAPI";
 import CallbackHellVisualizer from "./CallbackHell";
 import PureImpureVisualiser from "./PureVSImpure";
+import ResizableTableUIVisualizer from "./ResizableTableColumn";
+import ResizableDragTableUIVisualizer from "./ResizableDraggedColumn";
+import ArrayDemo from "./ArrayDemo";
+import ArrayPolyfillVisualizer from "./ArrayPolyfillVisualizer";
+import StarPatternVisualizer from "./StarPatternVisualizer";
+import SignedURLVisualiser from "./SignedURLVisualiser";
+import FlexboxVisualizer from "./FlexboxVisualizer";
 import { MdClose, MdOutlineVisibility } from "react-icons/md";
+import ProgressVisualiser from "./ProgressVisualiser";
+import ReactHookDemo from "./ReactHooksDemo";
+import ReactLifeCycle from "./ReactLifecycle";
+
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,6 +26,26 @@ export default function Card({ card }) {
         return <CallbackHellVisualizer/>
       case 'PureVSImpure':
         return <PureImpureVisualiser />;
+      case 'resizetablecolumn':
+        return <ResizableTableUIVisualizer />;
+      case 'resizeDragtablecolumn':
+        return <ResizableDragTableUIVisualizer />;
+      case 'arrayDemo':
+        return <ArrayDemo />;
+       case 'arraypolyfill':
+        return <ArrayPolyfillVisualizer />;
+       case 'starpattern':
+        return <StarPatternVisualizer />;
+       case  'progressbar':
+        return <ProgressVisualiser />;
+       case 'reacthooksdemo':
+        return <ReactHookDemo />;
+        case 'signedurlvisualiser':
+        return <SignedURLVisualiser />;
+        case 'flexboxvisualizer':
+        return <FlexboxVisualizer />;
+        case 'reactlifecycle':
+        return <ReactLifeCycle />;
       default:
         return null;
     }

@@ -30,6 +30,97 @@ import Card from "./Card";
       gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
       iconColor: 'text-blue-600'
     },
+    {
+      id: '4',
+      title: 'Resize Column in Table',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'resizetablecolumn',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+
+     {
+      id: '5',
+      title: 'Drag Column in Table',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'resizeDragtablecolumn',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+     {
+      id: '6',
+      title: 'Array Operations Demo',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'arrayDemo',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+     {
+      id: '7',
+      title: 'Array Polyfills Visualizer',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'arraypolyfill',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+    {
+      id: '8',
+      title: 'Star Pattern Visualizer',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'starpattern',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+    {
+      id: '9',
+      title: 'Progress Bar Visualizer',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'progressbar',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+    {
+      id: '10',
+      title: 'React Hooks Demo',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'reacthooksdemo',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+    {
+      id: '11',
+      title: 'Signed URL Visualiser',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'signedurlvisualiser',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+    {
+      id: '12',
+      title: 'Flexbox Visualizer',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'flexboxvisualizer',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
+     {
+      id: '13',
+      title: 'React Lifecycle Methods',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'reactlifecycle',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    }
   ];
 
   return (
