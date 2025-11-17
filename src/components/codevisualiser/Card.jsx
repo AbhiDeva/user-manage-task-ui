@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { AnalyticsModal } from "./AnalyticsModal"
 import SpeechApi from "./SpeechAPI";
 import CallbackHellVisualizer from "./CallbackHell";
+import PureImpureVisualiser from "./PureVSImpure";
 import { MdClose, MdOutlineVisibility } from "react-icons/md";
-
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,6 +13,8 @@ export default function Card({ card }) {
         return  <SpeechApi />;
       case 'callbackhell':
         return <CallbackHellVisualizer/>
+      case 'PureVSImpure':
+        return <PureImpureVisualiser />;
       default:
         return null;
     }

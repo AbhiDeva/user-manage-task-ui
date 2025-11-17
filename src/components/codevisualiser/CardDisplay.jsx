@@ -21,6 +21,15 @@ import Card from "./Card";
       gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
       iconColor: 'text-blue-600'
     },
+    {
+      id: '3',
+      title: 'Pure vs Impure Functions',
+      description: 'Track real-time metrics, monitor performance trends, and gain actionable insights from comprehensive analytics data.',
+      icon: <MdChevronRight className="w-8 h-8" />,
+      modalType: 'PureVSImpure',
+      gradient: 'bg-gradient-to-br from-gray-400 to-gray-600',
+      iconColor: 'text-blue-600'
+    },
   ];
 
   return (
