@@ -51,6 +51,19 @@ import StarRatingVisualizer from "../coding/simpleJS/starRating";
 import DigitalClockVisualizer from "../coding/simpleJS/SevenSegmentDigit";
 import TransferListVisualizer from "../coding/simpleJS/TransferList";
 import HierarchicalCheckboxVisualizer from "../coding/simpleJS/HierarchicalCheckbox";
+import StopwatchVisualizer from "../coding/simpleJS/StopWatch"
+import ImageCarouselVisualizer from "../coding/simpleJS/ImageCarousel";
+import TrafficLightVisualizer from "../coding/simpleJS/TrafficLight";
+import AnalogClockVisualizer from "../coding/simpleJS/AnalogClock";
+import InheritanceComparisonVisualizer from "./InheritanceComparsion";
+import PromiseVisualizer from "./PromiseVisualiser";
+import ObjectKeyVisualizerOutput from "./ObjectvsString";
+import ObjectReferenceVisualizer2 from "./ObjectKeyStringOutput2";
+import HoistingOutputVisualizer from "./HoistingOutput";
+import MultiSelectDropdown from "../coding/simpleJS/MultiSelectDropdown";
+import FactoryPatternVisualizer from "./patterns/FactoryPattern";
+import DomSiblingsVisualizer from "./DomSiblings";
+import IPv4Visualizer from "./IPV4";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -159,6 +172,32 @@ export default function Card({ card }) {
           return <TransferListVisualizer />
         case 'hiercheckbox':
           return <HierarchicalCheckboxVisualizer />
+        case 'stopWatch':
+          return <StopwatchVisualizer />
+        case 'imagecarousel':
+          return <ImageCarouselVisualizer />
+        case 'trafficlight':
+          return <TrafficLightVisualizer />
+        case 'analogClock':
+          return <AnalogClockVisualizer />
+        case 'inherit':
+          return <InheritanceComparisonVisualizer />
+        case 'promisevs':
+          return <PromiseVisualizer />
+        case 'outputObject':
+          return <ObjectKeyVisualizerOutput />
+        case 'outputObject2':
+          return <ObjectReferenceVisualizer2 />
+        case 'hostingout':
+          return <HoistingOutputVisualizer />
+        case 'selectDropdown':
+          return <MultiSelectDropdown />
+        case 'factory':
+          return <FactoryPatternVisualizer/>
+        case 'DomSiblings':
+          return <DomSiblingsVisualizer />
+        case 'IP4':
+          return <IPv4Visualizer />
       default:
         return null;
     }
