@@ -22,6 +22,23 @@ import AngularLifecycleNestedVisualizer from "./AngularLifeCycleWithNested";
 import AngularLifecycleSequenceVisualizer from "./AngularLifeCycleSequence";
 import ViewChildVisualizer from "./ViewChildVisualiser";
 import ContentChildVisualizer from "./contentChildandChildren";
+import RouterLifecycleVisualizer from "./RouterEventLifeCycle";
+import PipeVisualizer from "./PureandImpurePipeVisualiser";
+import PopOverVisualizer from "./PopOverVisualiser";
+import DebounceVisualizer from "./DebounceVisualiser";
+import DeepEqualVisualizer from "./DeepEqualiser";
+import EventLoopFlowVisualizer from "./EventLoopFlow";
+import EventLoopLiveVisualizer from "./EventLoopLive";
+import EventDelegationVisualizer from "./EventDelegate";
+import ScriptLoadingVisualizer from "./ScriptLoading";
+import EventDelegationAnimateVisualizer from "./EventDelegateAnimate";
+import PrototypalInheritanceVisualizer from "./Prototypalinheritance";
+import AccordionApp from "../coding/simpleJS/accordion";
+import UseCounterVisualizer from "../coding/simpleJS/useCounterhook";
+import UseClickAnywhereVisualizer from "../coding/simpleJS/useClickhook";
+import UseCounterFullVisualizer from "../coding/simpleJS/useOptimisedCounterhook";
+import MortgageCalculatorVisualizer from "../coding/simpleJS/MortgageCalculator";
+import TopologicalSortVisualizer from "./topologicalSort";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,7 +88,41 @@ export default function Card({ card }) {
         case 'viewChild':
         return <ViewChildVisualizer />;
         case 'contentChild':
-       return <ContentChildVisualizer/>
+       return <ContentChildVisualizer/>;
+        case 'routerEventLifecycle':
+        return <RouterLifecycleVisualizer/>;
+        case 'pureImpurePipe':
+        return <PipeVisualizer/>;
+        case  'popover':
+        return <PopOverVisualizer/>;
+        case  'debounce':
+        return <DebounceVisualizer/>;
+        case 'deepEqualiser':
+        return <DeepEqualVisualizer/>;
+        case 'eventloop':
+        return <EventLoopFlowVisualizer/>;
+        case 'eventlooplive':
+        return <EventLoopLiveVisualizer/>;
+        case 'eventdelegation':
+        return <EventDelegationVisualizer/>;
+        case 'eventdelegationanimated':
+        return <EventDelegationAnimateVisualizer/>;
+        case 'scriptloading':
+        return <ScriptLoadingVisualizer/>;
+        case 'prototypalinheritance':
+        return <PrototypalInheritanceVisualizer/>;
+        case 'accordionReact':
+          return <AccordionApp />
+        case 'counterHook':
+          return <UseCounterVisualizer />
+        case 'clickHook':
+          return <UseClickAnywhereVisualizer />
+        case 'usehookoptimisedcounter':
+          return <UseCounterFullVisualizer />
+        case 'calculatorAPP':
+          return <MortgageCalculatorVisualizer />
+        case 'topologicalSort':
+          return <TopologicalSortVisualizer />
       default:
         return null;
     }
