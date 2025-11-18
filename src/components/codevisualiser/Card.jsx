@@ -21,7 +21,7 @@ import AngularLifecycleVisualizer from "./AngularLifeCycle";
 import AngularLifecycleNestedVisualizer from "./AngularLifeCycleWithNested";
 import AngularLifecycleSequenceVisualizer from "./AngularLifeCycleSequence";
 import ViewChildVisualizer from "./ViewChildVisualiser";
-import ContentChildVisualizer from "./ContentChildVisualiser";
+import ContentChildVisualizer from "./contentChildandChildren";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
