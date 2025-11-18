@@ -14,7 +14,9 @@ import ProgressVisualiser from "./ProgressVisualiser";
 import ReactHookDemo from "./ReactHooksDemo";
 import ReactLifeCycle from "./ReactLifecycle";
 import ObjectVisualizer from "./ObjectSealvsFreeze";
-
+import EqualityVisualizer from "./EqualityVisualizer";
+import DOMTreeVisualiser from "./DOMTreeVisualiser";
+import DOMTreeUseCaseVisualizer from "./DOMTreeUseCaseVisualiser";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,6 +51,13 @@ export default function Card({ card }) {
         return <ReactLifeCycle />;
         case 'freezeVsSeal':
         return <ObjectVisualizer />;
+        case 'equalityChecker':
+        return <EqualityVisualizer />;
+        case 'domTree':
+        return <DOMTreeVisualiser />;
+        case 'domTreeuseCases':
+        return <DOMTreeUseCaseVisualizer />;
+       
       default:
         return null;
     }

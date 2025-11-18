@@ -16,7 +16,7 @@ import {
   MdAutorenew
 } from 'react-icons/md';
 
-import { FaLock } from "react-icons/fa";
+import { FaLock, FaEquals, FaSitemap } from "react-icons/fa";
 
   export default function CardsDisplay() {
   // const cards = [
@@ -268,7 +268,36 @@ const cards = [
   modalType: 'freezeVsSeal',
   gradient: 'bg-gradient-to-br from-sky-500 to-blue-600',
   iconColor: 'text-sky-600'
+},
+{
+  id: '15',
+  title: '== vs === Equality Checker',
+  description: 'Interactive visualizer demonstrating the difference between loose (==) and strict (===) equality for strings, arrays, and objects, with real-time UI comparisons.',
+  icon: <FaEquals className="w-8 h-8" />,
+  modalType: 'equalityChecker',
+  gradient: 'bg-gradient-to-br from-purple-500 to-violet-600',
+  iconColor: 'text-purple-600'
+},
+{
+  id: '16',
+  title: 'DOM Tree Visualizer',
+  description: 'Interactive DOM tree visualizer showing how nodes are created, updated, removed, and rendered with animations for each change.',
+  icon: <FaSitemap className="w-8 h-8" />,
+  modalType: 'domTree',
+  gradient: 'bg-gradient-to-br from-green-500 to-emerald-600',
+  iconColor: 'text-green-600'
+},
+{
+  id: '17',
+  title: 'DOM Tree UseCases Visualizer',
+  description: 'Interactive DOM tree Usecases visualizer.',
+  icon: <FaSitemap className="w-8 h-8" />,
+  modalType: 'domTreeuseCases',
+  gradient: 'bg-gradient-to-br from-green-500 to-emerald-600',
+  iconColor: 'text-green-600'
 }
+
+
 
 
 ];
