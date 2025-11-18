@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaPlay, FaSyncAlt, FaCodeBranch, FaBolt, FaArrowRight } from "react-icons/fa";
 
 function Event({ label, level = 0 }) {
+     if (!label) return null; // Prevent undefined errors
   return (
     <div className={`flex items-center gap-2 my-1 ml-${level * 4}`}>
       <FaArrowRight className="w-3 h-3 text-gray-400" />

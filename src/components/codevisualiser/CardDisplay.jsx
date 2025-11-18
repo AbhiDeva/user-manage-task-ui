@@ -323,6 +323,15 @@ const cards = [
     gradient: 'bg-gradient-to-br from-pink-500 to-purple-600',
     iconColor: 'text-purple-600',
   },
+   {
+    id: '21',
+    title: 'ViewChild & ViewChildren Visualizer',
+    description: 'Visualizes Angular @ViewChild and @ViewChildren decorators for accessing child components.',
+    icon: <FaSitemap className="w-8 h-8" />,
+    modalType: 'viewChild',
+    gradient: 'bg-gradient-to-br from-pink-500 to-purple-600',
+    iconColor: 'text-purple-600',
+  },
 
 ];
   return (
