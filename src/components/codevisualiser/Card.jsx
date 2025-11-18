@@ -39,6 +39,18 @@ import UseClickAnywhereVisualizer from "../coding/simpleJS/useClickhook";
 import UseCounterFullVisualizer from "../coding/simpleJS/useOptimisedCounterhook";
 import MortgageCalculatorVisualizer from "../coding/simpleJS/MortgageCalculator";
 import TopologicalSortVisualizer from "./topologicalSort";
+import CurryVisualizer from "./CurryFunction";
+import TabsVisualizer from "../coding/simpleJS/TabsComponent";
+import HolyGrailLayout from "../coding/simpleJS/HolyGrail";
+import UseArrayVisualizer from "../coding/simpleJS/UseArrayHook";
+import DiceRollerVisualizer from "../coding/simpleJS/DiceRoller";
+import FileTreeVisualizer from "../coding/simpleJS/FileExplorer";
+import LikeButtonVisualizer from "../coding/simpleJS/LikeButton";
+import ModalVisualizer from "../coding/simpleJS/ModalDialog";
+import StarRatingVisualizer from "../coding/simpleJS/starRating";
+import DigitalClockVisualizer from "../coding/simpleJS/SevenSegmentDigit";
+import TransferListVisualizer from "../coding/simpleJS/TransferList";
+import HierarchicalCheckboxVisualizer from "../coding/simpleJS/HierarchicalCheckbox";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -123,6 +135,30 @@ export default function Card({ card }) {
           return <MortgageCalculatorVisualizer />
         case 'topologicalSort':
           return <TopologicalSortVisualizer />
+        case 'curryingFunction':
+          return <CurryVisualizer />
+        case 'tabs':
+          return <TabsVisualizer />
+        case 'holyGrailLayout':
+          return <HolyGrailLayout />
+        case 'useArrayHook':
+          return <UseArrayVisualizer />
+        case 'rollDiceHook':
+          return <DiceRollerVisualizer />
+        case 'fileExplorer':
+          return <FileTreeVisualizer />
+        case 'likeButtonHook':
+          return <LikeButtonVisualizer />
+        case 'modaldisplay':
+          return <ModalVisualizer />
+        case 'starRate':
+          return <StarRatingVisualizer />
+        case 'digitalClock':
+          return <DigitalClockVisualizer />
+        case 'transferList':
+          return <TransferListVisualizer />
+        case 'hiercheckbox':
+          return <HierarchicalCheckboxVisualizer />
       default:
         return null;
     }
