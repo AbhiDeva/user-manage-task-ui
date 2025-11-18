@@ -13,6 +13,7 @@ import { MdClose, MdOutlineVisibility } from "react-icons/md";
 import ProgressVisualiser from "./ProgressVisualiser";
 import ReactHookDemo from "./ReactHooksDemo";
 import ReactLifeCycle from "./ReactLifecycle";
+import ObjectVisualizer from "./ObjectSealvsFreeze";
 
 
 export default function Card({ card }) {
@@ -46,6 +47,8 @@ export default function Card({ card }) {
         return <FlexboxVisualizer />;
         case 'reactlifecycle':
         return <ReactLifeCycle />;
+        case 'freezeVsSeal':
+        return <ObjectVisualizer />;
       default:
         return null;
     }
