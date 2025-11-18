@@ -17,6 +17,9 @@ import ObjectVisualizer from "./ObjectSealvsFreeze";
 import EqualityVisualizer from "./EqualityVisualizer";
 import DOMTreeVisualiser from "./DOMTreeVisualiser";
 import DOMTreeUseCaseVisualizer from "./DOMTreeUseCaseVisualiser";
+import AngularLifecycleVisualizer from "./AngularLifeCycle";
+import AngularLifecycleNestedVisualizer from "./AngularLifeCycleWithNested";
+import AngularLifecycleSequenceVisualizer from "./AngularLifeCycleSequence";
 
 export default function Card({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,6 +60,12 @@ export default function Card({ card }) {
         return <DOMTreeVisualiser />;
         case 'domTreeuseCases':
         return <DOMTreeUseCaseVisualizer />;
+        case 'angularlifecycle':
+        return <AngularLifecycleVisualizer />;
+        case 'angularlifecyclewithnested':
+        return <AngularLifecycleNestedVisualizer />;
+        case 'angularSequencelifeCycle':
+        return <AngularLifecycleSequenceVisualizer />;
        
       default:
         return null;

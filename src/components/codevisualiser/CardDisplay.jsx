@@ -16,7 +16,7 @@ import {
   MdAutorenew
 } from 'react-icons/md';
 
-import { FaLock, FaEquals, FaSitemap } from "react-icons/fa";
+import { FaLock, FaEquals, FaSitemap, FaRecycle } from "react-icons/fa";
 
   export default function CardsDisplay() {
   // const cards = [
@@ -295,10 +295,34 @@ const cards = [
   modalType: 'domTreeuseCases',
   gradient: 'bg-gradient-to-br from-green-500 to-emerald-600',
   iconColor: 'text-green-600'
-}
-
-
-
+},
+{
+  id: '18',
+  title: 'Angular Lifecycle Visualizer',
+  description: 'Interactive visualizer showing Angular component lifecycle flow.',
+  icon: <FaRecycle className="w-8 h-8" />,
+  modalType: 'angularlifecycle',
+  gradient: 'bg-gradient-to-br from-orange-500 to-red-600',
+  iconColor: 'text-orange-600'
+},
+{
+  id: '19',
+  title: 'Angular Lifecycle (Nested Components)',
+  description: 'Visualizes Angular lifecycle hooks with parent → child → nested children execution order.',
+  icon: <FaSitemap className="w-8 h-8" />,
+  modalType: 'angularlifecyclewithnested',
+  gradient: 'bg-gradient-to-br from-pink-500 to-purple-600',
+  iconColor: 'text-purple-600'
+},
+ {
+    id: '20',
+    title: 'Angular Lifecycle (Nested Components) - 2',
+    description: 'Visualizes Angular lifecycle hooks with parent → child → nested children execution order.',
+    icon: <FaSitemap className="w-8 h-8" />,
+    modalType: 'angularSequencelifeCycle',
+    gradient: 'bg-gradient-to-br from-pink-500 to-purple-600',
+    iconColor: 'text-purple-600',
+  },
 
 ];
   return (
